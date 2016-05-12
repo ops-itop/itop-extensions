@@ -7,8 +7,47 @@
 	  <class id="lnkSubnetToVLAN" _delta="delete"></class>
 	  <class id="Subnet" _delta="delete"></class>
 	  <class id="lnkPhysicalInterfaceToVLAN" _delta="delete"></class>
+	  <class id="Patch" _delta="delete"></class>
+	  <class id="lnkDocumentToPatch" _delta="delete"></class>
+	  <class id="lnkSoftwareInstanceToSoftwarePatch" _delta="delete"></class>
+	  <class id="lnkFunctionalCIToOSPatch" _delta="delete"></class>
+	  <class id="Middleware" _delta="delete"></class>
+	  <class id="PCSoftware" _delta="delete"></class>
+	  <class id="OtherSoftware" _delta="delete"></class>
+	  <class id="MiddlewareInstance" _delta="delete"></class>
+	  <class id="DatabaseSchema" _delta="delete"></class>
+	  <class id="Licence" _delta="delete"></class>
+	  <class id="lnkDocumentToLicence" _delta="delete"></class>
+	  <class id="Software" _delta="delete"></class>
+	  <class id="lnkDocumentToSoftware" _delta="delete"></class>
   </classes>
   <menus>
+	  <menu id="ConfigManagementOverview" xsi:type="DashboardMenuNode">
+		  <definition>
+			  <cells>
+				  <cell id="0">
+				  	<dashlets>
+						<dashlet id="ip" xsi:type="DashletBadge" _delta="define">
+							<rank>4</rank>
+							<class>NetworkInterface</class>
+						</dashlet>
+				  	</dashlets>
+				  </cell>
+				  <cell id="3">
+					  <dashlets>
+						  <dashlet id="13" xsi:type="DashletBadge" _delta="delete"></dashlet>
+					  </dashlets>
+				  </cell>
+				  <cell id="4">
+					  <dashlets>
+						  <dashlet id="vlan" xsi:type="DashletBadge" _delta="delete"></dashlet>
+						  <dashlet id="16" xsi:type="DashletBadge" _delta="delete"></dashlet>
+						  <dashlet id="17" xsi:type="DashletBadge" _delta="delete"></dashlet>
+					  </dashlets>
+				  </cell>
+			  </cells>
+		  </definition>
+	  </menu>
   </menus>
   <user_rights>
     <groups>
