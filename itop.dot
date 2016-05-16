@@ -1,7 +1,6 @@
 digraph G{
 rankdir=RL
 Organization->cmdbAbstractObject
-Location->cmdbAbstractObject
 Contact->cmdbAbstractObject
 Person->Contact
 Team->Contact
@@ -17,9 +16,6 @@ NetworkDevice->DatacenterDevice
 Server->DatacenterDevice
 ApplicationSolution->FunctionalCI
 BusinessProcess->FunctionalCI
-SoftwareInstance->FunctionalCI
-WebServer->SoftwareInstance
-WebApplication->FunctionalCI
 Typology->cmdbAbstractObject
 OSVersion->Typology
 OSFamily->Typology
@@ -28,7 +24,6 @@ ContactType->Typology
 Brand->Typology
 Model->Typology
 NetworkDeviceType->Typology
-IOSVersion->Typology
 lnkContactToFunctionalCI->cmdbAbstractObject
 lnkDocumentToFunctionalCI->cmdbAbstractObject
 NetworkInterface->cmdbAbstractObject
@@ -40,6 +35,6 @@ lnkApplicationSolutionToBusinessProcess->cmdbAbstractObject
 lnkPersonToTeam->cmdbAbstractObject
 Group->cmdbAbstractObject
 lnkGroupToCI->cmdbAbstractObject
-LogicalDevice->FunctionalCI
-Cluster->LogicalDevice
+Domain->FunctionalCI
+Cluster->DatacenterDevice
 }
