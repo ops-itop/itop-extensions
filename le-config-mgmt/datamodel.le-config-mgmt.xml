@@ -3,13 +3,13 @@
   <constants>
   </constants>
   <classes>
-    <class id="IPInterface" _delta="define">
+    <class id="VIPInterface" _delta="define">
       <parent>NetworkInterface</parent>
       <properties>
         <category>bizmodel,searchable</category>
         <abstract>true</abstract>
         <key_type>autoincrement</key_type>
-        <db_table>ipinterface</db_table>
+        <db_table>vipinterface</db_table>
         <db_key_field>id</db_key_field>
         <db_final_class_field/>
         <naming>
