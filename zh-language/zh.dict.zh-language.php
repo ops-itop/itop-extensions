@@ -3623,7 +3623,7 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 
 
 Dict::Add('ZH CN', "Chinese", "简体中文", array(
-	'Class:Model' => '模型',
+	'Class:Model' => '型号',
 	'Class:Model+' => '',
 	'Class:Model/Attribute:brand_id' => '品牌',
 	'Class:Model/Attribute:brand_id+' => '',
@@ -3668,7 +3668,7 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 	'Class:Model/Attribute:type/Value:Phone' => '电话',
 	'Class:Model/Attribute:type/Value:Phone+' => '电话',
 	'Class:Model/Attribute:physicaldevices_list' => '物理设备',
-	'Class:Model/Attribute:physicaldevices_list+' => '与这个模型相关的所有物理设备',
+	'Class:Model/Attribute:physicaldevices_list+' => '与这个型号相关的所有物理设备',
 ));
 
 
