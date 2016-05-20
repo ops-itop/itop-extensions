@@ -12,7 +12,6 @@ FunctionalCI->cmdbAbstractObject
 PhysicalDevice->FunctionalCI
 ConnectableCI->PhysicalDevice
 DatacenterDevice->ConnectableCI
-NetworkDevice->DatacenterDevice
 Server->DatacenterDevice
 ApplicationSolution->FunctionalCI
 BusinessProcess->FunctionalCI
@@ -26,15 +25,14 @@ Model->Typology
 NetworkDeviceType->Typology
 lnkContactToFunctionalCI->cmdbAbstractObject
 lnkDocumentToFunctionalCI->cmdbAbstractObject
-NetworkInterface->cmdbAbstractObject
-IPInterface->NetworkInterface
-PhysicalInterface->IPInterface
-lnkConnectableCIToNetworkDevice->cmdbAbstractObject
 lnkApplicationSolutionToFunctionalCI->cmdbAbstractObject
 lnkApplicationSolutionToBusinessProcess->cmdbAbstractObject
 lnkPersonToTeam->cmdbAbstractObject
 Group->cmdbAbstractObject
 lnkGroupToCI->cmdbAbstractObject
+IPAddress->cmdbAbstractObject
+PhysicalIP->IPAddress
+VirtualIP->IPAddress
 Domain->FunctionalCI
-Cluster->DatacenterDevice
+Cluster->FunctionalCI
 }

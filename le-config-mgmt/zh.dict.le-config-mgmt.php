@@ -31,4 +31,20 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Menu:ApplicationSolution+' => '所有应用',
 	'Menu:Domain' => '域名',
 	'Menu:Domain+' => '所有域名',
+	'Menu:Cluster' => '集群',
+	'Menu:Cluster+' => '所有集群',
+));
+
+// IP
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:PhysicalIP' => 'IP地址',
+	'Menu:PhysicalIP' => 'IP地址',
+	'Menu:PhysicalIP+' => '所有IP地址'
+));
+
+// VIP
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:VirtualIP' => 'VIP地址',
+	'Menu:VirtualIP' => 'VIP地址',
+	'Menu:VirtualIP+' => '所有VIP地址'
 ));
