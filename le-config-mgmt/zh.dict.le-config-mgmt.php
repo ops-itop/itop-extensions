@@ -35,6 +35,13 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Menu:Cluster+' => '所有集群',
 ));
 
+// Server
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:Server/Attribute:name' => '主机名',
+	'Class:Server/Attribute:serialnumber' => 'SN',
+));
+
+
 // IP
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:PhysicalIP' => 'IP地址',
