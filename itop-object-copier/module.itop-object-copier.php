@@ -123,6 +123,17 @@ SetupWebPage::AddModule(
 					'retrofit' => array( // Series of actions to retrofit some information from the created object to the source object
 					),
 				),
+				array(
+					'source_scope' => 'SELECT IPAddress',
+					'allowed_profiles' => 'Administrator,Configuration Manager',
+					'dest_class' => '', // Same class as the source object
+					'preset' => array( // Series of actions to preset the object in the creation form
+						'clone_scalars(*)',
+						'reset(name)',
+					),
+					'retrofit' => array( // Series of actions to retrofit some information from the created object to the source object
+					),
+				),
 			)
 		),
 	)

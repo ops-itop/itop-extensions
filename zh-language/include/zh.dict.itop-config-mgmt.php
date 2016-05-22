@@ -107,8 +107,9 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 //
 
 Dict::Add('ZH CN', "Chinese", "简体中文", array(
-	'Class:Location' => '位置',
-	'Class:Location+' => '任何类型的地理位置: 区域, 国家, 城市, 位置, 建筑, 楼层, 房间, 机架,...',
+	'Class:Location' => '机房',
+//	'Class:Location+' => '任何类型的地理位置: 区域, 国家, 城市, 位置, 建筑, 楼层, 房间, 机架,...',
+	'Class:Location+' => '所有机房',
 	'Class:Location/Attribute:name' => '名称',
 	'Class:Location/Attribute:name+' => '',
 	'Class:Location/Attribute:status' => '状态',
@@ -130,9 +131,9 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 	'Class:Location/Attribute:country' => '国家',
 	'Class:Location/Attribute:country+' => '',
 	'Class:Location/Attribute:physicaldevice_list' => '物理设备清单',
-	'Class:Location/Attribute:physicaldevice_list+' => '在该位置里的所有物理设备清单',
+	'Class:Location/Attribute:physicaldevice_list+' => '在该机房里的所有物理设备清单',
 	'Class:Location/Attribute:person_list' => '人员清单',
-	'Class:Location/Attribute:person_list+' => '在该位置的所有人员清单',
+	'Class:Location/Attribute:person_list+' => '在该机房的所有人员清单',
 ));
 
 //
@@ -1813,9 +1814,9 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 'Menu:Team+' => '所有团队',
 'Menu:Document' => '文档',
 'Menu:Document+' => '所有文档',
-'Menu:Location' => '位置',
+'Menu:Location' => '机房',
 
-'Menu:Location+' => '所有位置',
+'Menu:Location+' => '所有机房',
 'Menu:ConfigManagementCI' => '配置项',
 'Menu:ConfigManagementCI+' => '配置项',
 'Menu:BusinessProcess' => '业务过程',

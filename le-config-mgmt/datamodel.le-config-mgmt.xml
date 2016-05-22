@@ -23,7 +23,6 @@
 		<class id="SoftwareInstance" _delta="delete"></class>
 		<class id="lnkDocumentToSoftware" _delta="delete"></class>
 		<class id="WebApplication" _delta="delete"></class>
-		<class id="Location" _delta="delete"></class>
 		<class id="IOSVersion" _delta="delete"></class>
 		<class id="PhysicalInterface" _delta="delete"></class>
 		<class id="IPInterface" _delta="delete"></class>
@@ -59,11 +58,13 @@
 					<is_null_allowed>false</is_null_allowed>
 				</field>
 			</fields>
+
 		</class>
 		<class id="Server">
 			<properties>
 				<naming>
 					<attributes>
+						<attribute id="name" _delta="delete"></attribute>
 						<attribute id="serialnumber"/>
 					</attributes>
 				</naming>
@@ -77,6 +78,31 @@
 					</attributes>
 				</reconciliation>
 			</properties>
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[       public function DoCheckToWrite()
+				{
+					parent::DoCheckToWrite();
+
+					// serialnumber has to be unique! Currently it' not possible to define this in datamodel (xml)
+					$aChanges = $this->ListChanges();
+					if (array_key_exists('serialnumber', $aChanges))
+					{
+						$sServer = $aChanges['serialnumber'];
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Server WHERE serialnumber=:serialnumber");
+						$oSet = new DBObjectSet($oSearch, array(), array('serialnumber' => $sServer));
+						if ($oSet->Count() > 0)
+						{
+							$this->m_aCheckIssues[] = Dict::Format('Class:Server/Error:ServerMustBeUnique', $sServer);
+						}
+					}         
+				}]]></code>
+				</method>
+
+			</methods>
 
 			<presentation>
 				<details>
@@ -160,6 +186,8 @@
 										</item>
 									</items>
 								</item>
+								<item id="fieldset:Server:power" _delta="delete"></item>
+
 								<item id="fieldset:Server:otherinfo">
 									<rank>30</rank>
 									<items>
@@ -172,22 +200,26 @@
 						</item>
 					</items>
 				</details>
-				<search>
+				<search _delta="redefine">
 					<items>
-						<item id="name">
-							<rank>10</rank>
+						<item id="serialnumber">
+							<rank>1</rank>
 						</item>
-						<item id="org_id">
+
+						<item id="name">
 							<rank>20</rank>
 						</item>
-						<item id="status">
+						<item id="org_id">
 							<rank>30</rank>
 						</item>
-						<item id="business_criticity">
+						<item id="status">
 							<rank>40</rank>
 						</item>
-						<item id="location_id">
+						<item id="business_criticity">
 							<rank>50</rank>
+						</item>
+						<item id="location_id">
+							<rank>51</rank>
 						</item>
 						<item id="managementip">
 							<rank>55</rank>
@@ -198,40 +230,27 @@
 						<item id="model_id">
 							<rank>70</rank>
 						</item>
-						<item id="serialnumber">
-							<rank>80</rank>
-						</item>
-						<item id="asset_number">
-							<rank>90</rank>
-						</item>
-						<item id="powerA_id">
-							<rank>100</rank>
-						</item>
-						<item id="powerB_id">
-							<rank>110</rank>
-						</item>
 						<item id="move2production">
 							<rank>120</rank>
 						</item>
-						<item id="purchase_date">
-							<rank>130</rank>
-						</item>
-						<item id="end_of_warranty">
-							<rank>140</rank>
-						</item>
 					</items>
 				</search>
-				<list>
+				<list _delta="redefine">
 					<items>
-						<item id="org_id">
-							<rank>20</rank>
+						<item id="name">
+							<rank>1</rank>
 						</item>
+						<item id="cpu">
+							<rank>3</rank>
+						</item>
+						<item id="ram">
+							<rank>5</rank>
+						</item>
+
 						<item id="status">
-							<rank>20</rank>
+							<rank>21</rank>
 						</item>
-						<item id="business_criticity">
-							<rank>30</rank>
-						</item>
+
 						<item id="location_id">
 							<rank>40</rank>
 						</item>
@@ -241,8 +260,8 @@
 						<item id="model_id">
 							<rank>60</rank>
 						</item>
-						<item id="serialnumber">
-							<rank>10</rank>
+						<item id="org_id">
+							<rank>70</rank>
 						</item>
 					</items>
 				</list>
@@ -275,7 +294,7 @@
 				<field id="ipaddress" xsi:type="AttributeIPAddress">
 					<sql>ipaddress</sql>
 					<default_value/>
-					<is_null_allowed>true</is_null_allowed>
+					<is_null_allowed>false</is_null_allowed>
 				</field>
 				<field id="comment" xsi:type="AttributeText">
 					<sql>comment</sql>
@@ -283,7 +302,7 @@
 					<is_null_allowed>true</is_null_allowed>
 				</field>
 			</fields>
-			<methods/>
+			<methods></methods>
 			<presentation>
 				<details>
 					<items>
@@ -355,7 +374,32 @@
 					<target_attcode>name</target_attcode>
 				</field>
 			</fields>
-			<methods/>
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[       public function DoCheckToWrite()
+				{
+					parent::DoCheckToWrite();
+
+					// ipaddress has to be unique! Currently it' not possible to define this in datamodel (xml)
+					$aChanges = $this->ListChanges();
+					if (array_key_exists('ipaddress', $aChanges))
+					{
+						$sPhysicalIP = $aChanges['ipaddress'];
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT PhysicalIP WHERE ipaddress=:ipaddress");
+						$oSet = new DBObjectSet($oSearch, array(), array('ipaddress' => $sPhysicalIP));
+						if ($oSet->Count() > 0)
+						{
+							$this->m_aCheckIssues[] = Dict::Format('Class:PhysicalIP/Error:PhysicalIPMustBeUnique', $sPhysicalIP);
+						}
+					}         
+				}]]></code>
+				</method>
+
+			</methods>
+			
 			<presentation>
 				<details>
 					<items>
@@ -427,7 +471,32 @@
 					<target_attcode>name</target_attcode>
 				</field>
 			</fields>
-			<methods/>
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[       public function DoCheckToWrite()
+				{
+					parent::DoCheckToWrite();
+
+					// ipaddress has to be unique! Currently it' not possible to define this in datamodel (xml)
+					$aChanges = $this->ListChanges();
+					if (array_key_exists('ipaddress', $aChanges))
+					{
+						$sVirtualIP = $aChanges['ipaddress'];
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT VirtualIP WHERE ipaddress=:ipaddress");
+						$oSet = new DBObjectSet($oSearch, array(), array('ipaddress' => $sVirtualIP));
+						if ($oSet->Count() > 0)
+						{
+							$this->m_aCheckIssues[] = Dict::Format('Class:VirtualIP/Error:VirtualIPMustBeUnique', $sVirtualIP);
+						}
+					}         
+				}]]></code>
+				</method>
+
+			</methods>
+			
 			<presentation>
 				<details>
 					<items>
@@ -472,27 +541,57 @@
 				<db_key_field>id</db_key_field>
 				<db_final_class_field/>
 				<naming>
-					<attributes>
-						<attribute id="name"/>
+					<attributes _delta="redefine">
+						<attribute id="domain"/>
 					</attributes>
 				</naming>
 				<display_template/>
 				<icon>images/domain.png</icon>
 				<reconciliation>
-					<attributes>
-						<attribute id="name"/>
+					<attributes _delta="redefine">
+						<attribute id="domain"/>
 						<attribute id="org_id"/>
 						<attribute id="organization_name"/>
 					</attributes>
 				</reconciliation>
 			</properties>
 			<fields>
+				<field id="domain" xsi:type="AttributeString" _delta="define">
+					<sql>domain</sql>
+					<default_value/>
+					<is_null_allowed>false</is_null_allowed>					
+				</field>
 			</fields>
-			<methods/>
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[       public function DoCheckToWrite()
+				{
+					parent::DoCheckToWrite();
+
+					// domain has to be unique! Currently it' not possible to define this in datamodel (xml)
+					$aChanges = $this->ListChanges();
+					if (array_key_exists('domain', $aChanges))
+					{
+						$sDomain = $aChanges['domain'];
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Domain WHERE domain=:domain");
+						$oSet = new DBObjectSet($oSearch, array(), array('domain' => $sDomain));
+						if ($oSet->Count() > 0)
+						{
+							$this->m_aCheckIssues[] = Dict::Format('Class:Domain/Error:DomainMustBeUnique', $sDomain);
+						}
+					}         
+				}]]></code>
+				</method>
+
+			</methods>
+			
 			<presentation>
-				<details>
+				<details _delta="redefine">
 					<items>
-						<item id="name">
+						<item id="domain">
 							<rank>10</rank>
 						</item>
 						<item id="org_id">
@@ -515,9 +614,9 @@
 						</item>
 					</items>
 				</details>
-				<search>
+				<search _delta="redefine">
 					<items>
-						<item id="name">
+						<item id="domain">
 							<rank>10</rank>
 						</item>
 						<item id="org_id">
@@ -531,9 +630,9 @@
 						</item>
 					</items>
 				</search>
-				<list>
+				<list _delta="redefine">
 					<items>
-						<item id="name">
+						<item id="domain">
 							<rank>10</rank>
 						</item>
 						<item id="org_id">
@@ -585,7 +684,36 @@
 				</field>
 
 			</fields>
-			<methods/>
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[       public function DoCheckToWrite()
+				{
+					parent::DoCheckToWrite();
+
+					// name has to be unique! Currently it' not possible to define this in datamodel (xml)
+					$aChanges = $this->ListChanges();
+					if (array_key_exists('name', $aChanges))
+					{
+						$sCluster = $aChanges['name'];
+						if ($sCluster == "")
+						{
+							$this->m_aCheckIssues[] = Dict::Format('Class:Cluster/Error:ClusterMustBeNotNull', $sCluster);
+						}
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Cluster WHERE name=:name");
+						$oSet = new DBObjectSet($oSearch, array(), array('name' => $sCluster));
+						if ($oSet->Count() > 0)
+						{
+							$this->m_aCheckIssues[] = Dict::Format('Class:Cluster/Error:ClusterMustBeUnique', $sCluster);
+						}
+					}         
+				}]]></code>
+				</method>
+
+			</methods>
+			
 			<presentation>
 				<details>
 					<items>
@@ -676,6 +804,7 @@
 								<rank>4</rank>
 								<class>Domain</class>
 							</dashlet>
+							<dashlet id="3" _delta="delete"></dashlet>
 						</dashlets>
 					</cell>
 					<cell id="3">
@@ -733,7 +862,6 @@
 			</definition>
 		</menu>
 		<menu id="Software" xsi:type="OQLMenuNode" _delta="delete"></menu>
-		<menu id="Location" xsi:type="OQLMenuNode" _delta="delete"></menu>
 		<menu id="Server" xsi:type="OQLMenuNode" _delta="define">
 			<rank>7</rank>
 			<parent>SearchCIs</parent>

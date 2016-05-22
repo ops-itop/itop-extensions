@@ -55,3 +55,13 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Menu:VirtualIP' => 'VIP地址',
 	'Menu:VirtualIP+' => '所有VIP地址'
 ));
+
+// DoCheckToWrite
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:Server/Error:ServerMustBeUnique' => '服务器SN必须唯一',
+	'Class:PhysicalIP/Error:PhysicalIPMustBeUnique' => 'IP地址必须唯一',
+	'Class:VirtualIP/Error:VirtualIPMustBeUnique' => 'VIP地址必须唯一',
+	'Class:Domain/Error:DomainMustBeUnique' => '域名必须唯一',
+	'Class:Cluster/Error:ClusterMustBeNotNull' => '集群名称不能为空',
+	'Class:Cluster/Error:ClusterMustBeUnique' => '集群必须唯一',
+));

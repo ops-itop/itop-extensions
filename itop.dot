@@ -1,6 +1,7 @@
 digraph G{
 rankdir=RL
 Organization->cmdbAbstractObject
+Location->cmdbAbstractObject
 Contact->cmdbAbstractObject
 Person->Contact
 Team->Contact
