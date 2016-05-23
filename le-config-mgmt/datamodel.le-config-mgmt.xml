@@ -29,7 +29,75 @@
 		<class id="NetworkInterface" _delta="delete"></class>
 		<class id="NetworkDevice" _delta="delete"></class>
 		<class id="lnkConnectableCIToNetworkDevice" _delta="delete"></class>
+		<class id="Location">
+			<properties>
+				<reconciliation>
+					<attributes _delta="redefine">
+						<attribute id="name"/>
+						<attribute id="isp_id"/>
+						<attribute id="isp_name"/>
+					</attributes>
+				</reconciliation>
+			</properties>
 
+			<fields>
+				<field id="isp_id" xsi:type="AttributeExternalKey" _delta="define">
+					<sql>isp_id</sql>
+					<target_class>ISP</target_class>
+					<is_null_allowed>true</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="isp_name" xsi:type="AttributeExternalField" _delta="define">
+					<extkey_attcode>isp_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="org_id" _delta="delete"></field>
+				<field id="org_name" _delta="delete"></field>
+				<field id="postal_code" _delta="delete"></field>
+				<field id="person_list" _delta="delete"></field>
+
+			</fields>
+
+			<presentation>
+				<details>
+					<items>
+						<item id="isp_id">
+							<rank>30</rank>
+						</item>
+						<item id="org_id" _delta="delete"></item>
+						<item id="postal_code" _delta="delete"></item>
+						<item id="person_list" _delta="delete"></item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="isp_id">
+							<rank>30</rank>
+						</item>
+						<item id="org_id" _delta="delete"></item>
+						<item id="postal_code" _delta="delete"></item>
+					</items>
+				</search>
+				<list _delta="redefine">
+					<items>
+						<item id="isp_id">
+							<rank>10</rank>
+						</item>
+						<item id="city">
+							<rank>30</rank>
+						</item>
+						<item id="country">
+							<rank>40</rank>
+						</item>
+						<item id="status">
+							<rank>50</rank>
+						</item>
+
+					</items>
+
+				</list>
+			</presentation>
+		</class>
 		<class id="FunctionalCI">
 			<fields>
 				<field id="name" xsi:type="AttributeString" _delta="redefine">
@@ -57,6 +125,14 @@
 					<default_value/>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
+				<field id="location_id" xsi:type="AttributeExternalKey" _delta="redefine">
+					<sql>location_id</sql>
+					<target_class>Location</target_class>
+					<is_null_allowed>true</is_null_allowed>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>
+
+				</field>
 			</fields>
 
 		</class>
@@ -78,6 +154,30 @@
 					</attributes>
 				</reconciliation>
 			</properties>
+
+			<fields>
+				<field id="cluster_list" xsi:type="AttributeLinkedSetIndirect" _delta="define">
+					<linked_class>lnkServerToCluster</linked_class>
+					<ext_key_to_me>server_id</ext_key_to_me>
+					<ext_key_to_remote>cluster_id</ext_key_to_remote>
+					<count_max>0</count_max>
+					<count_min>0</count_min>
+					<duplicates/>
+				</field>
+				<field id="ip_list" xsi:type="AttributeLinkedSet" _delta="define">
+					<linked_class>PhysicalIP</linked_class>
+					<ext_key_to_me>connectableci_id</ext_key_to_me>
+					<edit_mode>add_only</edit_mode>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<duplicates/>
+				</field>
+				<field id="all_ip" xsi:type="AttributeString" _delta="define">
+					<sql>all_ip</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+			</fields>
 			<methods>
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
@@ -86,9 +186,10 @@
 					<code><![CDATA[       public function DoCheckToWrite()
 				{
 					parent::DoCheckToWrite();
-
+					
 					// serialnumber has to be unique! Currently it' not possible to define this in datamodel (xml)
 					$aChanges = $this->ListChanges();
+					
 					if (array_key_exists('serialnumber', $aChanges))
 					{
 						$sServer = $aChanges['serialnumber'];
@@ -98,7 +199,11 @@
 						{
 							$this->m_aCheckIssues[] = Dict::Format('Class:Server/Error:ServerMustBeUnique', $sServer);
 						}
-					}         
+					}
+					//$ipSearch = DBObjectSearch::FromOQL_AllData("SELECT ")
+					//print_r($aChanges);
+					//$this->m_aCheckIssues[] = Dict::Format(json_encode($aChanges),"1");
+					//$aChanges['all_ip'] = $aChanges[']
 				}]]></code>
 				</method>
 
@@ -107,6 +212,14 @@
 			<presentation>
 				<details>
 					<items>
+						<item id="providercontracts_list" _delta="delete"></item>
+						<item id="services_list" _delta="delete"></item>
+						<item id="ip_list" _delta="define">
+							<rank>5</rank>
+						</item>
+						<item id="cluster_list">
+							<rank>10</rank>
+						</item>
 						<item id="col:col1">
 							<rank>120</rank>
 							<items>
@@ -263,6 +376,9 @@
 						<item id="org_id">
 							<rank>70</rank>
 						</item>
+						<item id="ip_list">
+							<rank>80</rank>
+						</item>
 					</items>
 				</list>
 			</presentation>
@@ -296,18 +412,58 @@
 					<default_value/>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
+				<field id="type" xsi:type="AttributeEnum">
+					<values>
+						<value id="int">int</value>
+						<value id="ext">ext</value>
+						<value id="oob">oob</value>
+					</values>
+					<sql>type</sql>
+					<default_value>int</default_value>
+					<is_null_allowed>true</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
 				<field id="comment" xsi:type="AttributeText">
 					<sql>comment</sql>
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
 			</fields>
-			<methods></methods>
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[       public function DoCheckToWrite()
+				{
+					parent::DoCheckToWrite();
+
+					// ipaddress has to be unique! Currently it' not possible to define this in datamodel (xml)
+					$aChanges = $this->ListChanges();
+					
+					if (array_key_exists('ipaddress', $aChanges))
+					{
+						$sIPAddress = $aChanges['ipaddress'];
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT IPAddress WHERE ipaddress=:ipaddress");
+						$oSet = new DBObjectSet($oSearch, array(), array('ipaddress' => $sIPAddress));
+						if ($oSet->Count() > 0)
+						{
+							$this->m_aCheckIssues[] = Dict::Format("Class:IPAddress/Error:IPAddressMustBeUnique", $sIPAddress);
+						}
+					}         
+				}]]></code>
+				</method>
+
+			</methods>
+
 			<presentation>
 				<details>
 					<items>
 						<item id="ipaddress">
 							<rank>10</rank>
+						</item>
+						<item id="type">
+							<rank>15</rank>
 						</item>
 						<item id="comment">
 							<rank>40</rank>
@@ -319,6 +475,9 @@
 						<item id="ipaddress">
 							<rank>10</rank>
 						</item>
+						<item id="type">
+							<rank>15</rank>
+						</item>
 						<item id="comment">
 							<rank>40</rank>
 						</item>
@@ -326,9 +485,9 @@
 				</search>
 				<list>
 					<items>
-						<item id="ipaddress">
-							<rank>10</rank>
-						</item>
+						<item id="type">
+							<rank>15</rank>
+						</item>						
 						<item id="comment">
 							<rank>40</rank>
 						</item>
@@ -349,7 +508,6 @@
 				<naming>
 					<attributes>
 						<attribute id="ipaddress"/>
-						<attribute id="connectableci_name"/>
 					</attributes>
 				</naming>
 				<display_template/>
@@ -374,32 +532,7 @@
 					<target_attcode>name</target_attcode>
 				</field>
 			</fields>
-			<methods>
-				<method id="DoCheckToWrite" _delta="define">
-					<static>false</static>
-					<access>protected</access>
-					<type>Overload-DBObject</type>
-					<code><![CDATA[       public function DoCheckToWrite()
-				{
-					parent::DoCheckToWrite();
-
-					// ipaddress has to be unique! Currently it' not possible to define this in datamodel (xml)
-					$aChanges = $this->ListChanges();
-					if (array_key_exists('ipaddress', $aChanges))
-					{
-						$sPhysicalIP = $aChanges['ipaddress'];
-						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT PhysicalIP WHERE ipaddress=:ipaddress");
-						$oSet = new DBObjectSet($oSearch, array(), array('ipaddress' => $sPhysicalIP));
-						if ($oSet->Count() > 0)
-						{
-							$this->m_aCheckIssues[] = Dict::Format('Class:PhysicalIP/Error:PhysicalIPMustBeUnique', $sPhysicalIP);
-						}
-					}         
-				}]]></code>
-				</method>
-
-			</methods>
-			
+			<methods></methods>
 			<presentation>
 				<details>
 					<items>
@@ -409,6 +542,9 @@
 						<item id="ipaddress">
 							<rank>10</rank>
 						</item>
+						<item id="type">
+							<rank>15</rank>
+						</item>						
 						<item id="comment">
 							<rank>50</rank>
 						</item>
@@ -419,12 +555,23 @@
 						<item id="ipaddress">
 							<rank>10</rank>
 						</item>
+						<item id="type">
+							<rank>15</rank>
+						</item>
+						<item id="connectableci_id">
+							<rank>15</rank>
+						</item>
+
+
 					</items>
 				</search>
 				<list>
 					<items>
-						<item id="ipaddress">
+						<item id="type">
 							<rank>10</rank>
+						</item>
+						<item id="connectableci_id">
+							<rank>20</rank>
 						</item>
 						<item id="comment">
 							<rank>30</rank>
@@ -446,7 +593,6 @@
 				<naming>
 					<attributes>
 						<attribute id="ipaddress"/>
-						<attribute id="connectableci_name"/>
 					</attributes>
 				</naming>
 				<display_template/>
@@ -456,13 +602,15 @@
 						<attribute id="ipaddress"/>
 						<attribute id="connectableci_id"/>
 						<attribute id="connectableci_name"/>
+						<attribute id="isp_id"/>
+						<attribute id="isp_name"/>
 					</attributes>
 				</reconciliation>
 			</properties>
 			<fields>
 				<field id="connectableci_id" xsi:type="AttributeExternalKey">
 					<sql>connectableci_id</sql>
-					<target_class>ConnectableCI</target_class>
+					<target_class>Cluster</target_class>
 					<is_null_allowed>false</is_null_allowed>
 					<on_target_delete>DEL_AUTO</on_target_delete>
 				</field>
@@ -470,33 +618,18 @@
 					<extkey_attcode>connectableci_id</extkey_attcode>
 					<target_attcode>name</target_attcode>
 				</field>
+				<field id="isp_id" xsi:type="AttributeExternalKey">
+					<sql>isp_id</sql>
+					<target_class>ISP</target_class>
+					<is_null_allowed>true</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="isp_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>isp_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
 			</fields>
-			<methods>
-				<method id="DoCheckToWrite" _delta="define">
-					<static>false</static>
-					<access>protected</access>
-					<type>Overload-DBObject</type>
-					<code><![CDATA[       public function DoCheckToWrite()
-				{
-					parent::DoCheckToWrite();
-
-					// ipaddress has to be unique! Currently it' not possible to define this in datamodel (xml)
-					$aChanges = $this->ListChanges();
-					if (array_key_exists('ipaddress', $aChanges))
-					{
-						$sVirtualIP = $aChanges['ipaddress'];
-						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT VirtualIP WHERE ipaddress=:ipaddress");
-						$oSet = new DBObjectSet($oSearch, array(), array('ipaddress' => $sVirtualIP));
-						if ($oSet->Count() > 0)
-						{
-							$this->m_aCheckIssues[] = Dict::Format('Class:VirtualIP/Error:VirtualIPMustBeUnique', $sVirtualIP);
-						}
-					}         
-				}]]></code>
-				</method>
-
-			</methods>
-			
+			<methods></methods>
 			<presentation>
 				<details>
 					<items>
@@ -505,6 +638,13 @@
 						</item>
 						<item id="ipaddress">
 							<rank>10</rank>
+						</item>
+						<item id="type">
+							<rank>15</rank>
+						</item>
+
+						<item id="isp_id">
+							<rank>30</rank>
 						</item>
 						<item id="comment">
 							<rank>50</rank>
@@ -516,12 +656,29 @@
 						<item id="ipaddress">
 							<rank>10</rank>
 						</item>
+						<item id="type">
+							<rank>15</rank>
+						</item>
+
+						<item id="connectableci_id">
+							<rank>20</rank>
+						</item>
+						<item id="isp_id">
+							<rank>30</rank>
+						</item>
 					</items>
 				</search>
 				<list>
 					<items>
-						<item id="ipaddress">
+						<item id="type">
 							<rank>10</rank>
+						</item>
+
+						<item id="connectableci_id">
+							<rank>11</rank>
+						</item>
+						<item id="isp_id">
+							<rank>20</rank>
 						</item>
 						<item id="comment">
 							<rank>30</rank>
@@ -587,7 +744,7 @@
 				</method>
 
 			</methods>
-			
+
 			<presentation>
 				<details _delta="redefine">
 					<items>
@@ -682,6 +839,22 @@
 					<is_null_allowed>true</is_null_allowed>
 					<display_style>list</display_style>
 				</field>
+				<field id="server_list" xsi:type="AttributeLinkedSetIndirect" _delta="define">
+					<linked_class>lnkServerToCluster</linked_class>
+					<ext_key_to_me>cluster_id</ext_key_to_me>
+					<ext_key_to_remote>server_id</ext_key_to_remote>
+					<count_max>0</count_max>
+					<count_min>0</count_min>
+					<duplicates/>
+				</field>
+				<field id="vip_list" xsi:type="AttributeLinkedSet" _delta="define">
+					<linked_class>VirtualIP</linked_class>
+					<ext_key_to_me>connectableci_id</ext_key_to_me>
+					<edit_mode>add_only</edit_mode>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<duplicates/>
+				</field>
 
 			</fields>
 			<methods>
@@ -713,10 +886,17 @@
 				</method>
 
 			</methods>
-			
+
 			<presentation>
 				<details>
 					<items>
+						<item id="vip_list" _delta="define">
+							<rank>5</rank>
+						</item>
+
+						<item id="server_list">
+							<rank>10</rank>
+						</item>
 						<item id="name">
 							<rank>10</rank>
 						</item>
@@ -780,7 +960,270 @@
 				</list>
 			</presentation>
 		</class>
+		<class id="Typology">
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[       public function DoCheckToWrite()
+				{
+					parent::DoCheckToWrite();
 
+					// name has to be unique! Currently it' not possible to define this in datamodel (xml)
+					$aChanges = $this->ListChanges();
+					
+					if (array_key_exists('finalclass', $aChanges))
+						$finalclass = $aChanges['finalclass'];
+					else
+						$finalclass = "Typology";
+					
+					//print_r($aChanges);
+					if (array_key_exists('name', $aChanges))
+					{
+						$sTypology = $aChanges['name'];
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT $finalclass WHERE name=:name");
+						$oSet = new DBObjectSet($oSearch, array(), array('name' => $sTypology));
+						if ($oSet->Count() > 0)
+						{
+							$this->m_aCheckIssues[] = Dict::Format("Class:".$finalclass."/Error:".$finalclass."MustBeUnique", $sTypology);
+						}
+					}         
+				}]]></code>
+				</method>
+			</methods>
+		</class>
+
+		<class id="Model">
+			<properties>
+				<naming>
+					<attributes _delta="redefine">
+						<attribute id="name"/>
+					</attributes>
+
+				</naming>
+			</properties>
+			<fields>
+				<field id="type" xsi:type="AttributeEnum">
+					<values _delta="redefine">
+						<value id="Server">Server</value>
+					</values>
+				</field>
+			</fields>
+		</class>
+		<class id="ISP" _delta="define">
+			<parent>Typology</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>isp</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field/>
+				<naming>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon/>
+				<reconciliation>
+					<attributes>
+						<attribute id="name"/>
+						<attribute id="code"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="code" xsi:type="AttributeString">
+					<sql>code</sql>
+					<default_value/>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+				<field id="location_list" xsi:type="AttributeLinkedSet">
+					<linked_class>Location</linked_class>
+					<ext_key_to_me>isp_id</ext_key_to_me>
+					<edit_mode>add_only</edit_mode>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<duplicates/>
+				</field>
+				<field id="vip_list" xsi:type="AttributeLinkedSet">
+					<linked_class>VirtualIP</linked_class>
+					<ext_key_to_me>isp_id</ext_key_to_me>
+					<edit_mode>add_only</edit_mode>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<duplicates/>
+				</field>
+
+			</fields>
+			<methods/>
+			<presentation>
+				<details>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="code">
+							<rank>20</rank>
+						</item>
+						<item id="location_list">
+							<rank>40</rank>
+						</item>
+						<item id="vip_list">
+							<rank>40</rank>
+						</item>
+
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="code">
+							<rank>20</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="code">
+							<rank>20</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+		<class id="lnkServerToCluster" _delta="define">
+			<parent>cmdbAbstractObject</parent>
+			<properties>
+				<is_link>1</is_link>
+				<category>bizmodel</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>lnkservertocluster</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field/>
+				<naming>
+					<attributes>
+						<attribute id="server_id"/>
+						<attribute id="cluster_id"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon/>
+				<reconciliation>
+					<attributes>
+						<attribute id="server_id"/>
+						<attribute id="cluster_id"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="server_id" xsi:type="AttributeExternalKey">
+					<sql>server_id</sql>
+					<target_class>Server</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="server_serialnumber" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>serialnumber</target_attcode>
+				</field>
+				<field id="server_hostname" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="server_cpu" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>cpu</target_attcode>
+				</field>
+				<field id="server_ram" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>ram</target_attcode>
+				</field>
+				<field id="server_location" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>location_id</target_attcode>
+				</field>
+				<field id="server_brand" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>brand_id</target_attcode>
+				</field>
+				<field id="server_model" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>model_id</target_attcode>
+				</field>
+
+				<field id="cluster_id" xsi:type="AttributeExternalKey">
+					<sql>cluster_id</sql>
+					<target_class>Cluster</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="cluster_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>cluster_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+			</fields>
+			<methods/>
+			<presentation>
+				<details>
+					<items>
+						<item id="server_id">
+							<rank>10</rank>
+						</item>
+						<item id="cluster_id">
+							<rank>20</rank>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="server_id">
+							<rank>10</rank>
+						</item>
+						<item id="cluster_id">
+							<rank>20</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="server_id">
+							<rank>10</rank>
+						</item>
+						<item id="cluster_id">
+							<rank>20</rank>
+						</item>
+						<item id="server_hostname">
+							<rank>30</rank>
+						</item>
+						<item id="server_cpu">
+							<rank>40</rank>
+						</item>
+						<item id="server_ram">
+							<rank>50</rank>
+						</item>
+						<item id="server_location">
+							<rank>60</rank>
+						</item>
+						<item id="server_brand">
+							<rank>70</rank>
+						</item>
+						<item id="server_model">
+							<rank>80</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+
+		</class>
 	</classes>
 	<menus>
 		<menu id="ConfigManagementOverview" xsi:type="DashboardMenuNode">
@@ -838,6 +1281,10 @@
 					<cell id="0">
 						<dashlets>
 							<dashlet id="6" _delta="delete"></dashlet>
+							<dashlet id="isp" xsi:type="DashletBadge" _delta="define">
+								<rank>8</rank>
+								<class>ISP</class>
+							</dashlet>
 						</dashlets>
 					</cell>
 				</cells>
@@ -869,27 +1316,33 @@
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Domain" xsi:type="OQLMenuNode" _delta="define">
-			<rank>7</rank>
+			<rank>10</rank>
 			<parent>SearchCIs</parent>
 			<oql>SELECT Domain</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="ApplicationSolution" xsi:type="OQLMenuNode" _delta="define">
-			<rank>7</rank>
+			<rank>20</rank>
 			<parent>SearchCIs</parent>
 			<oql>SELECT ApplicationSolution</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Cluster" xsi:type="OQLMenuNode" _delta="define">
-			<rank>7</rank>
+			<rank>30</rank>
 			<parent>SearchCIs</parent>
 			<oql>SELECT Cluster</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="IPAddress" xsi:type="OQLMenuNode" _delta="define">
-			<rank>7</rank>
+			<rank>40</rank>
 			<parent>SearchCIs</parent>
-			<oql>SELECT IPAddress</oql>
+			<oql>SELECT PhysicalIP</oql>
+			<do_search>1</do_search>
+		</menu>
+		<menu id="VirtualIP" xsi:type="OQLMenuNode" _delta="define">
+			<rank>50</rank>
+			<parent>SearchCIs</parent>
+			<oql>SELECT VirtualIP</oql>
 			<do_search>1</do_search>
 		</menu>
 

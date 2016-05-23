@@ -6,14 +6,10 @@
  * @license     http://opensource.org/licenses/AGPL-3.0
  */
 
-Dict::Add('EN US', 'English', 'English', array(
-	// Dictionary entries go here
-));
 
 // Cluster
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Cluster' => '集群',
-	'Class:Domain' => '域名',
 	'Class:ApplicationSolution' => '应用',
 	'Class:OSVersion' => '操作系统',
 	'Class:Brand' => '厂商',
@@ -29,8 +25,6 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkProcessToSolution/Attribute:solution_name' => '应用',
 	'Menu:ApplicationSolution' => '应用',
 	'Menu:ApplicationSolution+' => '所有应用',
-	'Menu:Domain' => '域名',
-	'Menu:Domain+' => '所有域名',
 	'Menu:Cluster' => '集群',
 	'Menu:Cluster+' => '所有集群',
 ));
@@ -41,10 +35,22 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Server/Attribute:serialnumber' => 'SN',
 ));
 
+// IPAddress
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:IPAddress' => 'IP地址',
+	'Class:IPAddress/Attribute:ipaddress' => 'IP地址',
+	'Class:IPAddress/Attribute:connect_id' => '设备',
+	'Class:IPAddress/Attribute:connect_name' => '设备',
+	'Menu:IPAddress' => 'IP地址',
+	'Menu:IPAddress+' => '所有IP地址'
+));
 
-// IP
+// PhysicalIP
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:PhysicalIP' => 'IP地址',
+	'Class:PhysicalIP/Attribute:ipaddress' => 'IP地址',
+	'Class:PhysicalIP/Attribute:connect_id' => '设备',
+	'Class:PhysicalIP/Attribute:connect_name' => '设备',
 	'Menu:PhysicalIP' => 'IP地址',
 	'Menu:PhysicalIP+' => '所有IP地址'
 ));
@@ -56,12 +62,20 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Menu:VirtualIP+' => '所有VIP地址'
 ));
 
+// Domain
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:Domain' => '域名',
+	'Menu:Domain' => '域名',
+	'Menu:Domain+' => '所有域名',
+	'Class:Domain/Attribute:domain' => '域名',
+
+));
+
 // DoCheckToWrite
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
-	'Class:Server/Error:ServerMustBeUnique' => '服务器SN必须唯一',
-	'Class:PhysicalIP/Error:PhysicalIPMustBeUnique' => 'IP地址必须唯一',
-	'Class:VirtualIP/Error:VirtualIPMustBeUnique' => 'VIP地址必须唯一',
-	'Class:Domain/Error:DomainMustBeUnique' => '域名必须唯一',
+	'Class:Server/Error:ServerMustBeUnique' => '此SN已存在，不能重复添加',
+	'Class:IPAdress/Error:IPAdressMustBeUnique' => '此IP地址已存在，不能重复添加',
+	'Class:Domain/Error:DomainMustBeUnique' => '此域名已存在，不能重复添加',
 	'Class:Cluster/Error:ClusterMustBeNotNull' => '集群名称不能为空',
-	'Class:Cluster/Error:ClusterMustBeUnique' => '集群必须唯一',
+	'Class:Cluster/Error:ClusterMustBeUnique' => '此集群已存在，不能重复添加',
 ));
