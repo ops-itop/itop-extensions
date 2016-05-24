@@ -187,9 +187,19 @@
 				{
 					parent::DoCheckToWrite();
 					
+					$ip_list = $this->GetAsCSV("ip_list");
+                    $ip_arr = explode("|", $ip_list);
+                    foreach($ip_arr as $key => $value){
+                            $oArr = explode(";", $value);
+                                $ip_arr[$key] = $oArr[1] . "-" . $oArr[0];
+                                $ip_arr[$key] = preg_replace("/[':\"]|ipaddress|type/", "", $ip_arr[$key]);
+                    }    
+                    $all_ip = implode(";", $ip_arr);
+                    //print_r($all_ip);
+                    $this->Set("all_ip", $all_ip);
+
 					// serialnumber has to be unique! Currently it' not possible to define this in datamodel (xml)
 					$aChanges = $this->ListChanges();
-					
 					if (array_key_exists('serialnumber', $aChanges))
 					{
 						$sServer = $aChanges['serialnumber'];
@@ -200,6 +210,7 @@
 							$this->m_aCheckIssues[] = Dict::Format('Class:Server/Error:ServerMustBeUnique', $sServer);
 						}
 					}
+					
 					//$ipSearch = DBObjectSearch::FromOQL_AllData("SELECT ")
 					//print_r($aChanges);
 					//$this->m_aCheckIssues[] = Dict::Format(json_encode($aChanges),"1");
@@ -322,6 +333,9 @@
 						<item id="name">
 							<rank>20</rank>
 						</item>
+						<item id="all_ip">
+							<rank>25</rank>
+						</item>
 						<item id="org_id">
 							<rank>30</rank>
 						</item>
@@ -353,6 +367,10 @@
 						<item id="name">
 							<rank>1</rank>
 						</item>
+						<item id="all_ip">
+							<rank>25</rank>
+						</item>
+
 						<item id="cpu">
 							<rank>3</rank>
 						</item>
@@ -367,17 +385,11 @@
 						<item id="location_id">
 							<rank>40</rank>
 						</item>
-						<item id="brand_id">
-							<rank>50</rank>
-						</item>
 						<item id="model_id">
 							<rank>60</rank>
 						</item>
 						<item id="org_id">
 							<rank>70</rank>
-						</item>
-						<item id="ip_list">
-							<rank>80</rank>
 						</item>
 					</items>
 				</list>
@@ -1017,6 +1029,16 @@
 					</values>
 				</field>
 			</fields>
+		</class>
+		<class id="OSVersion">
+			<properties>
+				<naming>
+					<attributes _delta="redefine">
+						<attribute id="osfamily_name"/>
+						<attribute id="name"/>
+					</attributes>
+				</naming>
+			</properties>
 		</class>
 		<class id="ISP" _delta="define">
 			<parent>Typology</parent>
