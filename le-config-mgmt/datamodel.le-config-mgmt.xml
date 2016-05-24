@@ -970,25 +970,30 @@
 				{
 					parent::DoCheckToWrite();
 
-					// name has to be unique! Currently it' not possible to define this in datamodel (xml)
-					$aChanges = $this->ListChanges();
+					// friendlyname has to be unique! Currently it' not possible to define this in datamodel (xml)
 					
-					if (array_key_exists('finalclass', $aChanges))
-						$finalclass = $aChanges['finalclass'];
-					else
-						$finalclass = "Typology";
-					
-					//print_r($aChanges);
-					if (array_key_exists('name', $aChanges))
+					$finalclass = $this->Get('finalclass');
+
+					$nameSpec = MetaModel::GetNameSpec(get_class($this));
+					$sFormat = preg_replace('/%[1-9]\$s/', '%s', $nameSpec['0']);
+					$sArg = $nameSpec['1'];
+					$oArg = array();
+					foreach($sArg as $value) {
+						array_push($oArg, $this->Get($value));
+					}	
+					//print_r($this->Get('name') . "<br>");
+					//print_r($this->Get('brand_name') . "<br>");
+					//print_r($this->Get('friendlyname') . "<br>");
+					//print_r($oArg);
+					//print_r("<br>");
+					$sTypology = vsprintf("$sFormat", $oArg);
+					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT $finalclass WHERE friendlyname=:friendlyname");
+					$oSet = new DBObjectSet($oSearch, array(), array('friendlyname' => $sTypology));
+					if ($oSet->Count() > 0)
 					{
-						$sTypology = $aChanges['name'];
-						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT $finalclass WHERE name=:name");
-						$oSet = new DBObjectSet($oSearch, array(), array('name' => $sTypology));
-						if ($oSet->Count() > 0)
-						{
-							$this->m_aCheckIssues[] = Dict::Format("Class:".$finalclass."/Error:".$finalclass."MustBeUnique", $sTypology);
-						}
-					}         
+						$this->m_aCheckIssues[] = Dict::Format("Class:".$finalclass."/Error:".$finalclass."MustBeUnique", $sTypology);
+					}
+
 				}]]></code>
 				</method>
 			</methods>
@@ -998,6 +1003,8 @@
 			<properties>
 				<naming>
 					<attributes _delta="redefine">
+						<format>%1$s/%2$s</format>
+						<attribute id="brand_name"/>
 						<attribute id="name"/>
 					</attributes>
 
@@ -1354,4 +1361,9 @@
 		<profiles>
 		</profiles>
 	</user_rights>
+	<branding>
+		<main_logo>images/logo.png</main_logo>
+		<login_logo>images/logo.png</login_logo>
+		<portal_logo>images/logo.png</portal_logo>
+	</branding>
 </itop_design>

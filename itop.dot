@@ -36,4 +36,6 @@ PhysicalIP->IPAddress
 VirtualIP->IPAddress
 Domain->FunctionalCI
 Cluster->FunctionalCI
+ISP->Typology
+lnkServerToCluster->cmdbAbstractObject
 }

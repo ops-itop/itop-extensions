@@ -6,14 +6,19 @@
  * @license     http://opensource.org/licenses/AGPL-3.0
  */
 
+// Model
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:Brand' => '厂商',
+	'Class:Model' => '型号',
+	'Class:Model/Name' => '%1$s/%2$s',
+	
+));
 
 // Cluster
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Cluster' => '集群',
 	'Class:ApplicationSolution' => '应用',
 	'Class:OSVersion' => '操作系统',
-	'Class:Brand' => '厂商',
-	'Class:Model' => '型号',
 
 	'Class:FunctionalCI/Attribute:solution_list' => '应用',
 	'Class:FunctionalCI/Attribute:solution_list+' => '使用该 CI 的应用',
