@@ -2817,9 +2817,9 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 	'Class:FunctionalCI/Attribute:contacts_list+' => '所有与该配置项目关联的联系人',
 	'Class:FunctionalCI/Attribute:documents_list' => '文档',
 	'Class:FunctionalCI/Attribute:documents_list+' => '所有与该配置项目相关联的文档',
-	'Class:FunctionalCI/Attribute:applicationsolution_list' => '应用方案',
-	'Class:FunctionalCI/Attribute:applicationsolution_list+' => '在该配置项支持的所有应用方案',
-	'Class:FunctionalCI/Attribute:providercontracts_list' => '供应商联系人清单',
+	'Class:FunctionalCI/Attribute:applicationsolution_list' => 'APP',
+	'Class:FunctionalCI/Attribute:applicationsolution_list+' => '在该配置项支持的所有APP',
+	'Class:FunctionalCI/Attribute:providercontracts_list' => '合同清单',
 	'Class:FunctionalCI/Attribute:providercontracts_list+' => '所有供应商的联系人清单',
 	'Class:FunctionalCI/Attribute:services_list' => '服务清单',
 	'Class:FunctionalCI/Attribute:services_list+' => '该配置项影响的配置项清单',
@@ -3115,12 +3115,12 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 
 
 Dict::Add('ZH CN', "Chinese", "简体中文", array(
-	'Class:ApplicationSolution' => '应用方案',
+	'Class:ApplicationSolution' => 'APP',
 	'Class:ApplicationSolution+' => '',
-	'Class:ApplicationSolution/Attribute:functionalcis_list' => '配置项',
-	'Class:ApplicationSolution/Attribute:functionalcis_list+' => '构成该方案的配置项',
-	'Class:ApplicationSolution/Attribute:businessprocess_list' => '业务流程',
-	'Class:ApplicationSolution/Attribute:businessprocess_list+' => '依赖于该方案的业务流程',
+	'Class:ApplicationSolution/Attribute:functionalcis_list' => '依赖的配置项',
+	'Class:ApplicationSolution/Attribute:functionalcis_list+' => '该APP依赖的配置项',
+	'Class:ApplicationSolution/Attribute:businessprocess_list' => '业务线',
+	'Class:ApplicationSolution/Attribute:businessprocess_list+' => '依赖于该APP的业务线',
 	'Class:ApplicationSolution/Attribute:status' => '状态',
 	'Class:ApplicationSolution/Attribute:status+' => '',
 	'Class:ApplicationSolution/Attribute:status/Value:active' => '激活',
@@ -3128,18 +3128,18 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 	'Class:ApplicationSolution/Attribute:status/Value:inactive' => '未激活',
 	'Class:ApplicationSolution/Attribute:status/Value:inactive+' => '未激活',
 	'Class:ApplicationSolution/Attribute:redundancy' => '影响分析: 冗余配置',
-	'Class:ApplicationSolution/Attribute:redundancy/disabled' => '如果应用方案激活，方案里的所有配置项也会激活',
-	'Class:ApplicationSolution/Attribute:redundancy/count' => '如果想激活应用方案至少激活%1$s配置项',
-	'Class:ApplicationSolution/Attribute:redundancy/percent' => '如果要激活应用方案至少激活%1$s %%配置项',
+	'Class:ApplicationSolution/Attribute:redundancy/disabled' => '如果APP激活，APP里的所有配置项也会激活',
+	'Class:ApplicationSolution/Attribute:redundancy/count' => '如果想激活APP至少激活%1$s配置项',
+	'Class:ApplicationSolution/Attribute:redundancy/percent' => '如果要激活APP至少激活%1$s %%配置项',
 
 ));
 
 
 Dict::Add('ZH CN', "Chinese", "简体中文", array(
-	'Class:BusinessProcess' => '业务流程',
+	'Class:BusinessProcess' => '业务线',
 	'Class:BusinessProcess+' => '',
-	'Class:BusinessProcess/Attribute:applicationsolutions_list' => '应用方案',
-	'Class:BusinessProcess/Attribute:applicationsolutions_list+' => '业务流程所依赖的应用方案',
+	'Class:BusinessProcess/Attribute:applicationsolutions_list' => 'APP',
+	'Class:BusinessProcess/Attribute:applicationsolutions_list+' => '业务线所依赖的APP',
 	'Class:BusinessProcess/Attribute:status' => '状态',
 	'Class:BusinessProcess/Attribute:status+' => '',
 	'Class:BusinessProcess/Attribute:status/Value:active' => '激活',
@@ -3940,11 +3940,11 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 
 
 Dict::Add('ZH CN', "Chinese", "简体中文", array(
-	'Class:lnkApplicationSolutionToFunctionalCI' => '应用方案 / 配置项',
+	'Class:lnkApplicationSolutionToFunctionalCI' => 'APP / 配置项',
 	'Class:lnkApplicationSolutionToFunctionalCI+' => '',
-	'Class:lnkApplicationSolutionToFunctionalCI/Attribute:applicationsolution_id' => '应用方案',
+	'Class:lnkApplicationSolutionToFunctionalCI/Attribute:applicationsolution_id' => 'APP',
 	'Class:lnkApplicationSolutionToFunctionalCI/Attribute:applicationsolution_id+' => '',
-	'Class:lnkApplicationSolutionToFunctionalCI/Attribute:applicationsolution_name' => '应用方案名',
+	'Class:lnkApplicationSolutionToFunctionalCI/Attribute:applicationsolution_name' => 'APP名',
 	'Class:lnkApplicationSolutionToFunctionalCI/Attribute:applicationsolution_name+' => '',
 	'Class:lnkApplicationSolutionToFunctionalCI/Attribute:functionalci_id' => '配置项',
 	'Class:lnkApplicationSolutionToFunctionalCI/Attribute:functionalci_id+' => '',
@@ -3954,15 +3954,15 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 
 
 Dict::Add('ZH CN', "Chinese", "简体中文", array(
-	'Class:lnkApplicationSolutionToBusinessProcess' => '应用方案/ 业务流程',
+	'Class:lnkApplicationSolutionToBusinessProcess' => 'APP/ 业务线',
 	'Class:lnkApplicationSolutionToBusinessProcess+' => '',
-	'Class:lnkApplicationSolutionToBusinessProcess/Attribute:businessprocess_id' => '业务流程',
+	'Class:lnkApplicationSolutionToBusinessProcess/Attribute:businessprocess_id' => '业务线',
 	'Class:lnkApplicationSolutionToBusinessProcess/Attribute:businessprocess_id+' => '',
-	'Class:lnkApplicationSolutionToBusinessProcess/Attribute:businessprocess_name' => '业务流程名称',
+	'Class:lnkApplicationSolutionToBusinessProcess/Attribute:businessprocess_name' => '业务线名称',
 	'Class:lnkApplicationSolutionToBusinessProcess/Attribute:businessprocess_name+' => '',
-	'Class:lnkApplicationSolutionToBusinessProcess/Attribute:applicationsolution_id' => '应用方案',
+	'Class:lnkApplicationSolutionToBusinessProcess/Attribute:applicationsolution_id' => 'APP',
 	'Class:lnkApplicationSolutionToBusinessProcess/Attribute:applicationsolution_id+' => '',
-	'Class:lnkApplicationSolutionToBusinessProcess/Attribute:applicationsolution_name' => '应用方案名称',
+	'Class:lnkApplicationSolutionToBusinessProcess/Attribute:applicationsolution_name' => 'APP名称',
 	'Class:lnkApplicationSolutionToBusinessProcess/Attribute:applicationsolution_name+' => '',
 ));
 
@@ -4071,8 +4071,8 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 'Menu:ConfigManagementCI+' => '配置项',
 'Menu:BusinessProcess' => '业务过程',
 'Menu:BusinessProcess+' => '所有业务过程',
-'Menu:ApplicationSolution' => '应用方案',
-'Menu:ApplicationSolution+' => '所有应用方案',
+'Menu:ApplicationSolution' => 'APP',
+'Menu:ApplicationSolution+' => '所有APP',
 'Menu:ConfigManagementSoftware' => '应用管理',
 'Menu:Licence' => 'Licences',
 'Menu:Licence+' => '所有Licences',

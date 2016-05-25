@@ -27,7 +27,6 @@ NetworkDeviceType->Typology
 lnkContactToFunctionalCI->cmdbAbstractObject
 lnkDocumentToFunctionalCI->cmdbAbstractObject
 lnkApplicationSolutionToFunctionalCI->cmdbAbstractObject
-lnkApplicationSolutionToBusinessProcess->cmdbAbstractObject
 lnkPersonToTeam->cmdbAbstractObject
 Group->cmdbAbstractObject
 lnkGroupToCI->cmdbAbstractObject
