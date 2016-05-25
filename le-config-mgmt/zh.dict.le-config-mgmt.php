@@ -65,6 +65,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 // VIP
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:VirtualIP' => 'VIP地址',
+	'Class:VirtualIP/Attribute:ipaddress' => 'VIP地址',
+
 	'Menu:VirtualIP' => 'VIP地址',
 	'Menu:VirtualIP+' => '所有VIP地址',
 	'Class:VirtualIP/Attribute:connectableci_id' => '链接的集群',
