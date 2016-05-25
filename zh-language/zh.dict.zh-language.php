@@ -2591,7 +2591,7 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 Dict::Add('ZH CN', "Chinese", "简体中文", array(
 	'Relation:impacts/Description' => '被影响的元素',
 	'Relation:impacts/DownStream' => '影响...',
-	'Relation:impacts/UpStream' => '被影响的元素...',
+	'Relation:impacts/UpStream' => '依赖于...',
 	'Relation:depends on/Description' => '该元素依赖的元素',
 	'Relation:depends on/DownStream' => '依赖于...',
 	'Relation:depends on/UpStream' => '影响...',
@@ -2820,7 +2820,7 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 	'Class:FunctionalCI/Attribute:applicationsolution_list' => 'APP',
 	'Class:FunctionalCI/Attribute:applicationsolution_list+' => '在该配置项支持的所有APP',
 	'Class:FunctionalCI/Attribute:providercontracts_list' => '合同清单',
-	'Class:FunctionalCI/Attribute:providercontracts_list+' => '所有供应商的联系人清单',
+	'Class:FunctionalCI/Attribute:providercontracts_list+' => '所有所有合同清单',
 	'Class:FunctionalCI/Attribute:services_list' => '服务清单',
 	'Class:FunctionalCI/Attribute:services_list+' => '该配置项影响的配置项清单',
 	'Class:FunctionalCI/Attribute:softwares_list' => '软件清单',

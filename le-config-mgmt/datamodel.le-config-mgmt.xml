@@ -236,6 +236,11 @@
 				</relation>
 			</relations>
 		</class>
+		<class id="BusinessProcess">
+			<properties>
+				<icon _delta="redefine">../le-config-mgmt/images/business1.png</icon>
+			</properties>
+		</class>
 		<class id="ApplicationSolution">
 			<properties>
 				<naming>
@@ -244,6 +249,7 @@
 						<attribute id="name"/>
 					</attributes>
 				</naming>
+				<icon _delta="redefine">../le-config-mgmt/images/app.png</icon>
 			</properties>
 			<fields>
 				<field id="businessprocess_id" xsi:type="AttributeExternalKey" _delta="define">
@@ -367,9 +373,6 @@
 										<item id="business_criticity">
 											<rank>50</rank>
 										</item>
-										<item id="location_id">
-											<rank>60</rank>
-										</item>
 										<item id="rack_id">
 											<rank>70</rank>
 										</item>
@@ -386,6 +389,9 @@
 								<item id="fieldset:Server:moreinfo" _delta="redefine">
 									<rank>20</rank>
 									<items>
+										<item id="location_id">
+											<rank>60</rank>
+										</item>
 										<item id="brand_id">
 											<rank>10</rank>
 										</item>
@@ -398,7 +404,6 @@
 										<item id="osversion_id">
 											<rank>40</rank>
 										</item>
-										<item id="managementip" _delta="delete"></item>
 										<item id="oslicence_id">
 											<rank>50</rank>
 										</item>
