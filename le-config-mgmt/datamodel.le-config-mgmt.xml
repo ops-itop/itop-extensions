@@ -29,6 +29,56 @@
 		<class id="NetworkInterface" _delta="delete"></class>
 		<class id="NetworkDevice" _delta="delete"></class>
 		<class id="lnkConnectableCIToNetworkDevice" _delta="delete"></class>
+		<class id="lnkApplicationSolutionToBusinessProcess" _delta="delete"></class>
+		<class id="Person">
+			<properties>
+				<reconciliation>
+					<attributes _delta="redefine">
+						<attribute id="name"/>
+						<attribute id="first_name"/>
+						<attribute id="org_id"/>
+						<attribute id="org_name"/>
+						<attribute id="email"/>
+					</attributes>
+				</reconciliation>
+
+			</properties>
+			<fields>
+				<field id="location_id" _delta="delete"></field>
+				<field id="location_name" _delta="delete"></field>
+				<field id="employee_number" _delta="delete"></field>
+			</fields>
+			<presentation>
+				<details>
+					<items>
+						<item id="col:col1">
+							<items>
+								<item id="fieldset:Person:info">
+									<items>
+										<item id="location_id" _delta="delete"></item>
+										<item id="employee_number" _delta="delete"></item>		
+									</items>
+								</item>
+
+							</items>
+						</item>
+
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="location_id" _delta="delete"></item>
+						<item id="employee_number" _delta="delete"></item>	
+
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="location_id" _delta="delete"></item>
+					</items>
+				</list>
+			</presentation>
+		</class>
 		<class id="Location">
 			<properties>
 				<reconciliation>
@@ -117,7 +167,63 @@
 				</relation>
 			</relations>
 		</class>
+		<class id="ApplicationSolution">
+			<properties>
+				<naming>
+					<attributes _delta="redefine">
+						<attribute id="businessprocess_name"/>
+						<attribute id="name"/>
+					</attributes>
+				</naming>
+			</properties>
+			<fields>
+				<field id="businessprocess_id" xsi:type="AttributeExternalKey" _delta="define">
+					<sql>businessprocess_id</sql>
+					<target_class>BusinessProcess</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+				</field>
+				<field id="businessprocess_name" xsi:type="AttributeExternalField" _delta="define">
+					<extkey_attcode>businessprocess_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+			</fields>
+			<presentation>
+				<details>
+					<items>
+						<item id="businessprocess_id">
+							<rank>5</rank>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="businessprocess_id">
+							<rank>5</rank>
+						</item>
+					</items>
 
+				</search>
+				<list>
+					<items>
+						<item id="businessprocess_id">
+							<rank>5</rank>
+						</item>
+					</items>
+
+				</list>
+			</presentation>
+      <relations>
+        <relation id="impacts">
+          <neighbours>
+            <neighbour id="businessprocess" _delta="redefine">
+              <attribute>businessprocess_id</attribute>
+            </neighbour>
+          </neighbours>
+        </relation>
+      </relations>
+			
+		</class>
 		<class id="PhysicalDevice">
 			<fields>
 				<field id="serialnumber" xsi:type="AttributeString" _delta="redefine">
@@ -229,7 +335,7 @@
 							<rank>5</rank>
 						</item>
 						<item id="cluster_list">
-							<rank>10</rank>
+							<rank>6</rank>
 						</item>
 						<item id="col:col1">
 							<rank>120</rank>
@@ -730,6 +836,33 @@
 					<default_value/>
 					<is_null_allowed>false</is_null_allowed>					
 				</field>
+				<field id="status" xsi:type="AttributeEnum">
+					<values>
+						<value id="production">production</value>
+						<value id="implementation">implementation</value>
+						<value id="stock">stock</value>
+						<value id="obsolete">obsolete</value>
+					</values>
+					<sql>status</sql>
+					<default_value>production</default_value>
+					<is_null_allowed>true</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
+				<field id="applicationsolution_id" xsi:type="AttributeExternalKey" _delta="define">
+					<sql>applicationsolution_id</sql>
+					<target_class>ApplicationSolution</target_class>
+					<is_null_allowed>true</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="applicationsolution_name" xsi:type="AttributeExternalField" _delta="define">
+					<extkey_attcode>applicationsolution_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="contacts" xsi:type="AttributeString">
+					<sql>contacts</sql>
+					<is_null_allowed>true</is_null_allowed>
+					<default_value/>
+				</field>
 			</fields>
 			<methods>
 				<method id="DoCheckToWrite" _delta="define">
@@ -763,6 +896,12 @@
 						<item id="domain">
 							<rank>10</rank>
 						</item>
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="applicationsolution_id">
+							<rank>18</rank>
+						</item>
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
@@ -775,9 +914,6 @@
 						<item id="description">
 							<rank>130</rank>
 						</item>
-						<item id="contacts_list">
-							<rank>140</rank>
-						</item>
 						<item id="documents_list">
 							<rank>150</rank>
 						</item>
@@ -788,6 +924,13 @@
 						<item id="domain">
 							<rank>10</rank>
 						</item>
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="applicationsolution_id">
+							<rank>18</rank>
+						</item>
+
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
@@ -803,6 +946,15 @@
 					<items>
 						<item id="domain">
 							<rank>10</rank>
+						</item>
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="applicationsolution_id">
+							<rank>18</rank>
+						</item>
+						<item id="contacts">
+							<rank>19</rank>
 						</item>
 						<item id="org_id">
 							<rank>20</rank>
