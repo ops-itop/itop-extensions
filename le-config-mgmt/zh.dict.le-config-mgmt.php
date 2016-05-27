@@ -29,8 +29,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 
 // Server
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
-	'Class:Server/Attribute:name' => '主机名',
-	'Class:Server/Attribute:serialnumber' => 'SN',
+	'Class:Server/Attribute:name' => '盘点号',
+	'Class:Server/Attribute:hostname' => '主机名',
 	'Class:Server/Attribute:all_ip' => 'IP地址',
 	'Class:Server/Attribute:ip_list' => 'IP地址',
 	'Class:Server/Attribute:ip_list+' => '该服务器的所有 IP地址',
@@ -85,7 +85,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Domain' => '域名',
 	'Menu:Domain' => '域名',
 	'Menu:Domain+' => '所有域名',
-	'Class:Domain/Attribute:domain' => '域名',
+	'Class:Domain/Attribute:name' => '域名',
 	'Class:Domain/Attribute:status' => '状态',
 	'Class:Domain/Attribute:contacts' => '联系人',
 	'Class:Domain/Attribute:applicationsolution_id' => '产品线',
