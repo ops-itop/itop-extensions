@@ -99,6 +99,7 @@
 						<attribute id="isp_name"/>
 					</attributes>
 				</reconciliation>
+				<icon _delta="redefine">../le-config-mgmt/images/idc.png</icon>
 			</properties>
 
 			<fields>
@@ -169,6 +170,20 @@
 				{
 					parent::DoCheckToWrite();
 					$finalclass = $this->Get('finalclass');
+					/* all_ip基于PhysicalIP类的变化，这里无需处理
+					if($finalclass == "Server")
+					{
+						$ip_list = $this->GetAsCSV("ip_list");
+						$ip_arr = explode("|", $ip_list);
+						foreach($ip_arr as $key => $value){
+							$oArr = explode(";", $value);
+							$ip_arr[$key] = $oArr[1] . "-" . $oArr[0];
+							$ip_arr[$key] = preg_replace("/[':\"]|ipaddress|type/", "", $ip_arr[$key]);
+						}    
+						$all_ip = implode(";", $ip_arr);
+						//print_r($all_ip);
+						$this->Set("all_ip", $all_ip);
+					}*/
 					
 					// friendlyname of FunctionalCI has to be unique! Currently it' not possible to define this in datamodel (xml)
 					$nameSpec = MetaModel::GetNameSpec(get_class($this));
@@ -202,21 +217,6 @@
 							$this->m_aCheckIssues[] = Dict::Format("Class:".$finalclass."/Error:".$finalclass."MustBeUnique", $sFunctionalCI);
 						}					
 					}
-					
-					
-					/*
-					$aChanges = $this->ListChanges();
-					if (array_key_exists('name', $aChanges))
-					{
-						$sServer = $aChanges['name'];
-						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Server WHERE name=:name");
-						$oSet = new DBObjectSet($oSearch, array(), array('name' => $sServer));
-						if ($oSet->Count() > 0)
-						{
-							$this->m_aCheckIssues[] = Dict::Format('Class:Server/Error:ServerMustBeUnique', $sServer);
-						}
-					}
-					*/
 				}]]></code>
 				</method>
 
@@ -327,7 +327,6 @@
 				<field id="ip_list" xsi:type="AttributeLinkedSet" _delta="define">
 					<linked_class>PhysicalIP</linked_class>
 					<ext_key_to_me>connectableci_id</ext_key_to_me>
-					<edit_mode>add_only</edit_mode>
 					<count_min>0</count_min>
 					<count_max>0</count_max>
 					<duplicates/>
@@ -562,64 +561,74 @@
 					<access>protected</access>
 					<type>Overload-DBObject</type>
 					<code><![CDATA[       public function DoCheckToWrite()
+		{
+		
+			parent::DoCheckToWrite();
+			// ipaddress has to be unique! Currently it' not possible to define this in datamodel (xml)
+
+			$aChanges = $this->ListChanges();
+			if (array_key_exists('ipaddress', $aChanges))
+			{
+				$sIPAddress = $aChanges['ipaddress'];
+				$oSearch = DBObjectSearch::FromOQL_AllData("SELECT IPAddress WHERE ipaddress=:ipaddress");
+				$oSet = new DBObjectSet($oSearch, array(), array('ipaddress' => $sIPAddress));
+				if ($oSet->Count() > 0)
 				{
-					parent::DoCheckToWrite();
-					$finalclass = $this->Get('finalclass');
-					$finalclass = $this->Get('finalclass');
+					$this->m_aCheckIssues[] = Dict::Format("Class:IPAddress/Error:IPAddressMustBeUnique", $sIPAddress);
+				}
+			}
 
-                    if($finalclass == "PhysicalIP")
-                    {
-                        $connectableci_id = $this->Get('connectableci_id');
-                        $nSearch = DBObjectSearch::FromOQL_AllData("SELECT PhysicalIP WHERE connectableci_id=:connectableci_id");
-                        $nSet = new DBObjectSet($nSearch, array(), array('connectableci_id' => $connectableci_id));
-                        $nArray = $nSet->ToArrayOfValues();
-                        $ips = array();
-                        foreach($nArray as $value) {
-                            array_push($ips, $value['PhysicalIP.type'] . "-" . $value['PhysicalIP.ipaddress']);
-                        }   
+			$finalclass = $this->Get('finalclass');
 
-                        //$sSearch = DBObjectSearch::FromOQL_AllData("SELECT Server WHERE id=:id");
-                        //$sServer = new Server($sSearch, array(), array('id' => $connectableci_id));
-                        $aS =  MetaModel::GetObjectByColumn("Server", "id", $connectableci_id);
-    
-                        $ipStr = implode(";", $ips);
-                        $aS->Set("all_ip", $ipStr);
-                        $aS->UpdateObjectFromArray(array("all_ip" => $ips));
-                        print_r($aS);
-
-					if($finalclass == "PhysicalIP")
-					{
-						$connectableci_id = $this->Get('connectableci_id');
-						//print_r($connectableci_id);
-						
-						
-						/*
-						$ip_list = $this->GetAsCSV("ip_list");
-						$ip_arr = explode("|", $ip_list);
-						foreach($ip_arr as $key => $value){
-								$oArr = explode(";", $value);
-									$ip_arr[$key] = $oArr[1] . "-" . $oArr[0];
-									$ip_arr[$key] = preg_replace("/[':\"]|ipaddress|type/", "", $ip_arr[$key]);
-						}    
-						$all_ip = implode(";", $ip_arr);
-						//print_r($all_ip);
-						$this->Set("all_ip", $all_ip);*/
+			if($finalclass == "PhysicalIP" && count($aChanges)>0)
+			{
+				$connectableci_id = $this->Get('connectableci_id');
+				if($this->IsNew()){
+					$newIP = $aChanges['type'] . "-" . $aChanges['ipaddress'];
+					$old_connectableci_id = $connectableci_id;
+				}
+				else{
+					$old_connectableci_id = $this->GetOriginal('connectableci_id');
+					$this->DBWrite();
+				}
+				
+				//$str = $old_connectableci_id . "#" . $connectableci_id;
+				//$this->m_aCheckIssues[] = Dict::Format("Class:IPAddress/Error:ID", $str);
+				
+				$nSearch = DBObjectSearch::FromOQL_AllData("SELECT PhysicalIP WHERE connectableci_id=:connectableci_id");
+				
+				//connectableci_id 变化时，需要更新原connectableci_id设备的all_ip
+				if($old_connectableci_id != $connectableci_id) {
+					$oSet = new DBObjectSet($nSearch, array(), array('connectableci_id' => $old_connectableci_id));
+					$oArray = $oSet->ToArrayOfValues();
+					$oips = array();
+					foreach($oArray as $value) {
+						array_push($oips, $value['PhysicalIP.type'] . "-" . $value['PhysicalIP.ipaddress']);
 					}
-
-					// ipaddress has to be unique! Currently it' not possible to define this in datamodel (xml)
-					$aChanges = $this->ListChanges();
-					
-					if (array_key_exists('ipaddress', $aChanges))
-					{
-						$sIPAddress = $aChanges['ipaddress'];
-						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT IPAddress WHERE ipaddress=:ipaddress");
-						$oSet = new DBObjectSet($oSearch, array(), array('ipaddress' => $sIPAddress));
-						if ($oSet->Count() > 0)
-						{
-							$this->m_aCheckIssues[] = Dict::Format("Class:IPAddress/Error:IPAddressMustBeUnique", $sIPAddress);
-						}
-					}         
-				}]]></code>
+					$oipStr = implode(";", $oips);
+					$oS = MetaModel::GetObjectByColumn("Server", "id", $old_connectableci_id);
+					$oS->Set("all_ip", $oipStr);
+					$oS->DBWrite();
+					//print_r($oS->GetAsCSV("all_ip"));
+				}
+				$nSet = new DBObjectSet($nSearch, array(), array('connectableci_id' => $connectableci_id));
+				$nArray = $nSet->ToArrayOfValues();
+				$ips = array();
+				if(isset($newIP)){
+					array_push($ips, $newIP);
+				}
+				foreach($nArray as $value) {
+					array_push($ips, $value['PhysicalIP.type'] . "-" . $value['PhysicalIP.ipaddress']);
+				}   
+				$aS =  MetaModel::GetObjectByColumn("Server", "id", $connectableci_id);
+				$ipStr = implode(";", array_unique($ips));
+				$aS->Set("all_ip", $ipStr);
+				//$aS->UpdateObjectFromArray(array("all_ip" => $ips));
+				//print_r($aS->GetAsCSV("all_ip"));
+				$aS->DBWrite();
+			}
+		}]]>
+					</code>
 				</method>
 
 			</methods>
@@ -1634,6 +1643,18 @@
 								<rank>90</rank>
 								<class>lnkApplicationSolutionToFunctionalCI</class>
 							</dashlet>
+							<dashlet id="idc" xsi:type="DashletBadge" _delta="define">
+								<rank>80</rank>
+								<class>Location</class>
+							</dashlet>
+							<dashlet id="person" xsi:type="DashletBadge" _delta="define">
+								<rank>70</rank>
+								<class>Person</class>
+							</dashlet>
+							<dashlet id="team" xsi:type="DashletBadge" _delta="define">
+								<rank>60</rank>
+								<class>Team</class>
+							</dashlet>							
 						</dashlets>
 					</cell>
 				</cells>
