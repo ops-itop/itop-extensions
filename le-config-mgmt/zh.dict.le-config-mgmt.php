@@ -118,6 +118,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Database/Attribute:name' => '名称',
 	'Class:Database/Attribute:status' => '状态',
 	'Class:Database/Attribute:type' => '类型',
+	'Class:Database/Attribute:info' => '详细信息',
+	'Class:Database/Attribute:contacts' => '联系人',
 	'Menu:Database' => '数据库',
 	'Menu:Database+' => '所有数据库',
 

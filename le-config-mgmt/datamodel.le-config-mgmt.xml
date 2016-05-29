@@ -1137,7 +1137,7 @@
 				<display_template/>
 				<icon>images/database.png</icon>
 				<reconciliation>
-					<attributes _delta="redefine">
+					<attributes _delta="define">
 						<attribute id="name"/>
 						<attribute id="org_id"/>
 						<attribute id="organization_name"/>
@@ -1168,15 +1168,10 @@
 					<is_null_allowed>true</is_null_allowed>
 					<display_style>list</display_style>
 				</field>
-				<field id="applicationsolution_id" xsi:type="AttributeExternalKey" _delta="define">
-					<sql>applicationsolution_id</sql>
-					<target_class>ApplicationSolution</target_class>
+				<field id="info" xsi:type="AttributeText" _delta="define">
+					<sql>info</sql>
 					<is_null_allowed>true</is_null_allowed>
-					<on_target_delete>DEL_AUTO</on_target_delete>
-				</field>
-				<field id="applicationsolution_name" xsi:type="AttributeExternalField" _delta="define">
-					<extkey_attcode>applicationsolution_id</extkey_attcode>
-					<target_attcode>name</target_attcode>
+					<default_value/>
 				</field>
 				<field id="contacts" xsi:type="AttributeString">
 					<sql>contacts</sql>
@@ -1197,7 +1192,7 @@
 						<item id="status">
 							<rank>15</rank>
 						</item>
-						<item id="applicationsolution_id">
+						<item id="info">
 							<rank>18</rank>
 						</item>
 						<item id="org_id">
@@ -1233,7 +1228,7 @@
 						<item id="status">
 							<rank>15</rank>
 						</item>
-						<item id="applicationsolution_id">
+						<item id="info">
 							<rank>18</rank>
 						</item>
 
@@ -1260,9 +1255,6 @@
 						<item id="status">
 							<rank>15</rank>
 						</item>
-						<item id="applicationsolution_id">
-							<rank>18</rank>
-						</item>
 						<item id="contacts">
 							<rank>19</rank>
 						</item>
@@ -1279,13 +1271,12 @@
 				<relation id="impacts">
 					<neighbours>
 						<neighbour id="applicationsolution">
-							<attribute>applicationsolution_id</attribute>
+							<attribute>applicationsolution_list</attribute>
 						</neighbour>
 					</neighbours>
 				</relation>
 			</relations>
 		</class>		
-
 
 		<class id="Typology">
 			<methods>
