@@ -125,3 +125,10 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 
 ));
 
+// Rack
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:Rack/Name' => '%1$s.%2$s',
+	'Class:Rack/Attribute:server_list' => '服务器列表',
+	'Class:Rack/Attribute:server_list+' => '使用该机架的所有服务器列表',
+));
+
