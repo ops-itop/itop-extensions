@@ -78,13 +78,23 @@
 					</items>
 				</list>
 			</presentation>
-		</class>
-		<class id="Team">
 			<relations>
 				<relation id="impacts" _delta="define">
 					<neighbours>
-						<neighbour id="persons_list">
-							<attribute>persons_list</attribute>
+						<neighbour id="team">
+							<attribute>team_list</attribute>
+						</neighbour>
+					</neighbours>
+				</relation>
+			</relations>
+
+		</class>
+		<class id="Contact">
+			<relations>
+				<relation id="impacts" _delta="define">
+					<neighbours>
+						<neighbour id="cis">
+							<attribute>cis_list</attribute>
 						</neighbour>
 					</neighbours>
 				</relation>
@@ -225,9 +235,8 @@
 			<relations>
 				<relation id="impacts">
 					<neighbours>
-						<neighbour id="softwareinstance" _delta="delete">
-							<attribute>softwares_list</attribute>
-						</neighbour>
+						<neighbour id="softwareinstance" _delta="delete"></neighbour>
+						<neighbour id="contact" _delta="delete"></neighbour>
 					</neighbours>
 				</relation>
 			</relations>
@@ -1372,6 +1381,15 @@
 					</items>
 				</list>
 			</presentation>
+			<relations>
+				<relation id="impacts">
+					<neighbours>
+						<neighbour id="server">
+							<attribute>server_list</attribute>
+						</neighbour>
+					</neighbours>
+				</relation>
+			</relations>
 		</class>
 
 		<class id="Typology">

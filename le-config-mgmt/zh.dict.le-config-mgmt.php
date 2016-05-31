@@ -19,11 +19,22 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Cluster' => '集群',
 	'Menu:Cluster' => '集群',
 	'Menu:Cluster+' => '所有集群',
-	'Class:Cluster/Attribute:status' => '状态',
 	'Class:Cluster/Attribute:vip_list' => '集群VIP',
 	'Class:Cluster/Attribute:vip_list+' => '该集群使用的所有VIP',
 	'Class:Cluster/Attribute:server_list' => '服务器',
 	'Class:Cluster/Attribute:server_list+' => '隶属于该集群的所有服务器',
+	
+	'Class:Cluster/Attribute:status' => '状态',
+	'Class:Cluster/Attribute:status+' => '',
+	'Class:Cluster/Attribute:status/Value:implementation' => '上线中',
+	'Class:Cluster/Attribute:status/Value:implementation+' => '上线中',
+	'Class:Cluster/Attribute:status/Value:obsolete' => '报废',
+	'Class:Cluster/Attribute:status/Value:obsolete+' => '报废',
+	'Class:Cluster/Attribute:status/Value:production' => '使用中',
+	'Class:Cluster/Attribute:status/Value:production+' => '使用中',
+	'Class:Cluster/Attribute:status/Value:stock' => '库存',
+	'Class:Cluster/Attribute:status/Value:stock+' => '库存',
+	
 	
 ));
 
@@ -42,6 +53,10 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:IPAddress' => 'IP地址',
 	'Class:IPAddress/Attribute:ipaddress' => 'IP地址',
+	'Class:IPAddress/Attribute:type' => '类型',
+	'Class:IPAddress/Attribute:type/Value:int' => '内网',
+	'Class:IPAddress/Attribute:type/Value:ext' => '外网',
+	'Class:IPAddress/Attribute:type/Value:oob' => '管理卡',	
 	'Class:IPAddress/Attribute:connect_id' => '设备',
 	'Class:IPAddress/Attribute:connect_name' => '设备',
 	'Menu:IPAddress' => 'IP地址',
@@ -86,10 +101,18 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Menu:Domain' => '域名',
 	'Menu:Domain+' => '所有域名',
 	'Class:Domain/Attribute:name' => '域名',
-	'Class:Domain/Attribute:status' => '状态',
 	'Class:Domain/Attribute:contacts' => '联系人',
 	'Class:Domain/Attribute:applicationsolution_id' => '产品线',
-
+	'Class:Domain/Attribute:status' => '状态',
+	'Class:Domain/Attribute:status+' => '',
+	'Class:Domain/Attribute:status/Value:implementation' => '上线中',
+	'Class:Domain/Attribute:status/Value:implementation+' => '上线中',
+	'Class:Domain/Attribute:status/Value:obsolete' => '报废',
+	'Class:Domain/Attribute:status/Value:obsolete+' => '报废',
+	'Class:Domain/Attribute:status/Value:production' => '使用中',
+	'Class:Domain/Attribute:status/Value:production+' => '使用中',
+	'Class:Domain/Attribute:status/Value:stock' => '库存',
+	'Class:Domain/Attribute:status/Value:stock+' => '库存',
 ));
 
 // DoCheckToWrite
@@ -116,13 +139,21 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Database' => '数据库',
 	'Class:Database/Attribute:name' => '名称',
-	'Class:Database/Attribute:status' => '状态',
 	'Class:Database/Attribute:type' => '类型',
 	'Class:Database/Attribute:info' => '详细信息',
 	'Class:Database/Attribute:contacts' => '联系人',
 	'Menu:Database' => '数据库',
 	'Menu:Database+' => '所有数据库',
-
+	'Class:Database/Attribute:status' => '状态',
+	'Class:Database/Attribute:status+' => '',
+	'Class:Database/Attribute:status/Value:implementation' => '上线中',
+	'Class:Database/Attribute:status/Value:implementation+' => '上线中',
+	'Class:Database/Attribute:status/Value:obsolete' => '报废',
+	'Class:Database/Attribute:status/Value:obsolete+' => '报废',
+	'Class:Database/Attribute:status/Value:production' => '使用中',
+	'Class:Database/Attribute:status/Value:production+' => '使用中',
+	'Class:Database/Attribute:status/Value:stock' => '库存',
+	'Class:Database/Attribute:status/Value:stock+' => '库存',
 ));
 
 // Rack
