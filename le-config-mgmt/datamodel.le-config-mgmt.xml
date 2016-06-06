@@ -41,11 +41,23 @@
 		
 			parent::DoCheckToWrite();
 			// email has to be unique! Currently it' not possible to define this in datamodel (xml)
-			print_r($_SESSION['auth_user']);
+			$finalclass = $this->Get('finalclass');
+			
+			$myContactId = UserRights::GetContactId();
+			if($this->GetKey() != $myContactId && !UserRights::IsAdministrator())
+			{
+				$this->m_aCheckIssues[] = Dict::Format("Class:Person/Error:CanOnlyUpdateYourself", $myContactId);
+			}
+
+			
 			$aChanges = $this->ListChanges();
 			if (array_key_exists('email', $aChanges))
 			{
 				$sContact = $aChanges['email'];
+				if($sContact == "")
+				{
+					return true;
+				}
 				$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Contact WHERE email=:email");
 				$oSet = new DBObjectSet($oSearch, array(), array('email' => $sContact));
 				if ($oSet->Count() > 0)
@@ -53,11 +65,23 @@
 					$this->m_aCheckIssues[] = Dict::Format("Class:Contact/Error:ContactEmailMustBeUnique", $sContact);
 				}
 			}
+			
+			if($finalclass == "Team" && array_key_exists('name', $aChanges))
+			{
+				$sName = $aChanges['name'];
+				$oSearch = DBObjectSearch::FromOQL_AllData("SELECT $finalclass WHERE name=:name");
+				$oSet = new DBObjectSet($oSearch, array(), array('name' => $sName));
+				if ($oSet->Count() > 0)
+				{
+					$this->m_aCheckIssues[] = Dict::Format("Class:$finalclass/Error:$finalclass" . "NameMustBeUnique", $sName);
+				}
+
+			}
 
 		}]]>
 					</code>
 				</method>
-				
+
 			</methods>
 		</class>
 		<class id="Person">
@@ -559,7 +583,7 @@
 					</neighbours>
 				</relation>
 			</relations>
-			
+
 		</class>
 
 		<class id="IPAddress" _delta="define">
@@ -1901,7 +1925,12 @@
 					<class id="Contact"/>
 				</classes>
 			</group>
-			
+			<group id="EditTeam" _delta="define">
+				<classes>
+					<class id="lnkPersonToTeam"/>
+				</classes>
+			</group>
+
 		</groups>
 		<profiles>
 			<profile id="4" _delta="delete"></profile>
@@ -1939,6 +1968,11 @@
 							<action id="action:write">allow</action>
 						</actions>
 					</group>
+					<group id="EditTeam">
+						<actions>
+							<action id="action:delete">allow</action>
+						</actions>
+					</group>
 					<group id="*">
 						<actions>
 							<action id="action:read">allow</action>
@@ -1951,9 +1985,14 @@
 				<name>产品经理</name>
 				<description>允许修改Contact类</description>
 				<groups>
-					<group id="Develope">
+					<group id="PM">
 						<actions>
 							<action id="action:write">allow</action>
+						</actions>
+					</group>
+					<group id="EditTeam">
+						<actions>
+							<action id="action:delete">allow</action>
 						</actions>
 					</group>
 					<group id="*">
@@ -1964,7 +2003,7 @@
 					</group>
 				</groups>
 			</profile>
-			
+
 		</profiles>
 	</user_rights>
 	<branding>
