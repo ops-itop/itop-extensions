@@ -30,6 +30,36 @@
 		<class id="NetworkDevice" _delta="delete"></class>
 		<class id="lnkConnectableCIToNetworkDevice" _delta="delete"></class>
 		<class id="lnkApplicationSolutionToBusinessProcess" _delta="delete"></class>
+		<class id="Contact">
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[       public function DoCheckToWrite()
+		{
+		
+			parent::DoCheckToWrite();
+			// email has to be unique! Currently it' not possible to define this in datamodel (xml)
+
+			$aChanges = $this->ListChanges();
+			if (array_key_exists('email', $aChanges))
+			{
+				$sContact = $aChanges['email'];
+				$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Contact WHERE email=:email");
+				$oSet = new DBObjectSet($oSearch, array(), array('email' => $sContact));
+				if ($oSet->Count() > 0)
+				{
+					$this->m_aCheckIssues[] = Dict::Format("Class:Contact/Error:ContactEmailMustBeUnique", $sContact);
+				}
+			}
+
+		}]]>
+					</code>
+				</method>
+				
+			</methods>
+		</class>
 		<class id="Person">
 			<properties>
 				<reconciliation>
