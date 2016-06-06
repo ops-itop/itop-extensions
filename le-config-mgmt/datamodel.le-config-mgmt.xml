@@ -41,7 +41,7 @@
 		
 			parent::DoCheckToWrite();
 			// email has to be unique! Currently it' not possible to define this in datamodel (xml)
-
+			print_r($_SESSION['auth_user']);
 			$aChanges = $this->ListChanges();
 			if (array_key_exists('email', $aChanges))
 			{
@@ -1891,8 +1891,80 @@
 	</menus>
 	<user_rights>
 		<groups>
+			<group id="Develope" _delta="define">
+				<classes>
+					<class id="Person"/>
+				</classes>
+			</group>
+			<group id="PM" _delta="define">
+				<classes>
+					<class id="Contact"/>
+				</classes>
+			</group>
+			
 		</groups>
 		<profiles>
+			<profile id="4" _delta="delete"></profile>
+			<profile id="5" _delta="delete"></profile>
+			<profile id="6" _delta="delete"></profile>
+			<profile id="7" _delta="delete"></profile>
+			<profile id="8" _delta="delete"></profile>
+			<profile id="10" _delta="delete"></profile>
+			<profile id="11" _delta="delete"></profile>
+			<profile id="101" _delta="define">
+				<name>只读用户</name>
+				<description>只读方式浏览CMDB并发起工单</description>
+				<groups>
+					<group id="UserRequest">
+						<actions>
+							<action id="action:write">allow</action>
+							<action id="stimulus:ev_close">allow</action>
+							<action id="stimulus:ev_reopen">allow</action>
+						</actions>
+					</group>
+					<group id="*">
+						<actions>
+							<action id="action:read">allow</action>
+							<action id="action:bulk read">allow</action>
+						</actions>
+					</group>
+				</groups>
+			</profile>
+			<profile id="102" _delta="define">
+				<name>研发</name>
+				<description>允许修改Person类，并通过DoCheckToWrite控制只能修改自己link的Person</description>
+				<groups>
+					<group id="Develope">
+						<actions>
+							<action id="action:write">allow</action>
+						</actions>
+					</group>
+					<group id="*">
+						<actions>
+							<action id="action:read">allow</action>
+							<action id="action:bulk read">allow</action>
+						</actions>
+					</group>
+				</groups>
+			</profile>
+			<profile id="103" _delta="define">
+				<name>产品经理</name>
+				<description>允许修改Contact类</description>
+				<groups>
+					<group id="Develope">
+						<actions>
+							<action id="action:write">allow</action>
+						</actions>
+					</group>
+					<group id="*">
+						<actions>
+							<action id="action:read">allow</action>
+							<action id="action:bulk read">allow</action>
+						</actions>
+					</group>
+				</groups>
+			</profile>
+			
 		</profiles>
 	</user_rights>
 	<branding>
