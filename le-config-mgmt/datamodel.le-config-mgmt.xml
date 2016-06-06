@@ -190,6 +190,15 @@
 
 				</list>
 			</presentation>
+			<relations _delta="define">
+				<relation id="impacts">
+					<neighbours>
+						<neighbour id="rack">
+							<attribute>physicaldevice_list</attribute>
+						</neighbour>
+					</neighbours>
+				</relation>
+			</relations>
 		</class>
 		<class id="FunctionalCI">
 			<methods>
@@ -541,6 +550,16 @@
 					</items>
 				</list>
 			</presentation>
+			<relations>
+				<relation id="impacts" _delta="define">
+					<neighbours>
+						<neighbour id="cluster">
+							<attribute>cluster_list</attribute>
+						</neighbour>
+					</neighbours>
+				</relation>
+			</relations>
+			
 		</class>
 
 		<class id="IPAddress" _delta="define">
