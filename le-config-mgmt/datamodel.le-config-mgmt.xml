@@ -1936,7 +1936,20 @@
 			<oql>SELECT Database</oql>
 			<do_search>1</do_search>
 		</menu>
-
+		<menu id="NewContact" _delta="delete"></menu>
+		<menu id="SearchContacts" _delta="delete"></menu>
+		<menu id="Team" xsi:type="OQLMenuNode" _delta="define">
+			<rank>3</rank>
+			<parent>Contact</parent>
+			<oql>SELECT Team</oql>
+			<do_search>1</do_search>
+		</menu>
+		<menu id="Person" xsi:type="OQLMenuNode" _delta="define">
+			<rank>4</rank>
+			<parent>Contact</parent>
+			<oql>SELECT Person</oql>
+			<do_search>1</do_search>
+		</menu>
 
 	</menus>
 	<user_rights>
@@ -1985,7 +1998,7 @@
 			<profile id="12">
 				<description _delta="redefine">高级门户用户是能够查看某个用户下所有票单的人。它还必须具有其它角色，如门户用户的角色</description>
 			</profile>
-			
+
 			<profile id="101" _delta="define">
 				<name>只读用户</name>
 				<description>只读方式浏览CMDB并发起工单</description>
@@ -2025,7 +2038,7 @@
 							<action id="action:delete">allow</action>
 						</actions>
 					</group>
-					
+
 					<group id="*">
 						<actions>
 							<action id="action:read">allow</action>
@@ -2054,7 +2067,7 @@
 							<action id="action:delete">allow</action>
 						</actions>
 					</group>
-					
+
 					<group id="*">
 						<actions>
 							<action id="action:read">allow</action>
