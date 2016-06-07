@@ -129,6 +129,8 @@
 				<list>
 					<items>
 						<item id="location_id" _delta="delete"></item>
+						<item id="phone" _delta="delete"></item>
+						<item id="mobile_phone" _delta="define"></item>
 					</items>
 				</list>
 			</presentation>
