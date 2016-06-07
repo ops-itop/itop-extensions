@@ -714,7 +714,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'UI:Link_Class_Attributes' => '%1$s 属性',
 	'UI:SelectAllToggle+' => '选择全部 / 清除全部选择',
 	'UI:AddObjectsOf_Class_LinkedWith_Class_Instance' => '添加 %1$s 个对象, 链接 %2$s: %3$s',
-	'UI:AddObjectsOf_Class_LinkedWith_Class' => '添加 %1$s 个对象与 %2$s 链接',
+	'UI:AddObjectsOf_Class_LinkedWith_Class' => '添加 %1$s 对象与 %2$s 链接',
 	'UI:ManageObjectsOf_Class_LinkedWith_Class_Instance' => '管理 %1$s 个对象, 链接 %2$s: %3$s',
 	'UI:AddLinkedObjectsOf_Class' => '添加 %1$s...',
 	'UI:RemoveLinkedObjectsOf_Class' => '移除选择的对象',

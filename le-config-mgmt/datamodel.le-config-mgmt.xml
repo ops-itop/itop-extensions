@@ -1014,14 +1014,12 @@
 						<item id="status">
 							<rank>15</rank>
 						</item>
-						<item id="contacts_list">
-							<rank>60</rank>
-						</item>
-
 						<item id="applicationsolution_list">
 							<rank>90</rank>
 						</item>
-
+						<item id="contacts_list">
+							<rank>95</rank>
+						</item>
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
@@ -1952,6 +1950,11 @@
 					<class id="lnkPersonToTeam"/>
 				</classes>
 			</group>
+			<group id="EditCIs" _delta="define">
+				<classes>
+					<class id="lnkContactToFunctionalCI"/>
+				</classes>
+			</group>
 
 		</groups>
 		<profiles>
@@ -1962,6 +1965,21 @@
 			<profile id="8" _delta="delete"></profile>
 			<profile id="10" _delta="delete"></profile>
 			<profile id="11" _delta="delete"></profile>
+			<profile id="3">
+				<name _delta="redefine">配置经理</name>
+				<description _delta="redefine">配置经理是修改维护CMDB配置项的人</description>
+			</profile>
+			<profile id="9">
+				<name _delta="redefine">变更审批</name>
+				<description _delta="redefine">变更审批者是能影响变更审批的人</description>
+			</profile>
+			<profile id="2">
+				<description _delta="redefine">Portal user(门户用户)能访问iTop门户。不具有其它任何标准应用访问权限的人，将被自动重定向到用户门户</description>
+			</profile>
+			<profile id="12">
+				<description _delta="redefine">高级门户用户是能够查看某个用户下所有票单的人。它还必须具有其它角色，如门户用户的角色</description>
+			</profile>
+			
 			<profile id="101" _delta="define">
 				<name>只读用户</name>
 				<description>只读方式浏览CMDB并发起工单</description>
@@ -1995,6 +2013,13 @@
 							<action id="action:delete">allow</action>
 						</actions>
 					</group>
+					<group id="EditCIs">
+						<actions>
+							<action id="action:write">allow</action>
+							<action id="action:delete">allow</action>
+						</actions>
+					</group>
+					
 					<group id="*">
 						<actions>
 							<action id="action:read">allow</action>
@@ -2017,6 +2042,13 @@
 							<action id="action:delete">allow</action>
 						</actions>
 					</group>
+					<group id="EditCIs">
+						<actions>
+							<action id="action:write">allow</action>
+							<action id="action:delete">allow</action>
+						</actions>
+					</group>
+					
 					<group id="*">
 						<actions>
 							<action id="action:read">allow</action>
