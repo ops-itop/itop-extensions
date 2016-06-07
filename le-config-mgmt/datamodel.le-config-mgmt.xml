@@ -1878,10 +1878,14 @@
 							<dashlet id="5" _delta="delete"></dashlet>
 							<dashlet id="6" _delta="delete"></dashlet>
 							<dashlet id="8" _delta="delete"></dashlet>
-							<dashlet id="2" xsi:type="DashletBadge"  _delta="redefine">
-								<rank>1</rank>
+							<dashlet id="domain" xsi:type="DashletBadge"  _delta="define">
+								<rank>4</rank>
 								<class>Domain</class>
 							</dashlet>
+							<dashlet id="database" xsi:type="DashletBadge"  _delta="define">
+								<rank>4</rank>
+								<class>Database</class>
+							</dashlet>							
 						</dashlets>
 					</cell>
 				</cells>
