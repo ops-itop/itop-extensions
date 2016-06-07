@@ -258,8 +258,19 @@
 					/*
 					 * 如果组成friendlyname的所有attribute都没有发生变化，那么不进行检查
 					 * 如果不监听变化就进行检查，将导致对象无法更新
+					 * server不适用name作为friendlyname，如果finalclass是Server，同时检查name和friendlyname
 					 */
 					$aChanges = $this->ListChanges();
+					if($finalclass == "Server" && array_key_exists('name', $aChanges))
+					{
+						$sServer = $aChanges['name'];
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Server WHERE name=:name");
+						$oSet = new DBObjectSet($oSearch, array(), array('name' => $sServer));
+						if ($oSet->Count() > 0)
+						{
+							$this->m_aCheckIssues[] = Dict::Format("Class:".$finalclass."/Error:".$finalclass."MustBeUnique", $sServer);
+						}			
+					}
 					$isChanges = false;
 					foreach($sArg as $value) {
 						array_push($oArg, $this->Get($value));
@@ -374,9 +385,15 @@
 
 				</field>
 			</fields>
-
 		</class>
 		<class id="Server">
+			<properties>
+				<naming _delta="redefine">
+					<attributes>
+						<attribute id="hostname"/>
+					</attributes>
+				</naming>
+			</properties>
 			<fields>
 				<field id="cluster_list" xsi:type="AttributeLinkedSetIndirect" _delta="define">
 					<linked_class>lnkServerToCluster</linked_class>
@@ -544,9 +561,6 @@
 				</search>
 				<list _delta="redefine">
 					<items>
-						<item id="hostname">
-							<rank>1</rank>
-						</item>
 						<item id="all_ip">
 							<rank>25</rank>
 						</item>
@@ -1000,6 +1014,10 @@
 						<item id="status">
 							<rank>15</rank>
 						</item>
+						<item id="contacts_list">
+							<rank>60</rank>
+						</item>
+
 						<item id="applicationsolution_list">
 							<rank>90</rank>
 						</item>
@@ -1277,6 +1295,10 @@
 						<item id="business_criticity">
 							<rank>40</rank>
 						</item>
+						<item id="contacts_list">
+							<rank>95</rank>
+						</item>
+
 						<item id="applicationsolution_list">
 							<rank>90</rank>
 						</item>

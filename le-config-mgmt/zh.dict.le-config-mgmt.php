@@ -117,11 +117,11 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 
 // DoCheckToWrite
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
-	'Class:Server/Error:ServerMustBeUnique' => '此SN已存在，不能重复添加',
-	'Class:IPAdress/Error:IPAdressMustBeUnique' => '此IP地址已存在，不能重复添加',
-	'Class:Domain/Error:DomainMustBeUnique' => '此域名已存在，不能重复添加',
+	'Class:Server/Error:ServerMustBeUnique' => '%1s 已被占用，服务器必须唯一',
+	'Class:IPAdress/Error:IPAdressMustBeUnique' => '%1s 已被占用，IP地址必须唯一',
+	'Class:Domain/Error:DomainMustBeUnique' => '%1s 已被占用，域名必须唯一',
 	'Class:Cluster/Error:ClusterMustBeNotNull' => '集群名称不能为空',
-	'Class:Cluster/Error:ClusterMustBeUnique' => '此集群已存在，不能重复添加',
+	'Class:Cluster/Error:ClusterMustBeUnique' => '%1s 已被占用，集群必须唯一',
 ));
 
 // Location
