@@ -133,6 +133,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:ApplicationSolution/Name' => '%1$s.%2$s',
 	'Class:ApplicationSolution/Attribute:businessprocess_id' => '业务线',
+	'Class:ApplicationSolution/Attribute:name_cn' => '中文名称',
+	'Class:ApplicationSolution/Attribute:contact_list_custom' => '联系人',
+	'Class:ApplicationSolution/Attribute:contact_list_custom+' => '该APP的所有联系人',
 ));
 
 // Database
@@ -161,5 +164,11 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Rack/Name' => '%1$s.%2$s',
 	'Class:Rack/Attribute:server_list' => '服务器列表',
 	'Class:Rack/Attribute:server_list+' => '使用该机架的所有服务器列表',
+));
+
+// Contact
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:Contact/Attribute:applicationsolution_list' => '负责的APP',
+	'Class:Contact/Attribute:applicationsolution_list+' => '该联系人负责的所有APP',
 ));
 
