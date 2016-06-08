@@ -1874,6 +1874,14 @@
 					<extkey_attcode>applicationsolution_id</extkey_attcode>
 					<target_attcode>name</target_attcode>
 				</field>
+				<field id="applicationsolution_name_cn" xsi:type="AttributeExternalField">
+					<extkey_attcode>applicationsolution_id</extkey_attcode>
+					<target_attcode>name_cn</target_attcode>
+				</field>
+				<field id="applicationsolution_org" xsi:type="AttributeExternalField">
+					<extkey_attcode>applicationsolution_id</extkey_attcode>
+					<target_attcode>organization_name</target_attcode>
+				</field>
 			</fields>
 			<methods/>
 			<presentation>
@@ -1898,6 +1906,12 @@
 						<item id="contact_email">
 							<rank>30</rank>
 						</item>
+						<item id="applicationsolution_name_cn">
+							<rank>40</rank>
+						</item>
+						<item id="applicationsolution_org">
+							<rank>50</rank>
+						</item>
 
 					</items>
 				</search>
@@ -1912,6 +1926,13 @@
 						<item id="contact_email">
 							<rank>30</rank>
 						</item>
+						<item id="applicationsolution_name_cn">
+							<rank>40</rank>
+						</item>
+						<item id="applicationsolution_org">
+							<rank>50</rank>
+						</item>
+						
 					</items>
 				</list>
 			</presentation>

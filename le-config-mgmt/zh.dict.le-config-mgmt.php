@@ -172,3 +172,14 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Contact/Attribute:applicationsolution_list+' => '该联系人负责的所有APP',
 ));
 
+// Contact
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:lnkContactToApplicationSolution' => '链接 联系人/APP',
+	'Class:lnkContactToApplicationSolution/Attribute:applicationsolution_id' => 'APP',
+	'Class:lnkContactToApplicationSolution/Attribute:applicationsolution_name' => 'APP名称',
+	'Class:lnkContactToApplicationSolution/Attribute:applicationsolution_org' => 'APP所属组织',
+	'Class:lnkContactToApplicationSolution/Attribute:applicationsolution_name_cn' => 'APP中文名称',
+	'Class:lnkContactToApplicationSolution/Attribute:contact_id' => '联系人',
+	'Class:lnkContactToApplicationSolution/Attribute:contact_name' => '联系人名称',
+	'Class:lnkContactToApplicationSolution/Attribute:contact_email' => '联系人邮箱',
+));
