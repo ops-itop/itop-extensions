@@ -1451,6 +1451,7 @@
 				<reconciliation>
 					<attributes>
 						<attribute id="name"/>
+						<attribute id="friendlyname"/>
 						<attribute id="org_id"/>
 						<attribute id="organization_name"/>
 					</attributes>

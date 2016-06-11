@@ -183,3 +183,14 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkContactToApplicationSolution/Attribute:contact_name' => '联系人名称',
 	'Class:lnkContactToApplicationSolution/Attribute:contact_email' => '联系人邮箱',
 ));
+
+// ISP
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:ISP' => '运营商',
+	'Class:ISP/Attribute:name' => '运营商名称',
+	'Class:ISP/Attribute:code' => '运营商代码',
+	'Class:ISP/Attribute:vip_list' => 'VIP列表',
+	'Class:ISP/Attribute:vip_list+' => '所有VIP列表',
+	'Class:ISP/Attribute:location_list' => '机房列表',
+	'Class:ISP/Attribute:location_list+' => '所有机房列表',
+));
