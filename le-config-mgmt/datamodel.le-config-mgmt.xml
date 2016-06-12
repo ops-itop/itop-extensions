@@ -139,7 +139,19 @@
 					<items>
 						<item id="location_id" _delta="delete"></item>
 						<item id="phone" _delta="delete"></item>
-						<item id="mobile_phone" _delta="define"></item>
+						<item id="email" _delta="redefine">
+							<rank>10</rank>
+						</item>
+						<item id="mobile_phone" _delta="define">
+							<rank>20</rank>
+						</item>
+						<item id="status" _delta="redefine">
+							<rank>30</rank>
+						</item>						
+						<item id="org_id" _delta="redefine">
+							<rank>40</rank>
+						</item>
+						<item id="first_name" _delta="delete"></item>
 					</items>
 				</list>
 			</presentation>
@@ -458,6 +470,16 @@
 
 				</field>
 			</fields>
+			
+			<presentation>
+				<list>
+					<items>
+						<item id="serialnumber" _delta="delete"></item>
+						<item id="brand_id" _delta="delete"></item>
+						<item id="business_criticity" _delta="delete"></item>
+					</items>
+				</list>
+			</presentation>
 		</class>
 		<class id="Server">
 			<properties>
@@ -2038,7 +2060,7 @@
 				</field>
 				<field id="applicationsolution_org" xsi:type="AttributeExternalField">
 					<extkey_attcode>applicationsolution_id</extkey_attcode>
-					<target_attcode>organization_name</target_attcode>
+					<target_attcode>org_id</target_attcode>
 				</field>
 			</fields>
 			<methods/>
