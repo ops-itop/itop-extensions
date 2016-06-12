@@ -470,7 +470,7 @@
 
 				</field>
 			</fields>
-			
+
 			<presentation>
 				<list>
 					<items>
@@ -488,6 +488,14 @@
 						<attribute id="hostname"/>
 					</attributes>
 				</naming>
+				<reconciliation _delta="redefine">
+					<attributes>
+						<attribute id="name"/>
+						<attribute id="hostname"/>
+						<attribute id="org_id"/>
+						<attribute id="organization_name"/>
+					</attributes>
+				</reconciliation>
 			</properties>
 			<fields>
 				<field id="cluster_list" xsi:type="AttributeLinkedSetIndirect" _delta="define">
