@@ -47,6 +47,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Server/Attribute:ip_list+' => '该服务器的所有 IP地址',
 	'Class:Server/Attribute:cluster_list' => '集群',
 	'Class:Server/Attribute:cluster_list+' => '该服务器所属集群',
+	'Class:Server/Attribute:vip_list' => 'VIP列表',
+	'Class:Server/Attribute:vip_list+' => '该服务器的所有VIP',
 ));
 
 // IPAddress
@@ -92,6 +94,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 
 	'Class:VirtualIP/Attribute:comment' => '注释',
 	'Class:VirtualIP/Attribute:isp_id' => '运营商',
+	'Class:VirtualIP/Attribute:server_list' => 'Member列表',
+	'Class:VirtualIP/Attribute:server_list+' => '该VIP的所有服务器列表',
 
 ));
 
@@ -172,7 +176,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Contact/Attribute:applicationsolution_list+' => '该联系人负责的所有APP',
 ));
 
-// Contact
+// lnkContactToApplicationSolution
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkContactToApplicationSolution' => '链接 联系人/APP',
 	'Class:lnkContactToApplicationSolution/Attribute:applicationsolution_id' => 'APP',
@@ -193,4 +197,13 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:ISP/Attribute:vip_list+' => '所有VIP列表',
 	'Class:ISP/Attribute:location_list' => '机房列表',
 	'Class:ISP/Attribute:location_list+' => '所有机房列表',
+));
+
+// lnkServerToVirtualIP
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:lnkServerToVirtualIP' => '链接 服务器/VIP',
+	'Class:lnkServerToVirtualIP/Attribute:server_id' => '服务器',
+	'Class:lnkServerToVirtualIP/Attribute:server_hostname' => '服务器主机名',
+	'Class:lnkServerToVirtualIP/Attribute:vip_id' => 'VIP',
+	'Class:lnkServerToVirtualIP/Attribute:vip_name' => 'VIP',
 ));

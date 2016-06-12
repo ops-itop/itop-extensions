@@ -392,7 +392,7 @@
 						<item id="name_cn" _delta="define">
 							<rank>15</rank>
 						</item>
-					
+
 						<item id="businessprocess_id" _delta="define">
 							<rank>16</rank>
 						</item>
@@ -404,7 +404,7 @@
 						<item id="name_cn" _delta="define">
 							<rank>5</rank>
 						</item>
-					
+
 						<item id="businessprocess_id" _delta="define">
 							<rank>6</rank>
 						</item>
@@ -460,6 +460,15 @@
 					<count_min>0</count_min>
 					<duplicates/>
 				</field>
+				<field id="vip_list" xsi:type="AttributeLinkedSetIndirect" _delta="define">
+					<linked_class>lnkServerToVirtualIP</linked_class>
+					<ext_key_to_me>server_id</ext_key_to_me>
+					<ext_key_to_remote>vip_id</ext_key_to_remote>
+					<count_max>0</count_max>
+					<count_min>0</count_min>
+					<duplicates/>
+				</field>
+
 				<field id="ip_list" xsi:type="AttributeLinkedSet" _delta="define">
 					<linked_class>PhysicalIP</linked_class>
 					<ext_key_to_me>connectableci_id</ext_key_to_me>
@@ -479,10 +488,16 @@
 						<item id="providercontracts_list" _delta="delete"></item>
 						<item id="services_list" _delta="delete"></item>
 						<item id="ip_list" _delta="define">
+							<rank>4</rank>
+						</item>
+						<item id="cluster_list" _delta="define">
 							<rank>5</rank>
 						</item>
-						<item id="cluster_list">
+						<item id="vip_list" _delta="define">
 							<rank>6</rank>
+						</item>
+						<item id="documents_list" _delta="redefine">
+							<rank>100</rank>
 						</item>
 						<item id="col:col1">
 							<rank>120</rank>
@@ -955,11 +970,22 @@
 					<extkey_attcode>isp_id</extkey_attcode>
 					<target_attcode>name</target_attcode>
 				</field>
+				<field id="server_list" xsi:type="AttributeLinkedSetIndirect" _delta="define">
+					<linked_class>lnkServerToVirtualIP</linked_class>
+					<ext_key_to_me>vip_id</ext_key_to_me>
+					<ext_key_to_remote>server_id</ext_key_to_remote>
+					<count_max>0</count_max>
+					<count_min>0</count_min>
+					<duplicates/>
+				</field>
 			</fields>
 			<methods></methods>
 			<presentation>
 				<details>
 					<items>
+						<item id="server_list" _delta="define">
+							<rank>10</rank>
+						</item>
 						<item id="connectableci_id">
 							<rank>20</rank>
 						</item>
@@ -1732,10 +1758,6 @@
 					<is_null_allowed>false</is_null_allowed>
 					<on_target_delete>DEL_AUTO</on_target_delete>
 				</field>
-				<field id="server_serialnumber" xsi:type="AttributeExternalField">
-					<extkey_attcode>server_id</extkey_attcode>
-					<target_attcode>serialnumber</target_attcode>
-				</field>
 				<field id="server_hostname" xsi:type="AttributeExternalField">
 					<extkey_attcode>server_id</extkey_attcode>
 					<target_attcode>name</target_attcode>
@@ -1825,6 +1847,125 @@
 			</presentation>
 
 		</class>
+		<class id="lnkServerToVirtualIP" _delta="define">
+			<parent>cmdbAbstractObject</parent>
+			<properties>
+				<is_link>1</is_link>
+				<category>bizmodel</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>lnkservertovirtualip</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field/>
+				<naming>
+					<attributes>
+						<attribute id="server_id"/>
+						<attribute id="vip_id"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon/>
+				<reconciliation>
+					<attributes>
+						<attribute id="server_id"/>
+						<attribute id="vip_id"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="server_id" xsi:type="AttributeExternalKey">
+					<sql>server_id</sql>
+					<target_class>Server</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="server_hostname" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>hostname</target_attcode>
+				</field>
+				<field id="server_cpu" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>cpu</target_attcode>
+				</field>
+				<field id="server_ram" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>ram</target_attcode>
+				</field>
+				<field id="server_location" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>location_id</target_attcode>
+				</field>
+				<field id="server_model" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>model_id</target_attcode>
+				</field>
+
+				<field id="vip_id" xsi:type="AttributeExternalKey">
+					<sql>vip_id</sql>
+					<target_class>VirtualIP</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="vip_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>vip_id</extkey_attcode>
+					<target_attcode>ipaddress</target_attcode>
+				</field>
+			</fields>
+			<methods/>
+			<presentation>
+				<details>
+					<items>
+						<item id="server_id">
+							<rank>10</rank>
+						</item>
+						<item id="vip_id">
+							<rank>20</rank>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="server_id">
+							<rank>10</rank>
+						</item>
+						<item id="server_hostname">
+							<rank>30</rank>
+						</item>
+						<item id="server_location">
+							<rank>60</rank>
+						</item>
+
+						<item id="vip_id">
+							<rank>20</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="server_id">
+							<rank>10</rank>
+						</item>
+						<item id="vip_id">
+							<rank>20</rank>
+						</item>
+						<item id="server_cpu">
+							<rank>40</rank>
+						</item>
+						<item id="server_ram">
+							<rank>50</rank>
+						</item>
+						<item id="server_location">
+							<rank>60</rank>
+						</item>
+						<item id="server_model">
+							<rank>80</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+
+		</class>
+
 		<class id="lnkContactToApplicationSolution" _delta="define">
 			<parent>cmdbAbstractObject</parent>
 			<properties>
@@ -1933,7 +2074,7 @@
 						<item id="applicationsolution_org">
 							<rank>50</rank>
 						</item>
-						
+
 					</items>
 				</list>
 			</presentation>
