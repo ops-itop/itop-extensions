@@ -70,6 +70,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:PhysicalIP' => 'IP地址',
 	'Class:PhysicalIP/Attribute:ipaddress' => 'IP地址',
 	'Class:PhysicalIP/Attribute:connectableci_id' => '链接的设备',
+	'Class:PhysicalIP/Attribute:connectableci_name' => '链接的设备',
 	'Class:PhysicalIP/Attribute:type' => '类型',
 	'Class:PhysicalIP/Attribute:type/Value:int' => '内网',
 	'Class:PhysicalIP/Attribute:type/Value:ext' => '外网',
@@ -87,6 +88,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Menu:VirtualIP' => 'VIP地址',
 	'Menu:VirtualIP+' => '所有VIP地址',
 	'Class:VirtualIP/Attribute:connectableci_id' => '链接的集群',
+	'Class:VirtualIP/Attribute:connectableci_name' => '链接的集群',
 	'Class:VirtualIP/Attribute:type' => '类型',
 	'Class:VirtualIP/Attribute:type/Value:int' => '内网',
 	'Class:VirtualIP/Attribute:type/Value:ext' => '外网',
@@ -206,4 +208,13 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkServerToVirtualIP/Attribute:server_hostname' => '服务器主机名',
 	'Class:lnkServerToVirtualIP/Attribute:vip_id' => 'VIP',
 	'Class:lnkServerToVirtualIP/Attribute:vip_name' => 'VIP',
+));
+
+// lnkServerToCluster
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:lnkServerToCluster' => '链接 服务器/集群',
+	'Class:lnkServerToCluster/Attribute:server_id' => '服务器',
+	'Class:lnkServerToCluster/Attribute:server_hostname' => '服务器主机名',
+	'Class:lnkServerToCluster/Attribute:cluster_id' => '集群',
+	'Class:lnkServerToCluster/Attribute:cluster_name' => '集群',
 ));

@@ -1798,7 +1798,7 @@
 				</field>
 				<field id="server_hostname" xsi:type="AttributeExternalField">
 					<extkey_attcode>server_id</extkey_attcode>
-					<target_attcode>name</target_attcode>
+					<target_attcode>hostname</target_attcode>
 				</field>
 				<field id="server_cpu" xsi:type="AttributeExternalField">
 					<extkey_attcode>server_id</extkey_attcode>
