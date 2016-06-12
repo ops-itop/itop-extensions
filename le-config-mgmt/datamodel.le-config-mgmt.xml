@@ -40,7 +40,6 @@
 					<ext_key_to_remote>applicationsolution_id</ext_key_to_remote>
 					<duplicates/>
 				</field>
-
 			</fields>
 			<methods>
 				<method id="DoCheckToWrite" _delta="define">
@@ -92,7 +91,6 @@
 		}]]>
 					</code>
 				</method>
-
 			</methods>
 		</class>
 		<class id="Person">
@@ -106,7 +104,6 @@
 						<attribute id="email"/>
 					</attributes>
 				</reconciliation>
-
 			</properties>
 			<fields>
 				<field id="location_id" _delta="delete"></field>
@@ -127,10 +124,8 @@
 										<item id="employee_number" _delta="delete"></item>		
 									</items>
 								</item>
-
 							</items>
 						</item>
-
 					</items>
 				</details>
 				<search>
@@ -334,6 +329,27 @@
 			<properties>
 				<icon _delta="redefine">../le-config-mgmt/images/business1.png</icon>
 			</properties>
+			<fields>
+				<field id="applicationsolutions_list" xsi:type="AttributeLinkedSet" _delta="redefine">
+					<linked_class>ApplicationSolution</linked_class>
+					<ext_key_to_me>businessprocess_id</ext_key_to_me>
+				</field>
+			</fields>
+			<presentation>
+				<details>
+					<items>
+						<item id="contacts_list" _delta="redefine">
+							<rank>80</rank>
+						</item>
+						<item id="documents_list" _delta="redefine">
+							<rank>100</rank>
+						</item>
+						<item id="applicationsolutions_list" _delta="redefine">
+							<rank>70</rank>
+						</item>					
+					</items>
+				</details>
+			</presentation>
 		</class>
 		<class id="ApplicationSolution">
 			<properties>
