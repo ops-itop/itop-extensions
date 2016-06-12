@@ -1882,9 +1882,6 @@
 						<item id="server_location">
 							<rank>60</rank>
 						</item>
-						<item id="server_brand">
-							<rank>70</rank>
-						</item>
 						<item id="server_model">
 							<rank>80</rank>
 						</item>
