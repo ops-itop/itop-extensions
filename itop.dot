@@ -39,4 +39,6 @@ Database->FunctionalCI
 Rack->PhysicalDevice
 ISP->Typology
 lnkServerToCluster->cmdbAbstractObject
+lnkServerToVirtualIP->cmdbAbstractObject
+lnkContactToApplicationSolution->cmdbAbstractObject
 }
