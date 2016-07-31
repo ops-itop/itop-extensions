@@ -138,6 +138,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 // ApplicationSolution
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:ApplicationSolution/Name' => '%1$s.%2$s',
+	'Class:ApplicationSolution/Attribute:url_list' => 'URL列表',
+	'Class:ApplicationSolution/Attribute:url_list+' => '该APP的所有URL',
 	'Class:ApplicationSolution/Attribute:businessprocess_id' => '业务线',
 	'Class:ApplicationSolution/Attribute:name_cn' => '中文名称',
 	'Class:ApplicationSolution/Attribute:contact_list_custom' => '联系人',

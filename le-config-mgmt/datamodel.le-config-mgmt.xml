@@ -430,6 +430,10 @@
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
+				<field id="url_list" xsi:type="AttributeLinkedSet" _delta="define">
+					<linked_class>Url</linked_class>
+					<ext_key_to_me>applicationsolution_id</ext_key_to_me>
+				</field>
 
 			</fields>
 			<presentation>
@@ -438,6 +442,9 @@
 						<item id="contacts_list" _delta="delete"></item>
 						<item id="contact_list_custom" _delta="define">
 							<rank>70</rank>
+						</item>
+						<item id="url_list" _delta="define">
+							<rank>80</rank>
 						</item>
 						<item id="name_cn" _delta="define">
 							<rank>15</rank>
@@ -481,6 +488,9 @@
 						</neighbour>
 						<neighbour id="contact_custom" _delta="define">
 							<attribute>contact_list_custom</attribute>
+						</neighbour>
+						<neighbour id="url_list" _delta="define">
+							<attribute>url_list</attribute>
 						</neighbour>
 					</neighbours>
 				</relation>
