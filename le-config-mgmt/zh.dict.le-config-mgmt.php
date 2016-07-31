@@ -165,6 +165,37 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Database/Attribute:status/Value:stock+' => '库存',
 ));
 
+// Url
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:Url' => 'URL',
+	'Url:baseinfo' => '基本信息',
+	'Url:moreinfo' => '扩展信息',
+	'Url:monitorinfo' => '监控信息',
+	'Url:autocomplete' => '自动填充信息(无需填写)',
+	'Class:Url/Attribute:name' => '名称',
+	'Class:Url/Attribute:url' => 'URL',
+	'Class:Url/Attribute:applicationsolution_id' => 'APP',
+	'Class:Url/Attribute:method' => '请求方法',
+	'Class:Url/Attribute:headers' => 'Headers',
+	'Class:Url/Attribute:body' => '参数拼接',
+	'Class:Url/Attribute:monitor_node' => '监控节点',
+	'Class:Url/Attribute:interval' => '监控频率(s)',
+	'Class:Url/Attribute:timeout' => '超时阈值(s)',
+	'Class:Url/Attribute:require_code' => '正常状态码',
+	'Class:Url/Attribute:require_str' => '正常返回数据',
+	'Class:Url/Attribute:third_email' => '第三方邮箱',
+	'Class:Url/Attribute:third_phone' => '第三方手机',
+	'Class:Url/Attribute:curl' => 'cURL命令',
+	'Menu:Url' => 'URL',
+	'Menu:Url+' => '所有URL',
+	'Class:Url/Attribute:status' => '状态',
+	'Class:Url/Attribute:status+' => '',
+	'Class:Url/Attribute:status/Value:production' => '在线',
+	'Class:Url/Attribute:status/Value:production+' => '在线',
+	'Class:Url/Attribute:status/Value:stock' => '已下线',
+	'Class:Url/Attribute:status/Value:stock+' => '已下线',
+));
+
 // Rack
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Rack/Name' => '%1$s.%2$s',
