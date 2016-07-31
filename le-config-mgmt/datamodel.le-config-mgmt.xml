@@ -2437,7 +2437,30 @@
 					<target_attcode>org_id</target_attcode>
 				</field>
 			</fields>
-			<methods/>
+			<methods>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[       
+  	public function CheckToDelete(&$oDeletionPlan)
+  	{
+		$myContactId = UserRights::GetContactId();
+		$thisContactId = $this->Get('contact_id');
+  		if ($myContactId != $thisContactId && !UserRights::IsAdministrator())
+		{
+			// 普通用户不允许删除非自己名下的lnkContactToApplicationSolution
+			$oDeletionPlan->AddToDelete($this, null);
+			$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下的关联'), true);
+			$oDeletionPlan->ComputeResults();
+			return false;
+		}
+		return parent::CheckToDelete($oDeletionPlan);
+  	} 
+			]]></code>
+			</method>
+
+			</methods>
 			<presentation>
 				<details>
 					<items>
