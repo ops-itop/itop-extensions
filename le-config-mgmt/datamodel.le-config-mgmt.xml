@@ -129,17 +129,17 @@
 							</items>
 						</item>
 						<item id="col:col2">
-						  <rank>50</rank>
-						  <items>
-							<item id="fieldset:Person:notifiy">
-							  <rank>10</rank>
-							  <items>
-								<item id="mobile_phone" _delta="delete"></item>
-							  </items>
-							</item>
-						  </items>
+							<rank>50</rank>
+							<items>
+								<item id="fieldset:Person:notifiy">
+									<rank>10</rank>
+									<items>
+										<item id="mobile_phone" _delta="delete"></item>
+									</items>
+								</item>
+							</items>
 						</item>
-						
+
 					</items>
 				</details>
 				<search>
@@ -148,26 +148,26 @@
 						<item id="employee_number" _delta="delete"></item>
 						<item id="phone" _delta="delete"></item>
 						<item id="email" _delta="redefine">
-						  <rank>10</rank>
+							<rank>10</rank>
 						</item>
 						<item id="first_name" _delta="redefine">
-						  <rank>20</rank>
+							<rank>20</rank>
 						</item>
 						<item id="name" _delta="redefine">
-						  <rank>30</rank>
+							<rank>30</rank>
 						</item>
 						<item id="org_id" _delta="redefine">
-						  <rank>40</rank>
+							<rank>40</rank>
 						</item>
 						<item id="status" _delta="redefine">
-						  <rank>60</rank>
+							<rank>60</rank>
 						</item>
 						<item id="manager_id">
-						  <rank>90</rank>
+							<rank>90</rank>
 						</item>
 						<item id="mobile_phone" _delta="delete"></item>
 						<item id="notify" _delta="redefine">
-						  <rank>110</rank>
+							<rank>110</rank>
 						</item>
 					</items>
 				</search>
@@ -294,9 +294,9 @@
 		<class id="FunctionalCI">
 			<fields>
 				<field id="name" xsi:type="AttributeString" _delta="redefine">
-				  <sql>name</sql>
-				  <default_value>CI名称不能重复</default_value>
-				  <is_null_allowed>false</is_null_allowed>
+					<sql>name</sql>
+					<default_value>CI名称不能重复</default_value>
+					<is_null_allowed>false</is_null_allowed>
 				</field>
 			</fields>
 			<methods>
@@ -769,7 +769,7 @@
 			</relations>
 
 		</class>
-		
+
 		<class id="IPAddress" _delta="define">
 			<parent>cmdbAbstractObject</parent>
 			<properties>
@@ -1659,7 +1659,7 @@
 					<is_null_allowed>true</is_null_allowed>
 					<default_value/>
 				</field>				
-				
+
 				<field id="third_email" xsi:type="AttributeString">
 					<sql>third_email</sql>
 					<is_null_allowed>true</is_null_allowed>
@@ -1695,7 +1695,7 @@
 					<is_null_allowed>true</is_null_allowed>
 					<default_value/>
 				</field>
-				
+
 			</fields>
 			<presentation>
 				<details _delta="define">
@@ -1878,7 +1878,7 @@
 				}]]></code>
 				</method>
 			</methods>
-			
+
 		</class>		
 
 		<class id="Rack" _delta="define">
@@ -2467,7 +2467,7 @@
 		return parent::CheckToDelete($oDeletionPlan);
   	} 
 			]]></code>
-			</method>
+				</method>
 
 			</methods>
 			<presentation>
@@ -2525,6 +2525,38 @@
 
 		</class>
 
+		<class id="lnkContactToFunctionalCI">
+			<fields>
+				<field id="contact_email" xsi:type="AttributeExternalField" _delta="define">
+					<extkey_attcode>contact_id</extkey_attcode>
+					<target_attcode>email</target_attcode>
+				</field>
+				<field id="contact_phone" xsi:type="AttributeExternalField" _delta="define">
+					<extkey_attcode>contact_id</extkey_attcode>
+					<target_attcode>phone</target_attcode>
+				</field>
+
+			</fields>
+			<presentation>
+				<list>
+					<items _delta="redefine">
+						<item id="functionalci_id">
+							<rank>10</rank>
+						</item>
+						<item id="contact_id">
+							<rank>20</rank>
+						</item>
+						<item id="contact_email">
+							<rank>30</rank>
+						</item>
+						<item id="contact_phone">
+							<rank>40</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+
+		</class>
 		<class id="lnkApplicationSolutionToFunctionalCI">
 			<properties>
 				<icon _delta="redefine">../le-config-mgmt/images/link.png</icon>
@@ -2652,7 +2684,7 @@
 								<rank>5</rank>
 								<class>Url</class>
 							</dashlet>							
-							
+
 						</dashlets>
 					</cell>
 				</cells>
@@ -2683,7 +2715,7 @@
 			<oql>SELECT Url</oql>
 			<do_search>1</do_search>
 		</menu>
-		
+
 		<menu id="Cluster" xsi:type="OQLMenuNode" _delta="define">
 			<rank>30</rank>
 			<parent>SearchCIs</parent>
