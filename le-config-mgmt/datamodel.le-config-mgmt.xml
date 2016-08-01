@@ -102,7 +102,7 @@
 						<attribute id="org_id"/>
 						<attribute id="org_name"/>
 						<attribute id="email"/>
-						<attribute id="mobile_phone"/>
+						<attribute id="phone"/>
 					</attributes>
 				</reconciliation>
 			</properties>
@@ -110,6 +110,7 @@
 				<field id="location_id" _delta="delete"></field>
 				<field id="location_name" _delta="delete"></field>
 				<field id="employee_number" _delta="delete"></field>
+				<field id="mobile_phone" _delta="delete"></field>
 			</fields>
 			<presentation>
 				<details>
@@ -127,6 +128,18 @@
 								</item>
 							</items>
 						</item>
+						<item id="col:col2">
+						  <rank>50</rank>
+						  <items>
+							<item id="fieldset:Person:notifiy">
+							  <rank>10</rank>
+							  <items>
+								<item id="mobile_phone" _delta="delete"></item>
+							  </items>
+							</item>
+						  </items>
+						</item>
+						
 					</items>
 				</details>
 				<search>
@@ -134,41 +147,37 @@
 						<item id="location_id" _delta="delete"></item>
 						<item id="employee_number" _delta="delete"></item>
 						<item id="phone" _delta="delete"></item>
-						<item id="email">
+						<item id="email" _delta="redefine">
 						  <rank>10</rank>
 						</item>
-						<item id="first_name">
+						<item id="first_name" _delta="redefine">
 						  <rank>20</rank>
 						</item>
-						<item id="name">
+						<item id="name" _delta="redefine">
 						  <rank>30</rank>
 						</item>
-						<item id="org_id">
+						<item id="org_id" _delta="redefine">
 						  <rank>40</rank>
 						</item>
-						<item id="status">
+						<item id="status" _delta="redefine">
 						  <rank>60</rank>
 						</item>
 						<item id="manager_id">
 						  <rank>90</rank>
 						</item>
-						<item id="mobile_phone">
-						  <rank>100</rank>
-						</item>
-						<item id="notify">
+						<item id="mobile_phone" _delta="delete"></item>
+						<item id="notify" _delta="redefine">
 						  <rank>110</rank>
 						</item>
-
 					</items>
 				</search>
 				<list>
 					<items>
 						<item id="location_id" _delta="delete"></item>
-						<item id="phone" _delta="delete"></item>
 						<item id="email" _delta="redefine">
 							<rank>10</rank>
 						</item>
-						<item id="mobile_phone" _delta="define">
+						<item id="phone" _delta="redefine">
 							<rank>20</rank>
 						</item>
 						<item id="status" _delta="redefine">

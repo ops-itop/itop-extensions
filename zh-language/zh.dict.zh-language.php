@@ -1234,7 +1234,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'UI:SelectOne' => '-- 选择一个 --',
 	'UI:Login:Welcome' => '欢迎来到 CMDB 系统!',
 	'UI:Login:IncorrectLoginPassword' => '登录名或密码有误, 请重试.',
-	'UI:Login:IdentifyYourself' => '<a href="https://sso.xxx.com"><span style="color:red;font-size:18px">SSO用户点此登录</font></a>',
+	'UI:Login:IdentifyYourself' => '<a href="https://sso.xxx.com"><span style="color:red;font-size:22px">SSO用户点此登录</font></a>',
 
 	'UI:Login:UserNamePrompt' => '用户名',
 	'UI:Login:PasswordPrompt' => '密码',
@@ -2678,7 +2678,7 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 	'Class:Contact/Attribute:org_name+' => '',
 	'Class:Contact/Attribute:email' => 'Email',
 	'Class:Contact/Attribute:email+' => '',
-	'Class:Contact/Attribute:phone' => '电话',
+	'Class:Contact/Attribute:phone' => '手机号',
 	'Class:Contact/Attribute:phone+' => '',
 	'Class:Contact/Attribute:notify' => '通知',
 	'Class:Contact/Attribute:notify+' => '',

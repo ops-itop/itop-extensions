@@ -157,7 +157,7 @@ Dict::Add('ZH CN', "Chinese", "简体中文", array(
 	'Class:Contact/Attribute:org_name+' => '',
 	'Class:Contact/Attribute:email' => 'Email',
 	'Class:Contact/Attribute:email+' => '',
-	'Class:Contact/Attribute:phone' => '电话',
+	'Class:Contact/Attribute:phone' => '手机号',
 	'Class:Contact/Attribute:phone+' => '',
 	'Class:Contact/Attribute:notify' => '通知',
 	'Class:Contact/Attribute:notify+' => '',

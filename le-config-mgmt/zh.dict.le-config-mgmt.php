@@ -207,6 +207,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 
 // Contact
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:Contact/Attribute:phone' => '手机号',
 	'Class:Contact/Attribute:applicationsolution_list' => '负责的APP',
 	'Class:Contact/Attribute:applicationsolution_list+' => '该联系人负责的所有APP',
 ));
