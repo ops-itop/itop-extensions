@@ -1599,7 +1599,7 @@
 					<sql>applicationsolution_id</sql>
 					<target_class>ApplicationSolution</target_class>
 					<is_null_allowed>false</is_null_allowed>
-					<filter>SELECT ApplicationSolution AS app WHERE app.org_id = :this->org_id</filter>
+					<filter>SELECT ApplicationSolution AS app JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id = app.id WHERE l.contact_id = :current_contact_id</filter>
 					<on_target_delete>DEL_AUTO</on_target_delete>
 					<allow_target_creation>false</allow_target_creation>
 				</field>
@@ -2776,6 +2776,11 @@
 			<group id="EditCIs" _delta="define">
 				<classes>
 					<class id="lnkContactToApplicationSolution"/>
+				</classes>
+			</group>
+			<group id="Apps" _delta="define">
+				<classes>
+					<class id="ApplicationSolution"/>
 				</classes>
 			</group>
 
