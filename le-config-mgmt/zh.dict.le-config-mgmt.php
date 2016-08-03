@@ -214,7 +214,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 
 // lnkContactToApplicationSolution
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
-	'Class:lnkContactToApplicationSolution' => '链接 联系人/APP',
+	'Menu:lnkContactToApplicationSolution' => '联系人/APP',
+	'Menu:lnkContactToApplicationSolution+' => '所有 联系人/APP 关联',
+	'Class:lnkContactToApplicationSolution' => '联系人/APP',
 	'Class:lnkContactToApplicationSolution/Attribute:applicationsolution_id' => 'APP',
 	'Class:lnkContactToApplicationSolution/Attribute:applicationsolution_name' => 'APP名称',
 	'Class:lnkContactToApplicationSolution/Attribute:applicationsolution_org' => 'APP所属组织',
@@ -222,6 +224,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkContactToApplicationSolution/Attribute:contact_id' => '联系人',
 	'Class:lnkContactToApplicationSolution/Attribute:contact_name' => '联系人名称',
 	'Class:lnkContactToApplicationSolution/Attribute:contact_email' => '联系人邮箱',
+	'Class:lnkContactToApplicationSolution/Error:CanOnlyAddLinkForYourself' => '仅能创建自己的关联 - 无法操作 %1$s',
 ));
 
 // ISP
