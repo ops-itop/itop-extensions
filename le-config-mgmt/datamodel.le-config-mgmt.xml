@@ -504,8 +504,31 @@
 					</neighbours>
 				</relation>
 			</relations>
-
-		</class>
+			<methods>
+				<method id="DisplayBareRelations" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[      public function DisplayBareRelations(WebPage $oPage, $bEditMode = false)
+					{
+						parent::DisplayBareRelations($oPage, $bEditMode);
+						
+						$grafana = trim(MetaModel::GetModuleSetting('le-config-mgmt', 'grafana_app_url', 'http://localhost/'));
+						$app = $this->Get('name');
+						$tabUrl = $grafana . "?var-app=$app.8080";
+						$iframe_start = '<iframe style="border:0;padding:0;margin:0;width:100%;height:500px;overflow:auto" ';
+						$iframe_end = '</iframe></div>';
+						$addStr = $iframe_start . 'src=' . '"' . $tabUrl . '"' . '>' . $iframe_end;
+						if (!$bEditMode)
+						{
+							$oPage->SetCurrentTab('监控');
+							$oPage->add('<div id="grafana_app_url" style="width:100%;height:500px;">');
+							$oPage->add($addStr);
+						}
+					}]]></code>
+				</method>
+			</methods>		
+	  </class>
 		<class id="PhysicalDevice">
 			<fields>
 				<field id="hostname" xsi:type="AttributeString" _delta="define">
