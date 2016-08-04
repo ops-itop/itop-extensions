@@ -196,6 +196,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Url/Attribute:status/Value:production+' => '在线',
 	'Class:Url/Attribute:status/Value:stock' => '已下线',
 	'Class:Url/Attribute:status/Value:stock+' => '已下线',
+	'Class:Url/Stimulus:ev_new' => '新建',
+	'Class:Url/Stimulus:ev_online' => '上线监控',
+	'Class:Url/Stimulus:ev_offline' => '暂停监控',
 ));
 
 // Rack

@@ -1697,7 +1697,45 @@
 				</field>
 
 			</fields>
-			
+			<lifecycle>
+				<attribute>status</attribute>
+				<stimuli>
+					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
+					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
+				</stimuli>
+				<states>
+					<state id="production">
+						<flags>
+							<attribute id="org_id">
+								<read_only/>
+							</attribute>
+							<attribute id="business_criticity">
+								<read_only/>
+							</attribute>
+							<attribute id="curl">
+								<read_only/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="stock">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags/>
+						<transitions>
+							<transition id="ev_online">
+								<target>production</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+				</states>
+			</lifecycle>
 			<presentation>
 				<details _delta="define">
 					<items>
@@ -1838,7 +1876,21 @@
 				</list>
 			</presentation>
 			<methods>
-					
+				<method id="ComputeValues" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+					public function ComputeValues()
+					{
+						$app = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $this->Get('applicationsolution_name'), false);
+						$this->Set("org_id", $app->Get("org_id"));
+						$this->Set("business_criticity", $app->Get("business_criticity"));
+						return parent::ComputeValues();
+					}
+					]]>
+					</code>
+				</method>
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
 					<access>protected</access>
