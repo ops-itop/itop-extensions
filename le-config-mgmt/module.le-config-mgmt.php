@@ -44,6 +44,8 @@ SetupWebPage::AddModule(
 		//
 		'settings' => array(
 			// Module specific settings go here, if any
+			'grafana_app_url' => 'http://localhost/',
+			'grafana_api_url' => 'http://localhost/',
 		),
 	)
 );
