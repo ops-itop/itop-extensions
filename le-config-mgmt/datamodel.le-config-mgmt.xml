@@ -528,7 +528,7 @@
 					}]]></code>
 				</method>
 			</methods>		
-	  </class>
+		</class>
 		<class id="PhysicalDevice">
 			<fields>
 				<field id="hostname" xsi:type="AttributeString" _delta="define">
@@ -1654,7 +1654,7 @@
 				<field id="monitor_node" xsi:type="AttributeEnum">
 					<values>
 						<value id="cn">China</value>
-						<value id="us">United States</value>
+						<value id="us">UnitedStates</value>
 						<value id="hk">HongKong</value>
 					</values>
 					<sql>monitor_node</sql>
@@ -2811,7 +2811,7 @@
 			<oql>SELECT lnkContactToApplicationSolution</oql>
 			<do_search>1</do_search>
 		</menu>
-		
+
 		<menu id="Url" xsi:type="OQLMenuNode" _delta="define">
 			<rank>21</rank>
 			<parent>SearchCIs</parent>
