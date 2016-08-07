@@ -1945,6 +1945,14 @@
 					<code><![CDATA[       public function DoCheckToWrite()
 				{
 					parent::DoCheckToWrite();
+					
+					// 只允许编辑自己名下APP的Url
+					$myContactId = UserRights::GetContactId();
+					if($this->GetKey() != $myContactId && !UserRights::IsAdministrator())
+					{
+						$this->m_aCheckIssues[] = Dict::Format("Class:Person/Error:CanOnlyUpdateYourself", $myContactId);
+					}
+					
 					$this->Set("name", $this->Get("url"));
 					
 					// 自动填充curl字段
@@ -1975,7 +1983,6 @@
 						$curl = "curl -s X$method " . $headers . $url . " --data \"" . $body . "\"";
 					}
 					$this->Set("curl", $curl);
-					
 					
 				}]]></code>
 				</method>
@@ -2910,7 +2917,11 @@
 					<class id="ApplicationSolution"/>
 				</classes>
 			</group>
-
+			<group id="Urls" _delta="define">
+				<classes>
+					<class id="Url"/>					
+				</classes>
+			</group>
 		</groups>
 		<profiles>
 			<profile id="4" _delta="delete"></profile>
@@ -2974,7 +2985,16 @@
 							<action id="action:delete">allow</action>
 						</actions>
 					</group>
-
+					<group id="Urls">
+						<actions>
+							<action id="action:write">allow</action>
+							<action id="action:bulk write">allow</action>
+							<action id="action:delete">allow</action>
+							<action id="stimulus:ev_new">allow</action>
+							<action id="stimulus:ev_online">allow</action>
+							<action id="stimulus:ev_offline">allow</action>
+						</actions>
+					</group>
 					<group id="*">
 						<actions>
 							<action id="action:read">allow</action>
