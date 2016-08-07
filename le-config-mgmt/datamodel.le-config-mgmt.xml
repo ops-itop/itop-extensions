@@ -1698,13 +1698,13 @@
 				<field id="interval" xsi:type="AttributeString">
 					<sql>interval</sql>
 					<is_null_allowed>true</is_null_allowed>
-					<default_value>30</default_value>
+					<default_value>20</default_value>
 					<validation_pattern>^[1-9][0-9]$|^1[0-8][0-9]$</validation_pattern>
 				</field>
 				<field id="timeout" xsi:type="AttributeString">
 					<sql>timeout</sql>
 					<is_null_allowed>true</is_null_allowed>
-					<default_value>3</default_value>
+					<default_value>1</default_value>
 					<validation_pattern>^[0-9]+\.?[0-9]*$</validation_pattern>
 				</field>
 				<field id="failed_count" xsi:type="AttributeString">
@@ -1899,6 +1899,30 @@
 				</list>
 			</presentation>
 			<methods>
+				<method id="DisplayBareRelations" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[      public function DisplayBareRelations(WebPage $oPage, $bEditMode = false)
+					{
+						parent::DisplayBareRelations($oPage, $bEditMode);
+						
+						$grafana = trim(MetaModel::GetModuleSetting('le-config-mgmt', 'grafana_url_url', 'http://localhost/'));
+						$app = $this->Get('applicationsolution_name');
+						$monitor_node = $this->Get('monitor_node');
+						$url = urlencode($this->Get('url'));
+						$tabUrl = $grafana . "?var-monit_node=$monitor_node&var-app=$app&var-url=$url";
+						$iframe_start = '<iframe style="border:0;padding:0;margin:0;width:100%;height:500px;overflow:auto" ';
+						$iframe_end = '</iframe></div>';
+						$addStr = $iframe_start . 'src=' . '"' . $tabUrl . '"' . '>' . $iframe_end;
+						if (!$bEditMode)
+						{
+							$oPage->SetCurrentTab('监控');
+							$oPage->add('<div id="grafana_url_url" style="width:100%;height:500px;">');
+							$oPage->add($addStr);
+						}
+					}]]></code>
+				</method>
 				<method id="ComputeValues" _delta="define">
 					<static>false</static>
 					<access>public</access>
