@@ -2628,6 +2628,25 @@
 			if ($myContactId != $thisContactId && !UserRights::IsAdministrator()){
 				$this->m_aCheckIssues[] = Dict::Format("Class:lnkContactToApplicationSolution/Error:CanOnlyAddLinkForYourself", $thisContactName);
 			}
+			
+			$aChanges = $this->ListChanges();
+			if($aChanges)
+			{
+				$friendlyname = $this->Get('contact_id') . " " . $this->Get('applicationsolution_id');
+				if(!$this->IsNew())
+				{
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkContactToApplicationSolution/Error:OnlyAddAndDeleteIsAllow", $friendlyname);				
+				}else
+				{
+					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkContactToApplicationSolution WHERE friendlyname=:friendlyname");
+					$oSet = new DBObjectSet($oSearch, array(), array("friendlyname" => $friendlyname));
+					
+					if ($oSet->Count() > 0)
+					{
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkContactToApplicationSolution/Error:ThisLnkAlreadyExists", $friendlyname);
+					}				
+				}
+			}
 		}]]>
 					</code>
 				</method>
