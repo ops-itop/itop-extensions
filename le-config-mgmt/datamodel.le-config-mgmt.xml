@@ -1985,7 +1985,6 @@
 					
 					$lnkFriendlyName = "$myContactId $appId";
 					$lnk = MetaModel::GetObjectFromOQL("SELECT lnkContactToApplicationSolution WHERE friendlyname='$lnkFriendlyName'");
-					print_r($lnk);
 					
 					if(!$lnk && !UserRights::IsAdministrator())
 					{
