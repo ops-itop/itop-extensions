@@ -62,7 +62,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:IPAddress/Attribute:connect_id' => '设备',
 	'Class:IPAddress/Attribute:connect_name' => '设备',
 	'Menu:IPAddress' => 'IP地址',
-	'Menu:IPAddress+' => '所有IP地址'
+	'Menu:IPAddress+' => '所有IP地址',
+	
+	'Class:IPAddress/Error:IPAddressMustBeUnique' => '%$1s 已被占用，IP地址必须唯一',
 ));
 
 // PhysicalIP
@@ -124,7 +126,6 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 // DoCheckToWrite
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Server/Error:ServerMustBeUnique' => '%1s 已被占用，服务器必须唯一',
-	'Class:IPAdress/Error:IPAdressMustBeUnique' => '%1s 已被占用，IP地址必须唯一',
 	'Class:Domain/Error:DomainMustBeUnique' => '%1s 已被占用，域名必须唯一',
 	'Class:Cluster/Error:ClusterMustBeNotNull' => '集群名称不能为空',
 	'Class:Cluster/Error:ClusterMustBeUnique' => '%1s 已被占用，集群必须唯一',
@@ -199,6 +200,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Url/Stimulus:ev_new' => '新建',
 	'Class:Url/Stimulus:ev_online' => '上线监控',
 	'Class:Url/Stimulus:ev_offline' => '暂停监控',
+	
+	'Class:Url/Error:CanOnlyUpdateUrlOfYours' => '只能编辑自己名下APP的URL',
+	'Class:Cluster/Error:UrlMustBeUnique' => '%1s 已被占用，URL必须唯一',
 ));
 
 // Rack
@@ -213,6 +217,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Contact/Attribute:phone' => '手机号',
 	'Class:Contact/Attribute:applicationsolution_list' => '负责的APP',
 	'Class:Contact/Attribute:applicationsolution_list+' => '该联系人负责的所有APP',
+	
+	'Class:Contact/Error:ContactEmailMustBeUnique' => '%$1s 此邮箱已被占用',
 ));
 
 // lnkContactToApplicationSolution

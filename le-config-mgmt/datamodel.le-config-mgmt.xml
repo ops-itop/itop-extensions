@@ -1938,6 +1938,30 @@
 					]]>
 					</code>
 				</method>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[       
+  	public function CheckToDelete(&$oDeletionPlan)
+  	{
+		$myContactId = UserRights::GetContactId();
+		$appId = $this->Get('applicationsolution_id');
+		$lnkFriendlyName = "$myContactId $appId";
+		$lnk = MetaModel::GetObjectFromOQL("SELECT lnkContactToApplicationSolution WHERE friendlyname='$lnkFriendlyName'");
+		// 普通用户不允许删除非自己名下APP的Url
+		if(!$lnk && !UserRights::IsAdministrator())
+		{
+			$oDeletionPlan->AddToDelete($this, null);
+			$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下APP的Url'), true);
+			$oDeletionPlan->ComputeResults();
+			return false;
+		}
+		
+		return parent::CheckToDelete($oDeletionPlan);
+  	} 
+			]]></code>
+				</method>				
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
 					<access>protected</access>
@@ -1946,11 +1970,49 @@
 				{
 					parent::DoCheckToWrite();
 					
+					$aChanges = $this->ListChanges();
 					// 只允许编辑自己名下APP的Url
 					$myContactId = UserRights::GetContactId();
-					if($this->GetKey() != $myContactId && !UserRights::IsAdministrator())
+					$url = MetaModel::GetObjectByColumn("Url", "id", $this->GetKey(), false);
+					
+					if ($this->IsNew())
 					{
-						$this->m_aCheckIssues[] = Dict::Format("Class:Person/Error:CanOnlyUpdateYourself", $myContactId);
+						$appId = $this->Get('applicationsolution_id');
+					}else
+					{
+						$appId = $url->Get('applicationsolution_id');
+					}
+					
+					$lnkFriendlyName = "$myContactId $appId";
+					$lnk = MetaModel::GetObjectFromOQL("SELECT lnkContactToApplicationSolution WHERE friendlyname='$lnkFriendlyName'");
+					print_r($lnk);
+					
+					if(!$lnk && !UserRights::IsAdministrator())
+					{
+						$this->m_aCheckIssues[] = Dict::Format("Class:Url/Error:CanOnlyUpdateUrlOfYours", $myContactId);
+					}
+					
+					// applicationsolution_id 有 filter 限制时，管理员更新Url类会导致app变化
+					// 因此有了下面几行代码，但是同时也带来一个问题：管理员无法修改Url的app属性
+					// 最好的方法是filter只对普通用户生效，但是iTop貌似不支持这种做法
+					// 另一个解决方案是取消filter限制，但是导致用户的下拉列表有很多选项
+					// 权衡中
+					if(UserRights::IsAdministrator())
+					{
+						$this->Set('applicationsolution_id', $appId);
+					}
+					
+					// 当用户更改APP的时候做校验是不是其他人名下的APP
+					// 当然，在applicationsolution_id有filter的时候这段代码可以不要
+					if(array_key_exists('applicationsolution_id', $aChanges))
+					{
+						$appId = $this->Get('applicationsolution_id');
+						$lnkFriendlyName = "$myContactId $appId";
+						$lnk = MetaModel::GetObjectFromOQL("SELECT lnkContactToApplicationSolution WHERE friendlyname='$lnkFriendlyName'");
+						if(!$lnk && !UserRights::IsAdministrator())
+						{
+							$this->m_aCheckIssues[] = Dict::Format("Class:Url/Error:CanOnlyUpdateUrlOfYours", $myContactId);
+						}
 					}
 					
 					$this->Set("name", $this->Get("url"));
