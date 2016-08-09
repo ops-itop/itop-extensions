@@ -1616,7 +1616,7 @@
 				<field id="url" xsi:type="AttributeString" _delta="define">
 					<sql>url</sql>
 					<is_null_allowed>false</is_null_allowed>
-					<validation_pattern>^(http|https)://[a-zA-Z0-9-_\./]+$</validation_pattern>
+					<validation_pattern>^(http|https)://[a-zA-Z0-9:-_\./]+$</validation_pattern>
 				</field>
 				<field id="applicationsolution_id" xsi:type="AttributeExternalKey">
 					<sql>applicationsolution_id</sql>
