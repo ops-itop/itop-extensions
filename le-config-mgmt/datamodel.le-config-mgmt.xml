@@ -2884,27 +2884,119 @@
 			</definition>
 		</menu>
 
-		<menu id="WelcomeMenuPage" xsi:type="DashboardMenuNode">
+		<menu id="WelcomeMenuPage" xsi:type="DashboardMenuNode" _delta="redefine">
+			<rank>10</rank>
+			<parent>WelcomeMenu</parent>
 			<definition>
+				<layout>DashboardLayoutTwoCols</layout>
+				<title></title>
+				<auto_reload>
+					<enabled>false</enabled>
+					<interval>300</interval>
+				</auto_reload>
 				<cells>
-					<cell>
+					<cell id="0" _delta="redefine">
+						<rank>0</rank>
 						<dashlets>
-							<dashlet id="5" _delta="delete"></dashlet>
-							<dashlet id="6" _delta="delete"></dashlet>
-							<dashlet id="8" _delta="delete"></dashlet>
-							<dashlet id="domain" xsi:type="DashletBadge"  _delta="define">
-								<rank>4</rank>
-								<class>Domain</class>
+							<dashlet id="1" xsi:type="DashletHeaderStatic">
+								<rank>0</rank>
+								<title>Menu:ConfigManagementCI</title>
+								<icon>itop-welcome-itil/images/database.png</icon>
 							</dashlet>
-							<dashlet id="database" xsi:type="DashletBadge"  _delta="define">
+							<dashlet id="2" xsi:type="DashletBadge">
+								<rank>1</rank>
+								<class>BusinessProcess</class>
+							</dashlet>
+							<dashlet id="3" xsi:type="DashletBadge">
+								<rank>2</rank>
+								<class>ApplicationSolution</class>
+							</dashlet>
+							<dashlet id="4" xsi:type="DashletBadge">
+								<rank>3</rank>
+								<class>Contact</class>
+							</dashlet>
+							<dashlet id="database" xsi:type="DashletBadge">
 								<rank>4</rank>
 								<class>Database</class>
+							</dashlet>
+							<dashlet id="domain" xsi:type="DashletBadge">
+								<rank>5</rank>
+								<class>Domain</class>
+							</dashlet>
+							<dashlet id="7" xsi:type="DashletBadge">
+								<rank>6</rank>
+								<class>Server</class>
 							</dashlet>
 							<dashlet id="url" xsi:type="DashletBadge"  _delta="define">
 								<rank>5</rank>
 								<class>Url</class>
 							</dashlet>							
 
+						</dashlets>
+					</cell>
+					<cell id="statistics" _delta="redefine">
+						<rank>1</rank>
+						<dashlets>
+							<dashlet id="8" xsi:type="DashletHeaderStatic">
+								<rank>0</rank>
+								<title>&#x7EDF;&#x8BA1;&#x4FE1;&#x606F;</title>
+								<icon>itop-config-mgmt/images/webserver.png</icon>
+							</dashlet>
+							<dashlet id="9" xsi:type="DashletGroupByPie">
+								<rank>1</rank>
+								<title>Server Brand</title>
+								<query>SELECT Server</query>
+								<group_by>brand_id</group_by>
+								<style>pie</style>
+							</dashlet>
+						</dashlets>
+					</cell>
+					<cell id="2" _delta="redefine">
+						<rank>2</rank>
+						<dashlets>
+							<dashlet id="10" xsi:type="DashletGroupByPie">
+								<rank>2</rank>
+								<title>Server Location</title>
+								<query>SELECT Server</query>
+								<group_by>location_id</group_by>
+								<style>pie</style>
+							</dashlet>	
+						</dashlets>							
+					</cell>
+					<cell id="3" _delta="redefine">
+						<rank>3</rank>
+						<dashlets>
+							<dashlet id="12" xsi:type="DashletGroupByPie">
+								<rank>0</rank>
+								<title>Business - Org</title>
+								<query>SELECT BusinessProcess</query>
+								<group_by>org_id</group_by>
+								<style>pie</style>
+							</dashlet>
+						</dashlets>						
+					</cell>
+					<cell id="4" _delta="redefine">
+						<rank>4</rank>
+						<dashlets>
+							<dashlet id="13" xsi:type="DashletGroupByPie">
+								<rank>0</rank>
+								<title>App - Business</title>
+								<query>SELECT ApplicationSolution</query>
+								<group_by>businessprocess_id</group_by>
+								<style>pie</style>
+							</dashlet>
+						</dashlets>
+					</cell>
+					<cell id="5" _delta="redefine">
+						<rank>5</rank>
+						<dashlets>
+							<dashlet id="11" xsi:type="DashletGroupByPie">
+								<rank>7</rank>
+								<title>Person - Org</title>
+								<query>SELECT Person</query>
+								<group_by>org_id</group_by>
+								<style>pie</style>
+							</dashlet>							
 						</dashlets>
 					</cell>
 				</cells>
