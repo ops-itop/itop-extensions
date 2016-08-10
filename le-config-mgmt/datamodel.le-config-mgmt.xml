@@ -223,7 +223,6 @@
 				</reconciliation>
 				<icon _delta="redefine">../le-config-mgmt/images/idc.png</icon>
 			</properties>
-
 			<fields>
 				<field id="isp_id" xsi:type="AttributeExternalKey" _delta="define">
 					<sql>isp_id</sql>
@@ -239,9 +238,23 @@
 				<field id="org_name" _delta="delete"></field>
 				<field id="postal_code" _delta="delete"></field>
 				<field id="person_list" _delta="delete"></field>
-
+				<field id="physicaldevice_list" _delta="delete"></field>
+				<field id="server_list" xsi:type="AttributeLinkedSet" _delta="define">
+					<linked_class>Server</linked_class>
+					<ext_key_to_me>location_id</ext_key_to_me>
+					<edit_mode>add_only</edit_mode>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+				</field>
+				<field id="rack_list" xsi:type="AttributeLinkedSet" _delta="define">
+					<linked_class>Rack</linked_class>
+					<ext_key_to_me>location_id</ext_key_to_me>
+					<edit_mode>add_only</edit_mode>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+				</field>
+				
 			</fields>
-
 			<presentation>
 				<details>
 					<items>
@@ -251,6 +264,14 @@
 						<item id="org_id" _delta="delete"></item>
 						<item id="postal_code" _delta="delete"></item>
 						<item id="person_list" _delta="delete"></item>
+						<item id="physicaldevice_list" _delta="delete"></item>
+						<item id="server_list">
+							<rank>90</rank>
+						</item>
+						<item id="rack_list">
+							<rank>100</rank>
+						</item>
+						
 					</items>
 				</details>
 				<search>
@@ -284,9 +305,12 @@
 			<relations _delta="define">
 				<relation id="impacts">
 					<neighbours>
-						<neighbour id="rack">
-							<attribute>physicaldevice_list</attribute>
+						<neighbour id="server">
+							<attribute>server_list</attribute>
 						</neighbour>
+						<neighbour id="rack">
+							<attribute>rack_list</attribute>
+						</neighbour>						
 					</neighbours>
 				</relation>
 			</relations>

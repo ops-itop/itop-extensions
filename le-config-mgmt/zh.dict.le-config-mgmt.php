@@ -134,6 +134,10 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 // Location
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Location/Attribute:isp_id' => '运营商',
+	'Class:Location/Attribute:server_list' => '服务器列表',
+	'Class:Location/Attribute:server_list+' => '该机房的素有服务器',
+	'Class:Location/Attribute:rack_list' => '机柜列表',
+	'Class:Location/Attribute:rack_list+' => '该机房的所有机柜',
 ));
 
 // ApplicationSolution
