@@ -2055,13 +2055,14 @@
 					
 					// 自动填充curl字段
 					$method = $this->Get("method");
-					$lines = explode("\n", $this->Get("headers"));
+					$headers_arr = json_decode($this->Get("headers"), true);
 					$headers = "";
-					foreach ($lines as $header)
+					foreach($headers_arr as $k=>$v)
 					{
-						if ($header != "")
+						$k = str_replace(" ", "", $k);
+						if($k != "")
 						{
-							$headers = $headers . "-H \"$header\" ";
+							$headers = $headers . "-H \"$k: $v\" ";
 						}
 					}
 
