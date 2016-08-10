@@ -1971,6 +1971,19 @@
 					parent::DoCheckToWrite();
 					
 					$aChanges = $this->ListChanges();
+					//检查headers字段，只允许空值和json格式的值
+					if(array_key_exists('headers', $aChanges))
+					{
+						$sHeader = $aChanges['headers'];
+						if($sHeader != "")
+						{
+							json_decode($sHeader);
+							if(json_last_error() != JSON_ERROR_NONE)
+							{
+								$this->m_aCheckIssues[] = Dict::Format("Class:Url/Error:HeadersExpectJsonFormat", $sHeader);
+							}
+						}
+					}
 					// 只允许编辑自己名下APP的Url
 					$myContactId = UserRights::GetContactId();
 					$url = MetaModel::GetObjectByColumn("Url", "id", $this->GetKey(), false);
