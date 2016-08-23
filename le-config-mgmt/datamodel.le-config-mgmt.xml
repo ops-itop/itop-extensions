@@ -1613,6 +1613,7 @@
 				<db_final_class_field/>
 				<naming>
 					<attributes _delta="define">
+						<attribute id="method"/>
 						<attribute id="applicationsolution_name"/>
 						<attribute id="url"/>
 					</attributes>
@@ -1937,7 +1938,8 @@
 						$app = $this->Get('applicationsolution_name');
 						$monitor_node = $this->Get('monitor_node');
 						$url = urlencode($this->Get('url'));
-						$tabUrl = $grafana . "?var-monit_node=$monitor_node&var-app=$app&var-url=$url";
+						$method = $this->Get('method');
+						$tabUrl = $grafana . "?var-monit_node=$monitor_node&var-app=$app&var-url=$url&method=$method";
 						$iframe_start = '<iframe style="border:0;padding:0;margin:0;width:100%;height:500px;overflow:auto" ';
 						$iframe_end = '</iframe></div>';
 						$addStr = $iframe_start . 'src=' . '"' . $tabUrl . '"' . '>' . $iframe_end;
