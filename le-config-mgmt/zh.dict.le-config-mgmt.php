@@ -206,7 +206,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Url/Stimulus:ev_offline' => '暂停监控',
 	
 	'Class:Url/Error:CanOnlyUpdateUrlOfYours' => '只能编辑自己名下APP的URL',
-	'Class:Url/Error:UrlMustBeUnique' => '%1s 已被占用，URL必须唯一',
+	'Class:Url/Error:UrlMustBeUnique' => '%1s 已被占用，APP.URL必须唯一',
+	'Class:Url/Name' => '%1$s.%2$s',
+
 ));
 
 // Rack

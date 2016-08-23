@@ -1613,6 +1613,7 @@
 				<db_final_class_field/>
 				<naming>
 					<attributes _delta="define">
+						<attribute id="applicationsolution_name"/>
 						<attribute id="url"/>
 					</attributes>
 				</naming>
@@ -2057,15 +2058,18 @@
 					$method = $this->Get("method");
 					$headers_arr = json_decode($this->Get("headers"), true);
 					$headers = "";
-					foreach($headers_arr as $k=>$v)
+					if($headers_arr)
 					{
-						$k = str_replace(" ", "", $k);
-						if($k != "")
+						foreach($headers_arr as $k=>$v)
 						{
-							$headers = $headers . "-H \"$k: $v\" ";
+							$k = str_replace(" ", "", $k);
+							if($k != "")
+							{
+								$headers = $headers . "-H \"$k: $v\" ";
+							}
 						}
 					}
-
+					
 					if($method == "GET")
 					{
 						$url = $this->Get("url");
