@@ -337,7 +337,14 @@
 				{
 					parent::DoCheckToWrite();
 					$ci_id = $this->GetKey();
-					$this->Set('ci_id',$ci_id);
+					if(!$ci_id)
+					{
+						$this->Set('ci_id',time());
+					}else
+					{
+						$this->Set('ci_id',$ci_id);
+					}
+					
 					$finalclass = $this->Get('finalclass');
 					/* all_ip基于PhysicalIP类的变化，这里无需处理
 					if($finalclass == "Server")
