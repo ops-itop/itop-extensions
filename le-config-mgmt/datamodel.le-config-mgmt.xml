@@ -1634,6 +1634,7 @@
 				<db_final_class_field/>
 				<naming>
 					<attributes _delta="define">
+						<attribute id="monitor_node"/>
 						<attribute id="method"/>
 						<attribute id="applicationsolution_name"/>
 						<attribute id="url"/>
