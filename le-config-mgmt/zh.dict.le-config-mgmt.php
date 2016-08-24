@@ -270,3 +270,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkServerToCluster/Attribute:cluster_id' => '集群',
 	'Class:lnkServerToCluster/Attribute:cluster_name' => '集群',
 ));
+
+
+// FunctionalCI
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:FunctionalCI/Attribute:ci_id' => 'ID',
+));

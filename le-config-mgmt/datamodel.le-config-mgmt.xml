@@ -322,6 +322,11 @@
 					<default_value>CI名称不能重复</default_value>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
+				<field id="ci_id" xsi:type="AttributeInteger" _delta="define">
+					<sql>ci_id</sql>
+					<default_value>1</default_value>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
 			</fields>
 			<methods>
 				<method id="DoCheckToWrite" _delta="define">
@@ -331,6 +336,8 @@
 					<code><![CDATA[       public function DoCheckToWrite()
 				{
 					parent::DoCheckToWrite();
+					$ci_id = $this->GetKey();
+					$this->Set('ci_id',$ci_id);
 					$finalclass = $this->Get('finalclass');
 					/* all_ip基于PhysicalIP类的变化，这里无需处理
 					if($finalclass == "Server")
@@ -505,7 +512,9 @@
 						<item id="name_cn" _delta="define">
 							<rank>5</rank>
 						</item>
-
+						<item id="ci_id">
+							<rank>100</rank>
+						</item>
 						<item id="businessprocess_id" _delta="define">
 							<rank>6</rank>
 						</item>
@@ -778,6 +787,9 @@
 				</search>
 				<list _delta="redefine">
 					<items>
+						<item id="ci_id">
+							<rank>100</rank>
+						</item>					
 						<item id="all_ip">
 							<rank>25</rank>
 						</item>
@@ -1287,6 +1299,9 @@
 				</search>
 				<list _delta="redefine">
 					<items>
+						<item id="ci_id">
+							<rank>100</rank>
+						</item>					
 						<item id="name">
 							<rank>10</rank>
 						</item>
@@ -1423,6 +1438,9 @@
 				</search>
 				<list>
 					<items>
+						<item id="ci_id">
+							<rank>100</rank>
+						</item>					
 						<item id="name">
 							<rank>10</rank>
 						</item>
@@ -1569,6 +1587,9 @@
 				</search>
 				<list _delta="redefine">
 					<items>
+						<item id="ci_id">
+							<rank>100</rank>
+						</item>					
 						<item id="name">
 							<rank>10</rank>
 						</item>
@@ -1904,6 +1925,9 @@
 				</search>
 				<list _delta="redefine">
 					<items>
+						<item id="ci_id">
+							<rank>100</rank>
+						</item>
 						<item id="applicationsolution_id">
 							<rank>10</rank>
 						</item>						
@@ -2175,6 +2199,9 @@
 				</search>
 				<list>
 					<items>
+						<item id="ci_id">
+							<rank>100</rank>
+						</item>					
 						<item id="org_id">
 							<rank>90</rank>
 						</item>
