@@ -2113,12 +2113,12 @@
 						{
 							$url = $url . "?" . $body;
 						}
-						$curl = "curl -s -X$method " . $headers . $url;
+						$curl = "curl -s -X$method " . $headers . "\"$url\"";
 					}else
 					{
 						$url = $this->Get("url");
 						$body = $this->Get("body");
-						$curl = "curl -s X$method " . $headers . $url . " --data \"" . $body . "\"";
+						$curl = "curl -s X$method " . $headers . "\"$url\"" . " --data \"" . $body . "\"";
 					}
 					$this->Set("curl", $curl);
 					
