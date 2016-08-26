@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2">
+	<constants>
+	</constants>
+	<classes>
+	</classes>
+	<menus>
+		<menu id="NewUserRequest" xsi:type="NewObjectMenuNode" _delta="redefine">
+			<rank>1</rank>
+			<enable_admin_only>1</enable_admin_only>
+			<parent>RequestManagement</parent>
+			<class>UserRequest</class>
+		</menu> 
+		<menu id="PortalUserRequest" xsi:type="WebPageMenuNode" _delta="define">
+			<rank>1</rank>
+			<parent>RequestManagement</parent>
+			<url>$portal/index.php?operation=create_request</url>
+		</menu>		
+	</menus>
+	<user_rights>
+		<groups>
+		</groups>
+		<profiles>
+		</profiles>
+	</user_rights>
+</itop_design>

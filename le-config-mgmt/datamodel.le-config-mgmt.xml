@@ -1916,7 +1916,9 @@
 						<item id="monitor_node">
 							<rank>11</rank>
 						</item>
-
+						<item id="method">
+							<rank>12</rank>
+						</item>
 						<item id="status">
 							<rank>15</rank>
 						</item>
@@ -1942,6 +1944,9 @@
 						<item id="monitor_node">
 							<rank>11</rank>
 						</item>
+						<item id="method">
+							<rank>12</rank>
+						</item>						
 						<item id="status">
 							<rank>15</rank>
 						</item>
@@ -3140,7 +3145,6 @@
 			<oql>SELECT Person</oql>
 			<do_search>1</do_search>
 		</menu>
-
 	</menus>
 	<user_rights>
 		<groups>
@@ -3247,6 +3251,13 @@
 							<action id="stimulus:ev_offline">allow</action>
 						</actions>
 					</group>
+					<group id="UserRequest">
+						<actions>
+							<action id="action:write">allow</action>
+							<action id="stimulus:ev_close">allow</action>
+							<action id="stimulus:ev_reopen">allow</action>
+						</actions>
+					</group>					
 					<group id="*">
 						<actions>
 							<action id="action:read">allow</action>
@@ -3275,7 +3286,13 @@
 							<action id="action:delete">allow</action>
 						</actions>
 					</group>
-
+					<group id="UserRequest">
+						<actions>
+							<action id="action:write">allow</action>
+							<action id="stimulus:ev_close">allow</action>
+							<action id="stimulus:ev_reopen">allow</action>
+						</actions>
+					</group>
 					<group id="*">
 						<actions>
 							<action id="action:read">allow</action>
