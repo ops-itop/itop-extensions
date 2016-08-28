@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0">
+  <constants>
+    <constant id="REQUEST_TEMPLATE_QUERY" xsi:type="string" _delta="define"><![CDATA[SELECT RequestTemplate WHERE servicesubcategory_id = :servicesubcategory_id AND service_id=:service_id]]>
+    </constant>
+  </constants>
+  <classes>
+    <class id="ServiceSubcategory">
+      <fields>
+        <field id="requesttemplates_list" xsi:type="AttributeLinkedSet" _delta="define">
+          <linked_class>RequestTemplate</linked_class>
+          <ext_key_to_me>servicesubcategory_id</ext_key_to_me>
+          <edit_mode>none</edit_mode>
+          <count_min>0</count_min>
+          <count_max>0</count_max>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <details>
+          <items>
+            <item id="requesttemplates_list" _delta="define">
+              <rank>80</rank>
+            </item>
+          </items>
+        </details>
+      </presentation>
+    </class>
+     <class id="RequestTemplate" _delta="define">
+      <parent>cmdbAbstractObject</parent>
+      <php_parent>
+        <name>Template</name>
+      </php_parent>
+      <properties>
+        <category>bizmodel,searchable,servicemgmt</category>
+        <abstract>false</abstract>
+        <key_type>autoincrement</key_type>
+        <db_table>tpl_request</db_table>
+        <db_key_field>id</db_key_field>
+        <db_final_class_field/>
+        <naming>
+          <format>%1$s</format>
+          <attributes>
+            <attribute id="name"/>
+          </attributes>
+        </naming>
+        <display_template/>
+        <icon/>
+        <reconciliation>
+          <attributes>
+            <attribute id="name"/>
+            <attribute id="servicesubcategory_id"/>
+            <attribute id="service_id"/>
+          </attributes>
+        </reconciliation>
+      </properties>
+      <fields>
+        <field id="service_id" xsi:type="AttributeExternalKey">
+          <sql>service_id</sql>
+          <target_class>Service</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_AUTO</on_target_delete>
+          <jointype/>
+        </field>
+        <field id="service_name" xsi:type="AttributeExternalField">
+          <extkey_attcode>service_id</extkey_attcode>
+          <target_attcode>name</target_attcode>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+        <field id="servicesubcategory_id" xsi:type="AttributeExternalKey">
+          <filter><![CDATA[SELECT ServiceSubcategory WHERE service_id =:this->service_id]]></filter>
+          <dependencies>
+            <attribute id="service_id"/>
+          </dependencies>
+          <sql>servicesubcategory_id</sql>
+          <target_class>ServiceSubcategory</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_AUTO</on_target_delete>
+          <jointype/>
+        </field>
+        <field id="servicesubcategory_name" xsi:type="AttributeExternalField">
+          <extkey_attcode>servicesubcategory_id</extkey_attcode>
+          <target_attcode>name</target_attcode>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <details>
+          <items>
+            <item id="name">
+              <rank>10</rank>
+            </item>
+            <item id="service_id">
+              <rank>15</rank>
+            </item>
+            <item id="servicesubcategory_id">
+              <rank>20</rank>
+            </item>
+            <item id="label">
+              <rank>30</rank>
+            </item>
+            <item id="description">
+              <rank>40</rank>
+            </item>
+            <item id="field_list">
+              <rank>50</rank>
+            </item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="name">
+              <rank>10</rank>
+            </item>
+            <item id="service_id">
+              <rank>15</rank>
+            </item>
+            <item id="servicesubcategory_id">
+              <rank>20</rank>
+            </item>
+            <item id="label">
+              <rank>30</rank>
+            </item>
+            <item id="description">
+              <rank>40</rank>
+            </item>
+          </items>
+        </search>
+        <list>
+          <items>
+            <item id="service_id">
+              <rank>15</rank>
+            </item>
+            <item id="servicesubcategory_id">
+              <rank>20</rank>
+            </item>
+            <item id="label">
+              <rank>30</rank>
+            </item>
+          </items>
+        </list>
+      </presentation>
+    </class>
+  </classes>
+  <menus>
+    <menu id="RequestTemplate" xsi:type="OQLMenuNode" _delta="define">
+      <rank>9</rank>
+      <parent>ServiceManagement</parent>
+      <oql>SELECT RequestTemplate</oql>
+      <do_search>1</do_search>
+    </menu>
+  </menus>
+  <user_rights>
+    <groups>
+      <group id="Service" _delta="must_exist">
+        <classes>
+          <class id="RequestTemplate" _delta="define"/>
+          <class id="TemplateField" _delta="define"/>
+        </classes>
+      </group>
+    </groups>
+    <profiles>
+    </profiles>
+  </user_rights>
+</itop_design>
