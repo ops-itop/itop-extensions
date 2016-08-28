@@ -15,7 +15,8 @@ SetupWebPage::AddModule(
 		// Setup
 		//
 		'dependencies' => array(
-			'itop-request-mgmt-itil/2.2.0'		
+			'itop-request-mgmt-itil/2.2.0',		
+			'itop-tickets/2.2.0'
 		),
 		'mandatory' => false,
 		'visible' => true,

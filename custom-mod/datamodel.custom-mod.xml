@@ -28,4 +28,33 @@
 		<profiles>
 		</profiles>
 	</user_rights>
+	<module_designs>
+		<!--删除location_id-->
+		<module_design id="itop-portal" xsi:type="portal">
+			<bricks>
+				<brick id="user-profile" xsi:type="Combodo\iTop\Portal\Brick\UserProfileBrick">
+					<form>
+						<twig _delta="redefine">
+							<!-- data-field-id attribute must be an attribute code of the class -->
+							<!-- data-field-flags attribute contains flags among read_only/hidden/mandatory/must_prompt/must_chan     ge -->
+							<div class="form_field" data-field-id="first_name" data-field-flags="read_only">
+							</div>
+							<div class="form_field" data-field-id="name" data-field-flags="read_only">
+							</div>
+							<div class="form_field" data-field-id="org_id" data-field-flags="read_only">
+							</div>
+							<div class="form_field" data-field-id="email" data-field-flags="read_only">
+							</div>
+							<div class="form_field" data-field-id="phone">
+							</div>
+							<div class="form_field" data-field-id="function">
+							</div>
+							<div class="form_field" data-field-id="manager_id" data-field-flags="read_only">
+							</div>
+						</twig>
+					</form>
+				</brick>
+			</bricks>
+		</module_design>
+	</module_designs>
 </itop_design>
