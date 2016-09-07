@@ -2118,18 +2118,23 @@
 						}
 					}
 					
+					// GET参数
+					$params = $this->Get("params");
 					if($method == "GET")
 					{
 						$url = $this->Get("url");
-						$body = $this->Get("body");
-						if ($body != "")
+						if ($params != "")
 						{
-							$url = $url . "?" . $body;
+							$url = $url . "?" . $params;
 						}
 						$curl = "curl -s -X$method " . $headers . "\"$url\"";
 					}else
 					{
 						$url = $this->Get("url");
+						if ($params != "")
+						{
+							$url = $url . "?" . $params;
+						}
 						$body = $this->Get("body");
 						$curl = "curl -s X$method " . $headers . "\"$url\"" . " --data \"" . $body . "\"";
 					}
