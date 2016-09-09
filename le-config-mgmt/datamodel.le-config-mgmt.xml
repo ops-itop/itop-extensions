@@ -1766,7 +1766,7 @@
 					<sql>timeout</sql>
 					<is_null_allowed>true</is_null_allowed>
 					<default_value>3</default_value>
-					<validation_pattern>^[0-9]+\.?[0-9]*$</validation_pattern>
+					<validation_pattern>^([0-9]|1[0-4])(\.[0-9]*)?$</validation_pattern>
 				</field>
 				<field id="failed_count" xsi:type="AttributeString">
 					<sql>failed_count</sql>
