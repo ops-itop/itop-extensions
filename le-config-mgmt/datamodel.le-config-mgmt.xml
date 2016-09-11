@@ -327,6 +327,14 @@
 					<default_value>1</default_value>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
+				<!--根据lnkContactToFunctionalCI更新此字段-->
+				<field id="contacts_str" xsi:type="AttributeString" _delta="define">
+					<sql>contacts_str</sql>
+					<is_null_allowed>true</is_null_allowed>
+					<default_value/>
+				</field>
+				<!--
+				<field id="contacts" xsi:type="AttributeString" _delta="delete"></field>-->
 			</fields>
 			<methods>
 				<method id="DoCheckToWrite" _delta="define">
@@ -1245,11 +1253,6 @@
 					<is_null_allowed>true</is_null_allowed>
 					<display_style>list</display_style>
 				</field>
-				<field id="contacts" xsi:type="AttributeString">
-					<sql>contacts</sql>
-					<is_null_allowed>true</is_null_allowed>
-					<default_value/>
-				</field>
 			</fields>
 			<methods/>
 			<presentation>
@@ -1476,6 +1479,8 @@
 				<db_final_class_field/>
 				<naming>
 					<attributes _delta="define">
+						<attribute id="finalclass"/>
+						<attribute id="location"/>
 						<attribute id="name"/>
 					</attributes>
 				</naming>
@@ -1502,24 +1507,22 @@
 					<is_null_allowed>true</is_null_allowed>
 					<display_style>list</display_style>
 				</field>
-				<field id="type" xsi:type="AttributeEnum">
+				<field id="location" xsi:type="AttributeEnum">
 					<values>
-						<value id="rds_mysql">RDS_MySQL</value>
-						<value id="mysql">MySQL</value>
-						<value id="mongodb">MongoDB</value>
+						<value id="china">China</value>
+						<value id="us">UnitedStates</value>
+						<value id="hk">HongKong</value>
+						<value id="ru">Russia</value>
+						<value id="in">India</value>
+						<value id="other">Other</value>
 					</values>
-					<sql>type</sql>
+					<sql>location</sql>
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 					<display_style>list</display_style>
 				</field>
 				<field id="info" xsi:type="AttributeText" _delta="define">
 					<sql>info</sql>
-					<is_null_allowed>true</is_null_allowed>
-					<default_value/>
-				</field>
-				<field id="contacts" xsi:type="AttributeString">
-					<sql>contacts</sql>
 					<is_null_allowed>true</is_null_allowed>
 					<default_value/>
 				</field>
@@ -1531,7 +1534,7 @@
 						<item id="name">
 							<rank>10</rank>
 						</item>
-						<item id="type">
+						<item id="location">
 							<rank>11</rank>
 						</item>
 						<item id="status">
@@ -1570,7 +1573,7 @@
 						<item id="name">
 							<rank>10</rank>
 						</item>
-						<item id="type">
+						<item id="location">
 							<rank>11</rank>
 						</item>
 
@@ -1600,7 +1603,7 @@
 						<item id="name">
 							<rank>10</rank>
 						</item>
-						<item id="type">
+						<item id="location">
 							<rank>11</rank>
 						</item>
 
@@ -1619,17 +1622,416 @@
 					</items>
 				</list>
 			</presentation>
-			<relations>
-				<relation id="impacts">
-					<neighbours>
-						<neighbour id="applicationsolution">
-							<attribute>applicationsolution_list</attribute>
-						</neighbour>
-					</neighbours>
-				</relation>
-			</relations>
 		</class>		
+		<class id="RDS" _delta="define">
+			<parent>Database</parent>
+			<properties>
+				<icon>images/rds.png</icon>
+			</properties>
+			<fields/>
+			<methods/>
+			<presentation>
+				<details _delta="redefine">
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="location">
+							<rank>11</rank>
+						</item>
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="info">
+							<rank>18</rank>
+						</item>
+						<item id="org_id">
+							<rank>20</rank>
+						</item>
+						<item id="business_criticity">
+							<rank>40</rank>
+						</item>
+						<item id="contacts_list">
+							<rank>95</rank>
+						</item>
 
+						<item id="applicationsolution_list">
+							<rank>90</rank>
+						</item>
+
+						<item id="move2production">
+							<rank>100</rank>
+						</item>
+						<item id="description">
+							<rank>130</rank>
+						</item>
+						<item id="documents_list">
+							<rank>150</rank>
+						</item>
+					</items>
+				</details>
+				<search _delta="redefine">
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="location">
+							<rank>11</rank>
+						</item>
+
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="info">
+							<rank>18</rank>
+						</item>
+
+						<item id="org_id">
+							<rank>20</rank>
+						</item>
+						<item id="business_criticity">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>100</rank>
+						</item>
+					</items>
+				</search>
+				<list _delta="redefine">
+					<items>
+						<item id="ci_id">
+							<rank>100</rank>
+						</item>					
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="location">
+							<rank>11</rank>
+						</item>
+
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="contacts">
+							<rank>19</rank>
+						</item>
+						<item id="org_id">
+							<rank>20</rank>
+						</item>
+						<item id="business_criticity">
+							<rank>40</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+		<class id="MySQL" _delta="define">
+			<parent>Database</parent>
+			<properties>
+				<icon>images/mysql.png</icon>
+			</properties>
+			<fields/>
+			<methods/>
+			<presentation>
+				<details _delta="redefine">
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="location">
+							<rank>11</rank>
+						</item>
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="info">
+							<rank>18</rank>
+						</item>
+						<item id="org_id">
+							<rank>20</rank>
+						</item>
+						<item id="business_criticity">
+							<rank>40</rank>
+						</item>
+						<item id="contacts_list">
+							<rank>95</rank>
+						</item>
+
+						<item id="applicationsolution_list">
+							<rank>90</rank>
+						</item>
+
+						<item id="move2production">
+							<rank>100</rank>
+						</item>
+						<item id="description">
+							<rank>130</rank>
+						</item>
+						<item id="documents_list">
+							<rank>150</rank>
+						</item>
+					</items>
+				</details>
+				<search _delta="redefine">
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="location">
+							<rank>11</rank>
+						</item>
+
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="info">
+							<rank>18</rank>
+						</item>
+
+						<item id="org_id">
+							<rank>20</rank>
+						</item>
+						<item id="business_criticity">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>100</rank>
+						</item>
+					</items>
+				</search>
+				<list _delta="redefine">
+					<items>
+						<item id="ci_id">
+							<rank>100</rank>
+						</item>					
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="location">
+							<rank>11</rank>
+						</item>
+
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="contacts">
+							<rank>19</rank>
+						</item>
+						<item id="org_id">
+							<rank>20</rank>
+						</item>
+						<item id="business_criticity">
+							<rank>40</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+		<class id="MongoDB" _delta="define">
+			<parent>Database</parent>
+			<properties>
+				<icon>images/mongodb.png</icon>
+			</properties>
+			<fields/>
+			<methods/>
+			<presentation>
+				<details _delta="redefine">
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="location">
+							<rank>11</rank>
+						</item>
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="info">
+							<rank>18</rank>
+						</item>
+						<item id="org_id">
+							<rank>20</rank>
+						</item>
+						<item id="business_criticity">
+							<rank>40</rank>
+						</item>
+						<item id="contacts_list">
+							<rank>95</rank>
+						</item>
+
+						<item id="applicationsolution_list">
+							<rank>90</rank>
+						</item>
+
+						<item id="move2production">
+							<rank>100</rank>
+						</item>
+						<item id="description">
+							<rank>130</rank>
+						</item>
+						<item id="documents_list">
+							<rank>150</rank>
+						</item>
+					</items>
+				</details>
+				<search _delta="redefine">
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="location">
+							<rank>11</rank>
+						</item>
+
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="info">
+							<rank>18</rank>
+						</item>
+
+						<item id="org_id">
+							<rank>20</rank>
+						</item>
+						<item id="business_criticity">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>100</rank>
+						</item>
+					</items>
+				</search>
+				<list _delta="redefine">
+					<items>
+						<item id="ci_id">
+							<rank>100</rank>
+						</item>					
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="location">
+							<rank>11</rank>
+						</item>
+
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="contacts">
+							<rank>19</rank>
+						</item>
+						<item id="org_id">
+							<rank>20</rank>
+						</item>
+						<item id="business_criticity">
+							<rank>40</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+		<class id="Redis" _delta="define">
+			<parent>Database</parent>
+			<properties>
+				<icon>images/redis.png</icon>
+			</properties>
+			<fields/>
+			<methods/>
+			<presentation>
+				<details _delta="redefine">
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="location">
+							<rank>11</rank>
+						</item>
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="info">
+							<rank>18</rank>
+						</item>
+						<item id="org_id">
+							<rank>20</rank>
+						</item>
+						<item id="business_criticity">
+							<rank>40</rank>
+						</item>
+						<item id="contacts_list">
+							<rank>95</rank>
+						</item>
+
+						<item id="applicationsolution_list">
+							<rank>90</rank>
+						</item>
+
+						<item id="move2production">
+							<rank>100</rank>
+						</item>
+						<item id="description">
+							<rank>130</rank>
+						</item>
+						<item id="documents_list">
+							<rank>150</rank>
+						</item>
+					</items>
+				</details>
+				<search _delta="redefine">
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="location">
+							<rank>11</rank>
+						</item>
+
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="info">
+							<rank>18</rank>
+						</item>
+
+						<item id="org_id">
+							<rank>20</rank>
+						</item>
+						<item id="business_criticity">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>100</rank>
+						</item>
+					</items>
+				</search>
+				<list _delta="redefine">
+					<items>
+						<item id="ci_id">
+							<rank>100</rank>
+						</item>					
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="location">
+							<rank>11</rank>
+						</item>
+
+						<item id="status">
+							<rank>15</rank>
+						</item>
+						<item id="contacts">
+							<rank>19</rank>
+						</item>
+						<item id="org_id">
+							<rank>20</rank>
+						</item>
+						<item id="business_criticity">
+							<rank>40</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>		
+		
 		<class id="Url" _delta="define">
 			<parent>FunctionalCI</parent>
 			<properties>
@@ -3138,11 +3540,46 @@
 			<oql>SELECT VirtualIP</oql>
 			<do_search>1</do_search>
 		</menu>
-		<menu id="Database" xsi:type="OQLMenuNode" _delta="define">
-			<rank>60</rank>
+		<menu id="Database" xsi:type="DashboardMenuNode" _delta="define">
+			<rank>52</rank>
 			<parent>SearchCIs</parent>
-			<oql>SELECT Database</oql>
-			<do_search>1</do_search>
+			<definition>
+				<layout>DashboardLayoutOneCol</layout>
+				<title/>
+				<cells>
+					<cell id="0">
+						<rank>0</rank>
+						<dashlets>
+							<dashlet id="1" xsi:type="DashletHeaderDynamic">
+								<rank>1</rank>
+								<title>Menu:Contact</title>
+								<icon>images/database.png</icon>
+								<subtitle>Menu:Database:Count</subtitle>
+								<query>SELECT Database</query>
+								<group_by>status</group_by>
+								<values>active,inactive</values>
+							</dashlet>
+							<dashlet id="2" xsi:type="DashletBadge">
+								<rank>2</rank>
+								<class>RDS</class>
+							</dashlet>
+							<dashlet id="3" xsi:type="DashletBadge">
+								<rank>3</rank>
+								<class>MySQL</class>
+							</dashlet>
+							<dashlet id="3" xsi:type="DashletBadge">
+								<rank>4</rank>
+								<class>MongoDB</class>
+							</dashlet>
+							<dashlet id="3" xsi:type="DashletBadge">
+								<rank>5</rank>
+								<class>Redis</class>
+							</dashlet>
+						</dashlets>
+					</cell>
+				</cells>
+			</definition>
+
 		</menu>
 		<menu id="NewContact" _delta="delete"></menu>
 		<menu id="SearchContacts" _delta="delete"></menu>
