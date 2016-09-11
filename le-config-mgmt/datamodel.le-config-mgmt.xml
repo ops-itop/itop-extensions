@@ -328,8 +328,8 @@
 					<is_null_allowed>true</is_null_allowed>
 				</field>
 				<!--根据lnkContactToFunctionalCI更新此字段-->
-				<field id="contacts_str" xsi:type="AttributeString" _delta="define">
-					<sql>contacts_str</sql>
+				<field id="contacts" xsi:type="AttributeString" _delta="define">
+					<sql>contacts</sql>
 					<is_null_allowed>true</is_null_allowed>
 					<default_value/>
 				</field>
@@ -3552,8 +3552,8 @@
 						<dashlets>
 							<dashlet id="1" xsi:type="DashletHeaderDynamic">
 								<rank>1</rank>
-								<title>Menu:Contact</title>
-								<icon>images/database.png</icon>
+								<title>Menu:Database</title>
+								<icon>le-config-mgmt/images/database.png</icon>
 								<subtitle>Menu:Database:Count</subtitle>
 								<query>SELECT Database</query>
 								<group_by>status</group_by>
