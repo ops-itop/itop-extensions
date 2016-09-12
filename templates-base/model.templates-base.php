@@ -69,6 +69,22 @@ abstract class Template extends cmdbAbstractObject
 	}
 
 	/**
+	 * CI唯一性验证
+	 */
+	public function CheckUniqFields($value)
+	{
+		$classname = $this->Get('relatedclass');
+		$oql = "SELECT " . $classname . " WHERE name=:name";
+		$oSearch = DBObjectSearch::FromOQL_AllData($oql);
+		$oSet = new DBObjectSet($oSearch, array(), array('name' => $value));
+		if ($oSet->Count() > 0)
+		{   
+			$this->m_aCheckIssues[] = Dict::Format("Class:".$classname."/Error:".$classname."MustBeUnique", $value);
+			return(false);
+		}
+	}
+	 
+	/**
 	 *	Get the form data as an array
 	 */
 	public function GetPostedValuesAsArray($oObject)
@@ -86,12 +102,18 @@ abstract class Template extends cmdbAbstractObject
 			$value = utils::ReadPostedParam("tpl_{$sFormPrefix}{$sAttCode}", null, 'raw_data');
 			if (!is_null($value))
 			{
+				$aCode = $oField->Get('code');
 				$aValues[$oField->GetKey()] = array(
-					'code' => $oField->Get('code'),
+					'code' => $aCode,
 					'label' => $oField->Get('label'),
 					'input_type' => $oField->Get('input_type'),
 					'value' => $value
 				);
+				
+				if($aCode == "name")
+				{
+					return($this->CheckUniqFields($value));
+				}
 
 				if ($oField->Get('input_type') == 'duration')
 				{
@@ -139,6 +161,25 @@ abstract class Template extends cmdbAbstractObject
 	public function GetPostedValuesAsText($oObject)
 	{
 		$aValues = $this->GetPostedValuesAsArray($oObject);
+		if(!$aValues)
+		{
+			return($aValues);
+		}
+
+		/*  修改portal 的index.php代码
+			if(!$oTemplate->GetPostedValuesAsText($oRequest))
+			{
+				RequestCreationForm($oP, $oUserOrg);
+				$sIssueDesc = Dict::Format('此对象已存在，不能重复申请', implode(', ', $aIssues));
+				$oP->add_ready_script("alert('".addslashes($sIssueDesc)."');");
+				return;
+			}else
+			{
+				$oRequest->Set($sLogAttCode, $oTemplate->GetPostedValuesAsText($oRequest)."\n");
+				$oRequest->DBInsertNoReload();
+				$oTemplate->RecordExtraDataFromPostedForm($oRequest);
+			}
+		*/
 		$aLines = array();
 		foreach ($aValues as $sFieldId => $aFieldData)
 		{
