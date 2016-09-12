@@ -3303,9 +3303,21 @@
 							<dashlet id="11" xsi:type="DashletBadge" _delta="delete"></dashlet>
 							<dashlet id="12" xsi:type="DashletBadge" _delta="delete"></dashlet>
 							<dashlet id="14" xsi:type="DashletBadge" _delta="delete"></dashlet>
-							<dashlet id="database" xsi:type="DashletBadge" _delta="define">
-								<rank>10</rank>
-								<class>Database</class>
+							<dashlet id="rds" xsi:type="DashletBadge" _delta="define">
+								<rank>20</rank>
+								<class>RDS</class>
+							</dashlet>
+							<dashlet id="mongodb" xsi:type="DashletBadge" _delta="define">
+								<rank>20</rank>
+								<class>MongoDB</class>
+							</dashlet>
+							<dashlet id="mysql" xsi:type="DashletBadge" _delta="define">
+								<rank>30</rank>
+								<class>MySQL</class>
+							</dashlet>
+							<dashlet id="redis" xsi:type="DashletBadge" _delta="define">
+								<rank>30</rank>
+								<class>Redis</class>
 							</dashlet>
 							<dashlet id="app" xsi:type="DashletBadge" _delta="define">
 								<rank>10</rank>
