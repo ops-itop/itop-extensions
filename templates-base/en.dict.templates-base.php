@@ -39,6 +39,8 @@ Dict::Add('EN US', 'English', 'English', array(
 	'Class:Template/Attribute:name' => 'Name',
 	'Class:Template/Attribute:name+' => 'Internal name',
 	'Class:Template/Attribute:label' => 'Label',
+	'Class:Template/Attribute:relatedclass' => 'Class',
+	'Class:Template/Attribute:relatedclass+' => 'Related Class',
 	'Class:Template/Attribute:label+' => 'Label used in the form',
 	'Class:Template/Attribute:description' => 'Description',
 	'Class:Template/Attribute:description+' => 'Description used in the form',

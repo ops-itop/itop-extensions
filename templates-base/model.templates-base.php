@@ -60,12 +60,12 @@ abstract class Template extends cmdbAbstractObject
 		MetaModel::Init_AddAttribute(new AttributeLinkedSet("field_list", array("linked_class"=>"TemplateField", "ext_key_to_me"=>"template_id", "allowed_values"=>null, "count_min"=>0, "count_max"=>0,"edit_mode"=>LINKSET_EDITMODE_INPLACE, "depends_on"=>array())));
 
 		// 模板关联的功能配置类
-		MetaModel::Init_AddAttribute(new AttributeEnum("classes", array("allowed_values"=>new ValueSetEnum($sPossibleClasses), "display_style"=>'list', "sql"=>'classes', "default_value"=>'', "is_null_allowed"=>false, "depends_on"=>array(), "always_load_in_tables"=>false)));
+		MetaModel::Init_AddAttribute(new AttributeEnum("relatedclass", array("allowed_values"=>new ValueSetEnum($sPossibleClasses), "display_style"=>'list', "sql"=>'classes', "default_value"=>'', "is_null_allowed"=>false, "depends_on"=>array(), "always_load_in_tables"=>false)));
 
-		MetaModel::Init_SetZListItems('details', array('name', 'label', 'description', 'field_list'));
+		MetaModel::Init_SetZListItems('details', array('name', 'label', 'relatedclass', 'description', 'field_list'));
 		MetaModel::Init_SetZListItems('advanced_search', array('name', 'label', 'description'));
 		MetaModel::Init_SetZListItems('standard_search', array('name', 'label', 'description'));
-		MetaModel::Init_SetZListItems('list', array('name', 'label'));
+		MetaModel::Init_SetZListItems('list', array('name', 'label', 'relatedclass'));
 	}
 
 	/**
