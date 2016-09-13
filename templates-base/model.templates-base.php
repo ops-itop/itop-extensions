@@ -106,7 +106,7 @@ abstract class Template extends cmdbAbstractObject
 			if($FieldData['code'] == "applicationsolution_list")
 			{
 				// 和applicationsolution建立关联
-				$sApp = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $FieldData['value'], false);
+				$sApp = MetaModel::GetObjectByColumn('ApplicationSolution', 'friendlyname', $FieldData['value'], false);
 				if(!$sApp)
 				{
 					$lnkedAppID = null;
