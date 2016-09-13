@@ -46,7 +46,7 @@
 					<static>false</static>
 					<access>protected</access>
 					<type>Overload-DBObject</type>
-					<code><![CDATA[       public function DoCheckToWrite()
+					<code><![CDATA[	   public function DoCheckToWrite()
 		{
 		
 			parent::DoCheckToWrite();
@@ -341,7 +341,7 @@
 					<static>false</static>
 					<access>protected</access>
 					<type>Overload-DBObject</type>
-					<code><![CDATA[       public function DoCheckToWrite()
+					<code><![CDATA[	   public function DoCheckToWrite()
 				{
 					parent::DoCheckToWrite();
 					$ci_id = $this->GetKey();
@@ -363,7 +363,7 @@
 							$oArr = explode(";", $value);
 							$ip_arr[$key] = $oArr[1] . "-" . $oArr[0];
 							$ip_arr[$key] = preg_replace("/[':\"]|ipaddress|type/", "", $ip_arr[$key]);
-						}    
+						}	
 						$all_ip = implode(";", $ip_arr);
 						//print_r($all_ip);
 						$this->Set("all_ip", $all_ip);
@@ -380,8 +380,12 @@
 					 * 如果不监听变化就进行检查，将导致对象无法更新
 					 * server不适用name作为friendlyname，如果finalclass是Server，同时检查name和friendlyname
 					 */
+					
+					// 需要用name作为唯一性校验的Class
+					$UniqNameClass = array("Server", "ApplicationSolution");
+					
 					$aChanges = $this->ListChanges();
-					if($finalclass == "Server" && array_key_exists('name', $aChanges))
+					if(in_array($finalclass,$UniqNameClass) && array_key_exists('name', $aChanges))
 					{
 						$sServer = $aChanges['name'];
 						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Server WHERE name=:name");
@@ -391,11 +395,31 @@
 							$this->m_aCheckIssues[] = Dict::Format("Class:".$finalclass."/Error:".$finalclass."MustBeUnique", $sServer);
 						}			
 					}
+					
 					$isChanges = false;
+					foreach($aChanges as $key=>$value)
+					{   
+						if(MetaModel::IsValidKeyAttCode($finalclass, $key))
+						{   
+							$extKeyFriends = MetaModel::GetExtKeyFriends($finalclass, $key);
+							foreach($extKeyFriends as $k=>$v)
+							{   
+								if(in_array($k, $sArg))
+								{   
+									$isChanges = true;
+								}
+							}
+						 
+						}
+						if(in_array($key, $sArg))
+						{   
+							$isChanges = true;
+						}
+					}
+
+					
 					foreach($sArg as $value) {
 						array_push($oArg, $this->Get($value));
-						if(array_key_exists($value, $aChanges))
-							$isChanges = true;
 					}
 					$sFunctionalCI = vsprintf("$sFormat", $oArg);
 					
@@ -557,7 +581,7 @@
 					<static>false</static>
 					<access>public</access>
 					<type>Overload-cmdbAbstractObject</type>
-					<code><![CDATA[      public function DisplayBareRelations(WebPage $oPage, $bEditMode = false)
+					<code><![CDATA[	  public function DisplayBareRelations(WebPage $oPage, $bEditMode = false)
 					{
 						parent::DisplayBareRelations($oPage, $bEditMode);
 						
@@ -894,7 +918,7 @@
 					<static>false</static>
 					<access>protected</access>
 					<type>Overload-DBObject</type>
-					<code><![CDATA[       public function DoCheckToWrite()
+					<code><![CDATA[	   public function DoCheckToWrite()
 		{
 		
 			parent::DoCheckToWrite();
@@ -2377,7 +2401,7 @@
 					<static>false</static>
 					<access>public</access>
 					<type>Overload-cmdbAbstractObject</type>
-					<code><![CDATA[      public function DisplayBareRelations(WebPage $oPage, $bEditMode = false)
+					<code><![CDATA[	  public function DisplayBareRelations(WebPage $oPage, $bEditMode = false)
 					{
 						parent::DisplayBareRelations($oPage, $bEditMode);
 						
@@ -2417,7 +2441,7 @@
 					<static>false</static>
 					<access>protected</access>
 					<type>Overload-DBObject</type>
-					<code><![CDATA[       
+					<code><![CDATA[	   
   	public function CheckToDelete(&$oDeletionPlan)
   	{
 		$myContactId = UserRights::GetContactId();
@@ -2441,7 +2465,7 @@
 					<static>false</static>
 					<access>protected</access>
 					<type>Overload-DBObject</type>
-					<code><![CDATA[       public function DoCheckToWrite()
+					<code><![CDATA[	   public function DoCheckToWrite()
 				{
 					parent::DoCheckToWrite();
 					
@@ -2659,7 +2683,7 @@
 					<static>false</static>
 					<access>protected</access>
 					<type>Overload-DBObject</type>
-					<code><![CDATA[       public function DoCheckToWrite()
+					<code><![CDATA[	   public function DoCheckToWrite()
 				{
 					parent::DoCheckToWrite();
 
@@ -2677,11 +2701,30 @@
 					 * 如果不监听变化就进行检查，将导致对象无法更新
 					 */
 					$aChanges = $this->ListChanges();
+					
 					$isChanges = false;
+					foreach($aChanges as $key=>$value)
+					{   
+						if(MetaModel::IsValidKeyAttCode($finalclass, $key))
+						{   
+							$extKeyFriends = MetaModel::GetExtKeyFriends($finalclass, $key);
+							foreach($extKeyFriends as $k=>$v)
+							{   
+								if(in_array($k, $sArg))
+								{   
+									$isChanges = true;
+								}
+							}
+						 
+						}
+						if(in_array($key, $sArg))
+						{   
+							$isChanges = true;
+						}
+					}
+					
 					foreach($sArg as $value) {
 						array_push($oArg, $this->Get($value));
-						if(array_key_exists($value, $aChanges))
-							$isChanges = true;
 					}
 					$sTypology = vsprintf("$sFormat", $oArg);
 					//print_r($this->Get('name') . "<br>");
@@ -3154,7 +3197,7 @@
 					<static>false</static>
 					<access>protected</access>
 					<type>Overload-DBObject</type>
-					<code><![CDATA[       
+					<code><![CDATA[	   
   	public function CheckToDelete(&$oDeletionPlan)
   	{
 		$myContactId = UserRights::GetContactId();
