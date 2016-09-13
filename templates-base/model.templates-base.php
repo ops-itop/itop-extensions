@@ -82,6 +82,68 @@ abstract class Template extends cmdbAbstractObject
 			$this->m_aCheckIssues[] = Dict::Format("Class:".$classname."/Error:".$classname."MustBeUnique", $value);
 			return(false);
 		}
+		return(true);
+	}
+	 
+	/**
+	 * 从工单更新CMDB
+	 * 要求：request template中Fields必须在对应类中存在，比如 name对应name，location对应location
+	 * 工单创建时，新建对象，状态设置为实施，工单完成时，更改对象状态（上线或者废弃）
+	 */
+	public function CreateObject($data, $oObject)
+	{
+		$classname = $this->Get('relatedclass');
+		$myContactId = UserRights::GetContactId();
+		$sContact = MetaModel::GetObject("Person", $myContactId);
+		$sOrgId = $sContact->Get("org_id");
+		$oNewCI = new $classname();
+		$oNewCI->Set("org_id", $sOrgId);
+		$oNewCI->Set("status","implementation");
+		
+		$lnkedAppID = "";
+		foreach($data as $FieldId=>$FieldData)
+		{
+			if($FieldData['code'] == "applicationsolution_list")
+			{
+				// 和applicationsolution建立关联
+				$sApp = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $FieldData['value'], false);
+				if(!$sApp)
+				{
+					$lnkedAppID = null;
+				}else
+				{
+					$lnkedAppID = $sApp->GetKey();
+				}
+				//$oAppSet = DBObjectSet::FromScratch('lnkApplicationSolutionToFunctionalCI');
+				//$oAppSet->AddObject($sApp);
+				//$oNewCI->Set('applicationsolution_list', $oAppSet);
+			}else
+			{
+				$oNewCI->Set($FieldData['code'], $FieldData['value']);	
+			}
+		}
+		$oKey = $oNewCI->DBWrite();
+		
+		// 关联对象和工单
+		$oTicket = new lnkFunctionalCIToTicket();
+		$oTicket->Set('ticket_id', $oObject->GetKey());
+		$oTicket->Set('functionalci_id', $oKey);
+		$oTicket->DBWrite();
+		
+		// 和applicationsolution建立关联
+		if($lnkedAppID)
+		{
+			$oAppLnk = new lnkApplicationSolutionToFunctionalCI();
+			$oAppLnk->Set('applicationsolution_id', $lnkedAppID);
+			$oAppLnk->Set('functionalci_id', $oKey);
+			$oAppLnk->DBWrite();			
+		}
+		
+		// ticket和工单发起人建立关联
+		$oContactLnk = new lnkContactToTicket();
+		$oContactLnk->Set('ticket_id', $oObject->GetKey());
+		$oContactLnk->Set('contact_id', $myContactId);
+		$oContactLnk->DBWrite();	
 	}
 	 
 	/**
@@ -110,9 +172,9 @@ abstract class Template extends cmdbAbstractObject
 					'value' => $value
 				);
 				
-				if($aCode == "name")
+				if($aCode == "name" && !$this->CheckUniqFields($value))
 				{
-					return($this->CheckUniqFields($value));
+					return(false);
 				}
 
 				if ($oField->Get('input_type') == 'duration')
@@ -203,6 +265,9 @@ abstract class Template extends cmdbAbstractObject
 		$oExtraData->Set('obj_class', get_class($oObject));
 		$oExtraData->Set('obj_key', $oObject->GetKey());
 		$oExtraData->DBInsert();
+		
+		//创建对象
+		$this->CreateObject($aValues,$oObject);
 	}
 
 	/**
