@@ -1503,7 +1503,6 @@
 				<db_final_class_field/>
 				<naming>
 					<attributes _delta="define">
-						<attribute id="finalclass"/>
 						<attribute id="location"/>
 						<attribute id="name"/>
 					</attributes>
