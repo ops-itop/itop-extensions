@@ -5,6 +5,63 @@
     </constant>
   </constants>
   <classes>
+	<class id="UserRequest">
+		<methods>
+			<method id="DoCheckToWrite" _delta="redefine">
+				<static>false</static>
+				<access>public</access>
+				<type>Overload-DBObject</type>
+				<code><![CDATA[public function DoCheckToWrite()
+  {
+    parent::DoCheckToWrite();
+    if (!$this->IsNew() && ($this->Get('parent_request_id') == $this->GetKey()))
+    {
+      $this->m_aCheckIssues[] = Dict::Format('Class:UserRequest/Error:CannotAssignParentRequestIdToSelf');
+    }
+	
+	//检查工单状态的变化，对工单链接的配置项的状态进行变更
+	$aChange = $this->ListChanges();
+	if(array_key_exists('status', $aChange))
+	{
+		if($this->Get('origin') != "portal")
+		{
+			return;
+		}
+		// 拿到工单链接的配置项
+		$oCIs = $this->Get('functionalcis_list')->ToArrayOfValues();
+		foreach($oCIs as $aCI)
+		{
+			$nameClass = $aCI['lnkFunctionalCIToTicket.functionalci_id_finalclass_recall'];
+			$oID = $aCI['lnkFunctionalCIToTicket.functionalci_id'];
+			$oObject = MetaModel::GetObject($nameClass, $oID);
+			if($oObject->Get('status') == "implementation")
+			{
+				if($aChange['status'] == "closed")
+				{
+					$oObject->Set('status', 'production');
+				}
+				if($aChange['status'] == "rejected")
+				{
+					$oObject->Set('status', 'obsolete');
+				}
+				
+				$oObject->DBWrite();
+			}
+			
+			// 审批未通过的工单重新打开，CI变为上线中
+			if($oObject->Get("status") == "obsolete" && $aChange['status'] == "new")
+			{
+				$oObject->Set('status', 'implementation');
+				$oObject->DBWrite();
+			}
+		}
+	}
+  }]]>
+				
+				</code>
+			</method>
+		</methods>
+	</class>
     <class id="ServiceSubcategory">
       <fields>
         <field id="requesttemplates_list" xsi:type="AttributeLinkedSet" _delta="define">
@@ -26,7 +83,7 @@
         </details>
       </presentation>
     </class>
-     <class id="RequestTemplate" _delta="define">
+    <class id="RequestTemplate" _delta="define">
       <parent>cmdbAbstractObject</parent>
       <php_parent>
         <name>Template</name>
