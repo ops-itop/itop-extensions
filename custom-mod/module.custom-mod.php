@@ -24,7 +24,8 @@ SetupWebPage::AddModule(
 		// Components
 		//
 		'datamodel' => array(
-			'model.custom-mod.php'
+			'model.custom-mod.php',
+			'main.custom-mod.php',
 		),
 		'webservice' => array(
 			

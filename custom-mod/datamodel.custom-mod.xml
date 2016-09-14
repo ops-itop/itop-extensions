@@ -17,12 +17,12 @@
 			<url>$portal/index.php?operation=create_request</url>
 		</menu>
 		<menu id="WelcomeRequest" xsi:type="WebPageMenuNode" _delta="define">
-			<rank>20</rank>
+			<rank>19</rank>
 			<parent>WelcomeMenu</parent>
 			<url>$portal/index.php?operation=create_request</url>
 		</menu>
 		<menu id="WelcomeAudit" xsi:type="WebPageMenuNode" _delta="define">
-			<rank>30</rank>
+			<rank>20</rank>
 			<parent>WelcomeMenu</parent>
 			<url>$pages/audit.php</url>
 		</menu>
