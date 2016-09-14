@@ -21,6 +21,12 @@
 			<parent>WelcomeMenu</parent>
 			<url>$portal/index.php?operation=create_request</url>
 		</menu>
+		<menu id="WelcomeAudit" xsi:type="WebPageMenuNode" _delta="define">
+			<rank>30</rank>
+			<parent>WelcomeMenu</parent>
+			<url>$pages/audit.php</url>
+		</menu>
+		
 	</menus>
 	<user_rights>
 		<groups>
