@@ -74,6 +74,12 @@ abstract class Template extends cmdbAbstractObject
 	public function CheckUniqFields($value)
 	{
 		$classname = $this->Get('relatedclass');
+		
+		//服务器申请不做校验
+		if($classname == "Server")
+		{
+			return(true);
+		}
 		$oql = "SELECT " . $classname . " WHERE name=:name";
 		$oSearch = DBObjectSearch::FromOQL_AllData($oql);
 		$oSet = new DBObjectSet($oSearch, array(), array('name' => $value));
@@ -93,6 +99,12 @@ abstract class Template extends cmdbAbstractObject
 	public function CreateObject($data, $oObject)
 	{
 		$classname = $this->Get('relatedclass');
+		
+		//服务器申请不做操作
+		if($classname == "Server")
+		{
+			return;
+		}
 		$myContactId = UserRights::GetContactId();
 		$sContact = MetaModel::GetObject("Person", $myContactId);
 		$sOrgId = $sContact->Get("org_id");
@@ -248,7 +260,7 @@ abstract class Template extends cmdbAbstractObject
 			$aLines[] = $aFieldData['label']." : ".$aFieldData['value'];
 		}
 
-		$sRet = implode("\n", $aLines);
+		$sRet = implode("<br>", $aLines);
 		return $sRet;
 	}
 
