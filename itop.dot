@@ -36,6 +36,10 @@ VirtualIP->IPAddress
 Domain->FunctionalCI
 Cluster->FunctionalCI
 Database->FunctionalCI
+RDS->Database
+MySQL->Database
+MongoDB->Database
+Redis->Database
 Url->FunctionalCI
 Rack->PhysicalDevice
 ISP->Typology
