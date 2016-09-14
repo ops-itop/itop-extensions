@@ -26,7 +26,7 @@ SetupWebPage::AddModule(
 		// Setup
 		//
 		'dependencies' => array(
-			
+			'api-client/1.0.0'
 		),
 		'mandatory' => true,
 		'visible' => false,

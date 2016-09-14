@@ -18,6 +18,7 @@ SetupWebPage::AddModule(
 			'itop-service-mgmt/2.0.0||itop-service-mgmt-provider/2.0.0',	
 			'itop-request-mgmt/2.0.0||itop-request-mgmt-itil/2.0.0',	
 			'itop-profiles-itil/1.0.0',
+			'api-client/1.0.0'
 		),
 		'mandatory' => false,
 		'visible' => true,
