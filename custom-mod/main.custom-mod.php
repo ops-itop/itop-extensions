@@ -19,7 +19,7 @@ function isAdmin()
 {
 	if(isset($_SESSION['profile_list']))
 	{
-		if(array_key_exists("1", $_SESSION['profile_list']))
+		if(in_array("Administrator", $_SESSION['profile_list']))
 		{
 			return(true);
 		}

@@ -108,10 +108,14 @@ abstract class Template extends cmdbAbstractObject
 		$myContactId = UserRights::GetContactId();
 		$sContact = MetaModel::GetObject("Person", $myContactId);
 		$sOrgId = $sContact->Get("org_id");
-		$oNewCI = new $classname();
-		$oNewCI->Set("org_id", $sOrgId);
-		$oNewCI->Set("status","implementation");
+		$ticket_id = $oObject->GetKey();
 		
+		$iTopAPI = new iTopClient();
+		//$comment = 'iTopAPI library create '.$class.' from ticket #'.$ticket_id;
+		$fields = array();
+		$fields['org_id'] = $sOrgId;
+		$fields['status'] = "implementation";
+				
 		$lnkedAppID = "";
 		foreach($data as $FieldId=>$FieldData)
 		{
@@ -131,31 +135,42 @@ abstract class Template extends cmdbAbstractObject
 				//$oNewCI->Set('applicationsolution_list', $oAppSet);
 			}else
 			{
-				$oNewCI->Set($FieldData['code'], $FieldData['value']);	
+				$fields[$FieldData['code']] = $FieldData['value'];
 			}
 		}
-		$oKey = $oNewCI->DBWrite();
+		$oNew = $iTopAPI->coreCreate($classname, $fields);
+		if($oNew['code'] == 0)
+		{
+			foreach($oNew['objects'] as $k=>$v)
+			{
+				$oKey = $v['key'];
+			}
+		}else
+		{
+			die(json_encode($oNew['message']));
+		}
+		//die(json_encode($oKey));
 		
 		// 关联对象和工单
-		$oTicket = new lnkFunctionalCIToTicket();
-		$oTicket->Set('ticket_id', $oObject->GetKey());
-		$oTicket->Set('functionalci_id', $oKey);
-		$oTicket->DBWrite();
+		$iTopAPI->coreCreate('lnkFunctionalCIToTicket', array(
+			'ticket_id' => $ticket_id,
+			'functionalci_id' => $oKey,
+		));
 		
 		// 和applicationsolution建立关联
 		if($lnkedAppID)
 		{
-			$oAppLnk = new lnkApplicationSolutionToFunctionalCI();
-			$oAppLnk->Set('applicationsolution_id', $lnkedAppID);
-			$oAppLnk->Set('functionalci_id', $oKey);
-			$oAppLnk->DBWrite();			
+			$iTopAPI->coreCreate('lnkApplicationSolutionToFunctionalCI', array(
+				'applicationsolution_id' => $lnkedAppID,
+				'functionalci_id' => $oKey,
+			));
 		}
 		
 		// ticket和工单发起人建立关联
-		$oContactLnk = new lnkContactToTicket();
-		$oContactLnk->Set('ticket_id', $oObject->GetKey());
-		$oContactLnk->Set('contact_id', $myContactId);
-		$oContactLnk->DBWrite();	
+		$iTopAPI->coreCreate('lnkContactToTicket', array(
+			'ticket_id' => $ticket_id,
+			'contact_id' => $myContactId,
+		));
 	}
 	 
 	/**

@@ -27,6 +27,8 @@
 		{
 			return;
 		}
+		
+		$iTopAPI = new iTopClient();
 		// 拿到工单链接的配置项
 		$oCIs = $this->Get('functionalcis_list')->ToArrayOfValues();
 		foreach($oCIs as $aCI)
@@ -38,21 +40,19 @@
 			{
 				if($aChange['status'] == "closed")
 				{
-					$oObject->Set('status', 'production');
+					$iTopAPI->coreUpdate($nameClass, $oID, array("status"=>"production"));
 				}
 				if($aChange['status'] == "rejected")
 				{
-					$oObject->Set('status', 'obsolete');
+					$iTopAPI->coreUpdate($nameClass, $oID, array("status"=>"obsolete"));
 				}
 				
-				$oObject->DBWrite();
 			}
 			
 			// 审批未通过的工单重新打开，CI变为上线中
 			if($oObject->Get("status") == "obsolete" && $aChange['status'] == "new")
 			{
-				$oObject->Set('status', 'implementation');
-				$oObject->DBWrite();
+				$iTopAPI->coreUpdate($nameClass, $oID, array("status"=>"implementation"));
 			}
 		}
 	}
