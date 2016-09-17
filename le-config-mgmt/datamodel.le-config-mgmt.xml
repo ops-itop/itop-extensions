@@ -570,9 +570,6 @@
 						<neighbour id="contact_custom" _delta="define">
 							<attribute>contact_list_custom</attribute>
 						</neighbour>
-						<neighbour id="url_list" _delta="define">
-							<attribute>url_list</attribute>
-						</neighbour>
 					</neighbours>
 				</relation>
 			</relations>
@@ -2648,7 +2645,15 @@
 				}]]></code>
 				</method>
 			</methods>
-
+			<relations>
+				<relation id="impacts">
+					<neighbours>
+						<neighbour id="applicationsolution_id" _delta="define">
+							<attribute>applicationsolution_id</attribute>
+						</neighbour>					
+					</neighbours>
+				</relation>
+			</relations>
 		</class>		
 
 		<class id="Rack" _delta="define">
