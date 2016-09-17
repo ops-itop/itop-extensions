@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2">
+	<constants>
+	</constants>
+	<classes>
+	</classes>
+	<menus>
+		<menu id="WelcomeBatchQuery" xsi:type="WebPageMenuNode" _delta="define">
+			<rank>21</rank>
+			<parent>WelcomeMenu</parent>
+			<url>$env-production/custom-pages/batch_query.php</url>
+		</menu>
+		
+	</menus>
+	<user_rights>
+		<groups>
+		</groups>
+		<profiles>
+		</profiles>
+	</user_rights>
+</itop_design>
