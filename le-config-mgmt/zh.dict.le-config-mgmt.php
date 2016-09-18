@@ -23,7 +23,10 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Cluster/Attribute:vip_list+' => '该集群使用的所有VIP',
 	'Class:Cluster/Attribute:server_list' => '服务器',
 	'Class:Cluster/Attribute:server_list+' => '隶属于该集群的所有服务器',
-	
+	'Class:Cluster/Attribute:domain_list' => '域名列表',
+	'Class:Cluster/Attribute:domain_list+' => '解析到该集群的所有域名列表',
+	'Class:Cluster/Attribute:cname' => 'CNAME域名',
+	'Class:Cluster/Attribute:type' => '类型',
 	'Class:Cluster/Attribute:status' => '状态',
 	'Class:Cluster/Attribute:status+' => '',
 	'Class:Cluster/Attribute:status/Value:implementation' => '上线中',
@@ -112,6 +115,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Domain/Attribute:contacts' => '联系人',
 	'Class:Domain/Attribute:applicationsolution_id' => '产品线',
 	'Class:Domain/Attribute:status' => '状态',
+	'Class:Domain/Attribute:record_id' => '解析地址',
 	'Class:Domain/Attribute:status+' => '',
 	'Class:Domain/Attribute:status/Value:implementation' => '上线中',
 	'Class:Domain/Attribute:status/Value:implementation+' => '上线中',
@@ -170,6 +174,22 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Database/Attribute:status/Value:production+' => '使用中',
 	'Class:Database/Attribute:status/Value:stock' => '库存',
 	'Class:Database/Attribute:status/Value:stock+' => '库存',
+	
+	//RDS
+	'Class:RDS' => 'RDS',
+	'Class:RDS/Name' => '%1$s.%2$s',
+	
+	//Monngo
+	'Class:MongoDB' => 'MongoDB',
+	'Class:MongoDB/Name' => '%1$s.%2$s',
+	
+	//MySQL
+	'Class:MySQL' => 'MySQL',
+	'Class:MySQL/Name' => '%1$s.%2$s',
+	
+	//Redis
+	'Class:Redis' => 'Redis',
+	'Class:Redis/Name' => '%1$s.%2$s',
 ));
 
 // Url

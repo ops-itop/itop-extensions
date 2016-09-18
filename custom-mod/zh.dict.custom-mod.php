@@ -15,6 +15,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Menu:WelcomeAudit' => '审计',
 	'Menu:PortalUserRequest+' => '创建一个新用户请求工单',
 	'Portal:CMDB' => '返回CMDB',
+	'Portal:Help' => '查看帮助',
 ));
 
 ?>
