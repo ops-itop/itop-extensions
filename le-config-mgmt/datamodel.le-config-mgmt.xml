@@ -551,7 +551,9 @@
 						<item id="name_cn" _delta="define">
 							<rank>15</rank>
 						</item>
-
+						<item id="status" _delta="define">
+							<rank>20</rank>
+						</item>
 						<item id="businessprocess_id" _delta="define">
 							<rank>16</rank>
 						</item>
@@ -562,6 +564,9 @@
 					<items>
 						<item id="name_cn" _delta="define">
 							<rank>5</rank>
+						</item>
+						<item id="status" _delta="define">
+							<rank>10</rank>
 						</item>
 						<item id="ci_id">
 							<rank>100</rank>
