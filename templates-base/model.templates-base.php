@@ -122,6 +122,9 @@ abstract class Template extends cmdbAbstractObject
 			if($FieldData['code'] == "applicationsolution_list")
 			{
 				// 和applicationsolution建立关联
+				$lnkedAppID = $FieldData['value_obj_key'];
+				
+				/*
 				$sApp = MetaModel::GetObjectByColumn('ApplicationSolution', 'friendlyname', $FieldData['value'], false);
 				if(!$sApp)
 				{
@@ -129,10 +132,13 @@ abstract class Template extends cmdbAbstractObject
 				}else
 				{
 					$lnkedAppID = $sApp->GetKey();
-				}
+				}*/
 				//$oAppSet = DBObjectSet::FromScratch('lnkApplicationSolutionToFunctionalCI');
 				//$oAppSet->AddObject($sApp);
 				//$oNewCI->Set('applicationsolution_list', $oAppSet);
+			}elseif($FieldData['code'] == "record_id")  // 域名解析
+			{
+				$fields[$FieldData['code']] = $FieldData['value_obj_key'];
 			}else
 			{
 				$fields[$FieldData['code']] = $FieldData['value'];
