@@ -2107,7 +2107,42 @@
 					</attributes>
 				</reconciliation>
 			</properties>
-			<fields/>
+			
+			<fields>
+				<field id="capacity" xsi:type="AttributeString" _delta="define">
+					<sql>capacity</sql>
+					<is_null_allowed>true</is_null_allowed>
+					<default_value>2G</default_value>
+				</field>
+				<field id="datatype" xsi:type="AttributeString" _delta="define">
+					<sql>datatype</sql>
+					<is_null_allowed>true</is_null_allowed>
+					<default_value/>
+				</field>
+				<field id="language" xsi:type="AttributeString" _delta="define">
+					<sql>language</sql>
+					<is_null_allowed>true</is_null_allowed>
+					<default_value/>
+				</field>
+				<field id="type" xsi:type="AttributeEnum" _delta="define">
+					<values>
+						<value id="sentinel">sentinel</value>
+						<value id="cluster">cluster</value>
+					</values>
+					<sql>type</sql>
+					<default_value>cluster</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+				<field id="persistence" xsi:type="AttributeEnum" _delta="define">
+					<values>
+						<value id="yes">yes</value>
+						<value id="no">no</value>
+					</values>
+					<sql>persistence</sql>
+					<default_value>yes</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+			</fields>
 			<methods/>
 			<presentation>
 				<details _delta="redefine">
@@ -2119,8 +2154,23 @@
 							<rank>11</rank>
 						</item>
 						<item id="status">
+							<rank>12</rank>
+						</item>
+						<item id="capacity" _delta="define">
+							<rank>13</rank>
+						</item>
+						<item id="datatype" _delta="define">
+							<rank>14</rank>
+						</item>
+						<item id="language" _delta="define">
 							<rank>15</rank>
 						</item>
+						<item id="type" _delta="define">
+							<rank>16</rank>
+						</item>
+						<item id="persistence" _delta="define">
+							<rank>17</rank>
+						</item>						
 						<item id="info">
 							<rank>18</rank>
 						</item>
@@ -2159,8 +2209,23 @@
 						</item>
 
 						<item id="status">
+							<rank>12</rank>
+						</item>
+						<item id="capacity" _delta="define">
+							<rank>13</rank>
+						</item>
+						<item id="datatype" _delta="define">
+							<rank>14</rank>
+						</item>
+						<item id="language" _delta="define">
 							<rank>15</rank>
 						</item>
+						<item id="type" _delta="define">
+							<rank>16</rank>
+						</item>
+						<item id="persistence" _delta="define">
+							<rank>17</rank>
+						</item>						
 						<item id="info">
 							<rank>18</rank>
 						</item>
@@ -2189,8 +2254,24 @@
 						</item>
 
 						<item id="status">
+							<rank>12</rank>
+						</item>
+						<item id="capacity" _delta="define">
+							<rank>13</rank>
+						</item>
+						<item id="datatype" _delta="define">
+							<rank>14</rank>
+						</item>
+						<item id="language" _delta="define">
 							<rank>15</rank>
 						</item>
+						<item id="type" _delta="define">
+							<rank>16</rank>
+						</item>
+						<item id="persistence" _delta="define">
+							<rank>17</rank>
+						</item>
+						
 						<item id="contacts">
 							<rank>19</rank>
 						</item>

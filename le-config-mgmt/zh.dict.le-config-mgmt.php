@@ -167,7 +167,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Database' => '数据库',
 	'Class:Database/Attribute:name' => '名称',
-	'Class:Database/Attribute:type' => '类型',
+	'Class:Database/Attribute:location' => '地区',
 	'Class:Database/Attribute:info' => '详细信息',
 	'Class:Database/Attribute:contacts' => '联系人',
 	'Menu:Database' => '数据库',
@@ -198,6 +198,11 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	//Redis
 	'Class:Redis' => 'Redis',
 	'Class:Redis/Name' => '%1$s.%2$s',
+	'Class:Redis/Attribute:capacity' => '容量预估',
+	'Class:Redis/Attribute:datatype' => '数据类型',
+	'Class:Redis/Attribute:language' => '客户端语言',
+	'Class:Redis/Attribute:type' => '类型',
+	'Class:Redis/Attribute:persistence' => '是否持久化',
 ));
 
 // Url
