@@ -109,14 +109,18 @@ abstract class Template extends cmdbAbstractObject
 		$sContact = MetaModel::GetObject("Person", $myContactId);
 		$sOrgId = $sContact->Get("org_id");
 		$ticket_id = $oObject->GetKey();
+		$ticket_description = $oObject->Get('description');
 		
 		$iTopAPI = new iTopClient();
 		//$comment = 'iTopAPI library create '.$class.' from ticket #'.$ticket_id;
 		$fields = array();
 		$fields['org_id'] = $sOrgId;
 		$fields['status'] = "implementation";
+		$fields['description'] = $ticket_description;
 				
 		$lnkedAppID = "";
+		
+		$extKey = array("businessprocess_id", "record_id");
 		foreach($data as $FieldId=>$FieldData)
 		{
 			if($FieldData['code'] == "applicationsolution_list")
@@ -136,7 +140,7 @@ abstract class Template extends cmdbAbstractObject
 				//$oAppSet = DBObjectSet::FromScratch('lnkApplicationSolutionToFunctionalCI');
 				//$oAppSet->AddObject($sApp);
 				//$oNewCI->Set('applicationsolution_list', $oAppSet);
-			}elseif($FieldData['code'] == "record_id")  // 域名解析
+			}elseif(in_array($FieldData['code'], $extKey))  // 外键特殊处理
 			{
 				$fields[$FieldData['code']] = $FieldData['value_obj_key'];
 			}else
@@ -177,6 +181,15 @@ abstract class Template extends cmdbAbstractObject
 			'ticket_id' => $ticket_id,
 			'contact_id' => $myContactId,
 		));
+		
+		// 如果是申请APP，APP联系人添加工单发起人
+		if($classname == "ApplicationSolution")
+		{
+			$iTopAPI->coreCreate('lnkContactToApplicationSolution', array(
+				'applicationsolution_id' => $oKey,
+				'contact_id' => $myContactId,
+			));
+		}
 	}
 	 
 	/**

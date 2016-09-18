@@ -153,6 +153,14 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:ApplicationSolution/Attribute:name_cn' => '中文名称',
 	'Class:ApplicationSolution/Attribute:contact_list_custom' => '联系人',
 	'Class:ApplicationSolution/Attribute:contact_list_custom+' => '该APP的所有联系人',
+	'Class:ApplicationSolution/Attribute:status/Value:implementation' => '上线中',
+	'Class:ApplicationSolution/Attribute:status/Value:implementation+' => '上线中',
+	'Class:ApplicationSolution/Attribute:status/Value:obsolete' => '废弃',
+	'Class:ApplicationSolution/Attribute:status/Value:obsolete+' => '废弃',
+	'Class:ApplicationSolution/Attribute:status/Value:production' => '在线',
+	'Class:ApplicationSolution/Attribute:status/Value:production+' => '在线',
+	'Class:ApplicationSolution/Attribute:status/Value:stock' => '库存',
+	'Class:ApplicationSolution/Attribute:status/Value:stock+' => '库存',	
 ));
 
 // Database
