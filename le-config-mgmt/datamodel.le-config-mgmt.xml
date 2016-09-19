@@ -2811,7 +2811,7 @@
 							$url = $url . "?" . $params;
 						}
 						$body = $this->Get("body");
-						$curl = "curl -s X$method " . $headers . "\"$url\"" . " --data \"" . $body . "\"";
+						$curl = "curl -s -X$method " . $headers . "\"$url\"" . " --data \"" . $body . "\"";
 					}
 					$this->Set("curl", $curl);
 					
