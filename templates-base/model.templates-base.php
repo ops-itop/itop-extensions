@@ -143,6 +143,9 @@ abstract class Template extends cmdbAbstractObject
 			}elseif(in_array($FieldData['code'], $extKey))  // 外键特殊处理
 			{
 				$fields[$FieldData['code']] = $FieldData['value_obj_key'];
+			}elseif($FieldData['code'] == "tips")  // tips字段做特殊处理，用于工单页面提醒信息
+			{
+				continue;
 			}else
 			{
 				$fields[$FieldData['code']] = $FieldData['value'];
