@@ -4044,7 +4044,23 @@
 					</group>
 				</groups>
 			</profile>
-
+			<profile id="104" _delta="define">
+				<name>工单机器人</name>
+				<description>只允许修改UserRequest</description>
+				<groups>
+					<group id="UserRequest">
+						<actions>
+							<action id="action:write">allow</action>
+						</actions>
+					</group>
+					<group id="*">
+						<actions>
+							<action id="action:read">allow</action>
+							<action id="action:bulk read">allow</action>
+						</actions>
+					</group>
+				</groups>
+			</profile>
 		</profiles>
 	</user_rights>
 	<branding>
