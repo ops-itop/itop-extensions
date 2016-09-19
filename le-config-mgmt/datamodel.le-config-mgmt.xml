@@ -2810,8 +2810,8 @@
 						{
 							$url = $url . "?" . $params;
 						}
-						$body = $this->Get("body");
-						$curl = "curl -s -X$method " . $headers . "\"$url\"" . " --data \"" . $body . "\"";
+						$body = str_replace(array("\r\n", "\r", "\n"), "", $this->Get("body"));
+						$curl = "curl -s -X$method " . $headers . "\"$url\"" . " --data '" . $body . "'";
 					}
 					$this->Set("curl", $curl);
 					
