@@ -525,7 +525,17 @@
 					<is_null_allowed>true</is_null_allowed>
 					<display_style>list</display_style>					
 				</field>
-
+				<field id="type" xsi:type="AttributeEnum" _delta="define">
+					<values>
+						<value id="web">web</value>
+						<value id="other">other</value>
+						<value id="shadowlink">shadowlink</value>
+					</values>
+					<sql>type</sql>
+					<default_value>web</default_value>
+					<is_null_allowed>true</is_null_allowed>
+					<display_style>list</display_style>					
+				</field>
 			</fields>
 			<presentation>
 				<details>
@@ -540,6 +550,9 @@
 						<item id="name_cn" _delta="define">
 							<rank>15</rank>
 						</item>
+						<item id="type" _delta="define">
+							<rank>16</rank>
+						</item>
 						<item id="businessprocess_id" _delta="define">
 							<rank>16</rank>
 						</item>
@@ -551,6 +564,9 @@
 						<item id="name_cn" _delta="define">
 							<rank>15</rank>
 						</item>
+						<item id="type" _delta="define">
+							<rank>16</rank>
+						</item>						
 						<item id="status" _delta="define">
 							<rank>20</rank>
 						</item>
@@ -565,6 +581,9 @@
 						<item id="name_cn" _delta="define">
 							<rank>5</rank>
 						</item>
+						<item id="type" _delta="define">
+							<rank>16</rank>
+						</item>						
 						<item id="status" _delta="define">
 							<rank>10</rank>
 						</item>
