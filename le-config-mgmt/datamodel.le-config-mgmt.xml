@@ -2376,6 +2376,9 @@
 						<value id="post">POST</value>
 						<value id="put">PUT</value>
 						<value id="delete">DELETE</value>
+						<value id="head">HEAD</value>
+						<value id="propfind">PROPFIND</value>
+						<value id="report">REPORT</value>
 					</values>
 					<sql>method</sql>
 					<default_value>GET</default_value>
