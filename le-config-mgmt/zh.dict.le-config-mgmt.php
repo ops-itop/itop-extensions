@@ -203,6 +203,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Redis/Attribute:datatype' => '数据类型',
 	'Class:Redis/Attribute:language' => '客户端语言',
 	'Class:Redis/Attribute:type' => '类型',
+	'Class:Redis/Attribute:name' => '前缀',
 	'Class:Redis/Attribute:persistence' => '是否持久化',
 ));
 

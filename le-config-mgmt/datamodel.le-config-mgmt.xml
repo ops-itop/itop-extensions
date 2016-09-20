@@ -2681,9 +2681,12 @@
 					<code><![CDATA[
 					public function ComputeValues()
 					{
-						$app = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $this->Get('applicationsolution_name'), false);
-						$this->Set("org_id", $app->Get("org_id"));
-						$this->Set("business_criticity", $app->Get("business_criticity"));
+						if($this->Get('applicationsolution_id') != 0)
+						{
+							$app = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $this->Get('applicationsolution_name'), false);
+							$this->Set("org_id", $app->Get("org_id"));
+							$this->Set("business_criticity", $app->Get("business_criticity"));						
+						}
 						return parent::ComputeValues();
 					}
 					]]>
