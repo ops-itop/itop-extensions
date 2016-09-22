@@ -3555,17 +3555,64 @@
 				</field>
 			</fields>
 			<methods>
+				<method id="ReloadAndDisplayCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+					function ReloadAndDisplayCustom($oPage, $oObj, $sMessageId = '', $sMessage = '', $sSeverity = null)
+					{
+						$oAppContext = new ApplicationContext();
+						if ($sMessageId != '')
+						{
+							cmdbAbstractObject::SetSessionMessage(get_class($oObj), $oObj->GetKey(), $sMessageId, $sMessage, $sSeverity, 0, true /* must not exist */);
+						}
+						
+						$oId = $oObj->getKey();
+						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
+					}
+					]]>
+					</code>
+				</method>			
+				<method id="DisplayModifyForm" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[
+						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
+						{
+							if(!UserRights::IsAdministrator())
+							{
+								$sMesg = Dict::Format("Class:lnkContactToApplicationSolution/Error:NotAllowDirectCreation", get_class($this));
+								if($this->IsNew())
+								{
+									$sMesg = $sMesg . '...<a href="'.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=modify&class=Person&id='.UserRights::GetContactId().'">'.Dict::Format("Class:lnkContactToApplicationSolution/Msg:EditMySelf").'</a>';
+									$oPage->add("<div class=\"header_message message_info\">$sMesg</div>\n");
+								}else
+								{
+									self::ReloadAndDisplayCustom($oPage, $this, 'lnkcontacttoapplicationsolution-no-direct', $sMesg, 'info');
+								}
+							}else
+							{
+								parent::DisplayModifyForm($oPage, $aExtraParams);
+							}
+						}
+					]]>
+					</code>
+				</method>			
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
 					<access>protected</access>
 					<type>Overload-DBObject</type>
 					<code><![CDATA[  public function DoCheckToWrite(){
+			/* 允许研发编辑app时添加删除联系人, 取消这里的检查
 			$myContactId = UserRights::GetContactId();
 			$thisContactId = $this->Get('contact_id');
 			$thisContactName = $this->Get('contact_name');
 			if ($myContactId != $thisContactId && !UserRights::IsAdministrator()){
 				$this->m_aCheckIssues[] = Dict::Format("Class:lnkContactToApplicationSolution/Error:CanOnlyAddLinkForYourself", $thisContactName);
 			}
+			*/
 			
 			$aChanges = $this->ListChanges();
 			if($aChanges)
@@ -3702,6 +3749,103 @@
 			<properties>
 				<icon _delta="redefine">../le-config-mgmt/images/link.png</icon>
 			</properties>
+			<methods>
+				<method id="ReloadAndDisplayCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+					function ReloadAndDisplayCustom($oPage, $oObj, $sMessageId = '', $sMessage = '', $sSeverity = null)
+					{
+						$oAppContext = new ApplicationContext();
+						if ($sMessageId != '')
+						{
+							cmdbAbstractObject::SetSessionMessage(get_class($oObj), $oObj->GetKey(), $sMessageId, $sMessage, $sSeverity, 0, true /* must not exist */);
+						}
+						
+						$oId = $oObj->getKey();
+						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
+					}
+					]]>
+					</code>
+				</method>			
+				<method id="DisplayModifyForm" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[
+						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
+						{
+							if(!UserRights::IsAdministrator())
+							{
+								$sMesg = Dict::Format("Class:lnkApplicationSolutionToFunctionalCI/Error:NotAllowDirectCreation", get_class($this));
+								if($this->IsNew())
+								{
+									$sMesg = $sMesg . '...<a href="'.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?c%5Bmenu%5D=ApplicationSolution">'.Dict::Format("Class:lnkApplicationSolutionToFunctionalCI/Msg:EditApp").'</a>';
+									$oPage->add("<div class=\"header_message message_info\">$sMesg</div>\n");
+								}else
+								{
+									self::ReloadAndDisplayCustom($oPage, $this, 'lnkApplicationSolutionToFunctionalCI-no-direct', $sMesg, 'info');
+								}
+							}else
+							{
+								parent::DisplayModifyForm($oPage, $aExtraParams);
+							}
+						}
+					]]>
+					</code>
+				</method>			
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[  public function DoCheckToWrite(){
+			$aChanges = $this->ListChanges();
+			if($aChanges)
+			{
+				$friendlyname = $this->Get('friendlyname');
+				if(!$this->IsNew())
+				{
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkApplicationSolutionToFunctionalCI/Error:OnlyAddAndDeleteIsAllow", $friendlyname);				
+				}else
+				{
+					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkApplicationSolutionToFunctionalCI WHERE friendlyname=:friendlyname");
+					$oSet = new DBObjectSet($oSearch, array(), array("friendlyname" => $friendlyname));
+					
+					if ($oSet->Count() > 0)
+					{
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkApplicationSolutionToFunctionalCI/Error:ThisLnkAlreadyExists", $friendlyname);
+					}				
+				}
+			}
+		}]]>
+					</code>
+				</method>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   
+  	public function CheckToDelete(&$oDeletionPlan)
+  	{
+		$myContactId = UserRights::GetContactId();
+		$appId = $this->Get('applicationsolution_id');
+		$oql = "SELECT lnkContactToApplicationSolution AS l WHERE l.contact_id = $myContactId AND l.applicationsolution_id = $appId";
+		$sObj = MetaModel::GetObjectFromOQL($oql);
+		
+  		if (!$sObj && !UserRights::IsAdministrator())
+		{
+			// 普通用户不允许删除非自己名下的lnkApplicationSolutionToFunctionalCI
+			$oDeletionPlan->AddToDelete($this, null);
+			$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下APP的关联'), true);
+			$oDeletionPlan->ComputeResults();
+			return false;
+		}
+		return parent::CheckToDelete($oDeletionPlan);
+  	} 
+			]]></code>
+				</method>
+			</methods>
 		</class>
 	</classes>
 	<menus>
@@ -4066,11 +4210,7 @@
 			<group id="EditCIs" _delta="define">
 				<classes>
 					<class id="lnkContactToApplicationSolution"/>
-				</classes>
-			</group>
-			<group id="Apps" _delta="define">
-				<classes>
-					<class id="ApplicationSolution"/>
+					<class id="lnkApplicationSolutionToFunctionalCI"/>
 				</classes>
 			</group>
 			<group id="Urls" _delta="define">
@@ -4082,7 +4222,7 @@
 				<classes>
 					<class id="ApplicationSolution"/>					
 				</classes>
-			</group>			
+			</group>
 		</groups>
 		<profiles>
 			<profile id="4" _delta="delete"></profile>
@@ -4196,6 +4336,11 @@
 							<action id="action:delete">allow</action>
 						</actions>
 					</group>
+					<group id="App">
+						<actions>
+							<action id="action:write">allow</action>
+						</actions>
+					</group>					
 					<group id="UserRequest">
 						<actions>
 							<action id="action:write">allow</action>

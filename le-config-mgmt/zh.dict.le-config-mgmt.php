@@ -279,6 +279,14 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkContactToApplicationSolution/Attribute:contact_name' => '联系人名称',
 	'Class:lnkContactToApplicationSolution/Attribute:contact_email' => '联系人邮箱',
 	'Class:lnkContactToApplicationSolution/Error:CanOnlyAddLinkForYourself' => '仅能创建自己的关联 - 无法操作 %1$s',
+	'Class:lnkContactToApplicationSolution/Error:NotAllowDirectCreation' => '不允许直接编辑, 请在APP或者个人资料中维护 APP/联系人 关系',
+	'Class:lnkContactToApplicationSolution/Msg:EditMySelf' => '编辑我的个人资料',
+));
+
+// lnkApplicationSolutionToFunctionalCI
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:lnkApplicationSolutionToFunctionalCI/Error:NotAllowDirectCreation' => '不允许直接编辑, 请在APP中维护 APP/功能配置项 关系',
+	'Class:lnkApplicationSolutionToFunctionalCI/Msg:EditApp' => '去APP列表页',	
 ));
 
 // ISP
