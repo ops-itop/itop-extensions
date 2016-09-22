@@ -161,7 +161,10 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:ApplicationSolution/Attribute:status/Value:production' => '在线',
 	'Class:ApplicationSolution/Attribute:status/Value:production+' => '在线',
 	'Class:ApplicationSolution/Attribute:status/Value:stock' => '库存',
-	'Class:ApplicationSolution/Attribute:status/Value:stock+' => '库存',	
+	'Class:ApplicationSolution/Attribute:status/Value:stock+' => '库存',
+	'Class:ApplicationSolution/Error:NotAllowNew' => '您没有新建 %1$s 对象的权限，请使用工单系统上线APP',
+	'Class:ApplicationSolution/Error:CanOnlyUpdateAppYourself' => '%1$s 不在您的名下，您没有编辑权限',
+	'Class:ApplicationSolution/Msg:ReturnList' => '返回APP列表',
 ));
 
 // Database

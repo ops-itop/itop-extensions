@@ -610,6 +610,98 @@
 				</relation>
 			</relations>
 			<methods>
+				<method id="isAllowedCreationCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+						public function isAllowedCreationCustom()
+						{
+							if($this->IsNew() && !UserRights::IsAdministrator())
+							{
+								return(false);
+							}else
+							{
+								return(true);
+							}
+						}
+					]]>
+					</code>
+				</method>
+				<method id="isAllowedModifyCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+						public function isAllowedModifyCustom()
+						{
+							$iKey = $this->GetKey();
+							if($iKey < 0 && !UserRights::IsAdministrator())
+							{
+								return(false);
+							}
+							$iUserID = UserRights::GetContactId();
+							$oql = "SELECT lnkContactToApplicationSolution AS l WHERE l.contact_id = $iUserID AND l.applicationsolution_id = $iKey";
+							$iObj = MetaModel::GetObjectFromOQL($oql);
+
+							if (!$iObj && !UserRights::IsAdministrator() && !UserRights::HasProfile("产品经理"))
+							{
+								return(false);
+							}else
+							{
+								return(true);
+							}
+						}
+					]]>
+					</code>
+				</method>
+				<method id="ReloadAndDisplayCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+					function ReloadAndDisplayCustom($oPage, $oObj, $sMessageId = '', $sMessage = '', $sSeverity = null)
+					{
+						$oAppContext = new ApplicationContext();
+						if ($sMessageId != '')
+						{
+							cmdbAbstractObject::SetSessionMessage(get_class($oObj), $oObj->GetKey(), $sMessageId, $sMessage, $sSeverity, 0, true /* must not exist */);
+						}
+						
+						$oId = $oObj->getKey();
+						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
+					}
+					]]>
+					</code>
+				</method>
+				
+				<method id="DisplayModifyForm" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[
+						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
+						{
+							if(!self::isAllowedCreationCustom())
+							{
+								$sMesg = Dict::Format("Class:ApplicationSolution/Error:NotAllowNew", get_class($this));
+								$sMesg = $sMesg . "...<a href=\"".utils::GetAbsoluteUrlAppRoot()."pages/UI.php?c%5Bmenu%5D=ApplicationSolution\">" . Dict::Format("Class:ApplicationSolution/Msg:ReturnList")."</a>";
+								$oPage->add("<div class=\"header_message message_info\">$sMesg</div>\n");
+								//self::ReloadAndDisplayCustom($oPage, $this, 'app-create-not-allowd', $sMesg, 'info');
+							}elseif(!self::isAllowedModifyCustom())
+							{
+								$sMesg = Dict::Format("Class:ApplicationSolution/Error:CanOnlyUpdateAppYourself", $this->Get('friendlyname'));
+								//$oPage->add("<div class=\"header_message message_info\">$sMesg</div>\n");
+								self::ReloadAndDisplayCustom($oPage, $this, 'app-modify-not-allowd', $sMesg, 'info');
+							}
+							else
+							{
+								parent::DisplayModifyForm($oPage, $aExtraParams);
+							}
+						}
+					]]>
+					</code>
+				</method>
 				<method id="DisplayBareRelations" _delta="define">
 					<static>false</static>
 					<access>public</access>
@@ -631,6 +723,46 @@
 							$oPage->add($addStr);
 						}
 					}]]></code>
+				</method>
+				<method id="GetAttributeFlags" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+					// 用DisplayModifyForm控制页面跳转，配合DoCheckToWrite已经能很好的保证权限控制。
+					// GetAttributeFlags已经不会起作用了。保留作为其他场景下的参考代码。
+					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+					{
+						if (!self::isAllowedModifyCustom())
+						{
+							return OPT_ATT_READONLY;
+						}
+						else
+						{
+							return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+						}
+					}
+					]]>
+					</code>
+				</method>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   public function DoCheckToWrite()
+					{
+						parent::DoCheckToWrite();
+						if(!self::isAllowedCreationCustom())
+						{
+							$this->m_aCheckIssues[] = Dict::Format("Class:ApplicationSolution/Error:NotAllowNew");
+						}
+						if(!self::isAllowedModifyCustom())
+						{
+							$this->m_aCheckIssues[] = Dict::Format("Class:ApplicationSolution/Error:CanOnlyUpdateAppYourself", $this->Get('friendlyname'));
+						}
+					}
+					]]>
+					</code>
 				</method>
 			</methods>		
 		</class>
@@ -3946,6 +4078,11 @@
 					<class id="Url"/>					
 				</classes>
 			</group>
+			<group id="App" _delta="define">
+				<classes>
+					<class id="ApplicationSolution"/>					
+				</classes>
+			</group>			
 		</groups>
 		<profiles>
 			<profile id="4" _delta="delete"></profile>
@@ -4017,6 +4154,11 @@
 							<action id="stimulus:ev_new">allow</action>
 							<action id="stimulus:ev_online">allow</action>
 							<action id="stimulus:ev_offline">allow</action>
+						</actions>
+					</group>
+					<group id="App">
+						<actions>
+							<action id="action:write">allow</action>
 						</actions>
 					</group>
 					<group id="UserRequest">
