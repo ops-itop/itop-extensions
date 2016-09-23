@@ -640,9 +640,13 @@
 							{
 								return(false);
 							}
+							$iObj = NULL;
 							$iUserID = UserRights::GetContactId();
-							$oql = "SELECT lnkContactToApplicationSolution AS l WHERE l.contact_id = $iUserID AND l.applicationsolution_id = $iKey";
-							$iObj = MetaModel::GetObjectFromOQL($oql);
+							if($iUserID>0)
+							{
+								$oql = "SELECT lnkContactToApplicationSolution AS l WHERE l.contact_id = $iUserID AND l.applicationsolution_id = $iKey";
+								$iObj = MetaModel::GetObjectFromOQL($oql);
+							}
 
 							if (!$iObj && !UserRights::IsAdministrator() && !UserRights::HasProfile("产品经理"))
 							{
@@ -3830,8 +3834,14 @@
   	{
 		$myContactId = UserRights::GetContactId();
 		$appId = $this->Get('applicationsolution_id');
-		$oql = "SELECT lnkContactToApplicationSolution AS l WHERE l.contact_id = $myContactId AND l.applicationsolution_id = $appId";
-		$sObj = MetaModel::GetObjectFromOQL($oql);
+
+		$sObj = NULL;
+		
+		if($myContactId>0)
+		{
+			$oql = "SELECT lnkContactToApplicationSolution AS l WHERE l.contact_id = $myContactId AND l.applicationsolution_id = $appId";
+			$sObj = MetaModel::GetObjectFromOQL($oql);		
+		}
 		
   		if (!$sObj && !UserRights::IsAdministrator())
 		{
