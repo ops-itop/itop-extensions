@@ -333,8 +333,6 @@
 					<is_null_allowed>true</is_null_allowed>
 					<default_value/>
 				</field>
-				<!--
-				<field id="contacts" xsi:type="AttributeString" _delta="delete"></field>-->
 			</fields>
 			<methods>
 				<method id="DoCheckToWrite" _delta="define">
@@ -830,7 +828,14 @@
 					<count_min>0</count_min>
 					<duplicates/>
 				</field>
-
+				<field id="database_list" xsi:type="AttributeLinkedSetIndirect" _delta="define">
+					<linked_class>lnkDatabaseToServer</linked_class>
+					<ext_key_to_me>server_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>database_id</ext_key_to_remote>
+					<duplicates/>				
+				</field>
 				<field id="ip_list" xsi:type="AttributeLinkedSet" _delta="define">
 					<linked_class>PhysicalIP</linked_class>
 					<ext_key_to_me>connectableci_id</ext_key_to_me>
@@ -857,6 +862,9 @@
 						</item>
 						<item id="vip_list" _delta="define">
 							<rank>6</rank>
+						</item>
+						<item id="database_list">
+							<rank>8</rank>
 						</item>
 						<item id="documents_list" _delta="redefine">
 							<rank>100</rank>
@@ -1031,6 +1039,9 @@
 						<neighbour id="cluster">
 							<attribute>cluster_list</attribute>
 						</neighbour>
+						<neighbour id="database_list" _delta="define">
+							<attribute>database_list</attribute>							
+						</neighbour>						
 					</neighbours>
 				</relation>
 			</relations>
@@ -1045,7 +1056,7 @@
 				<key_type>autoincrement</key_type>
 				<db_table>ipaddress</db_table>
 				<db_key_field>id</db_key_field>
-				<db_final_class_field/>
+				<db_final_class_field>finalclass</db_final_class_field>
 				<naming>
 					<attributes>
 						<attribute id="ipaddress"/>
@@ -1725,7 +1736,7 @@
 				<key_type>autoincrement</key_type>
 				<db_table>database</db_table>
 				<db_key_field>id</db_key_field>
-				<db_final_class_field/>
+				<db_final_class_field>finalclass</db_final_class_field>
 				<naming>
 					<attributes _delta="define">
 						<attribute id="location"/>
@@ -1774,6 +1785,14 @@
 					<is_null_allowed>true</is_null_allowed>
 					<default_value/>
 				</field>
+				<field id="server_list" xsi:type="AttributeLinkedSetIndirect" _delta="define">
+					<linked_class>lnkDatabaseToServer</linked_class>
+					<ext_key_to_me>database_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>server_id</ext_key_to_remote>
+					<duplicates/>				
+				</field>
 			</fields>
 			<methods/>
 			<presentation>
@@ -1800,11 +1819,12 @@
 						<item id="contacts_list">
 							<rank>95</rank>
 						</item>
-
 						<item id="applicationsolution_list">
 							<rank>90</rank>
 						</item>
-
+						<item id="server_list">
+							<rank>95</rank>
+						</item>
 						<item id="move2production">
 							<rank>100</rank>
 						</item>
@@ -2044,7 +2064,9 @@
 						<item id="contacts_list">
 							<rank>95</rank>
 						</item>
-
+						<item id="server_list">
+							<rank>95</rank>
+						</item>
 						<item id="applicationsolution_list">
 							<rank>90</rank>
 						</item>
@@ -2166,7 +2188,9 @@
 						<item id="contacts_list">
 							<rank>95</rank>
 						</item>
-
+						<item id="server_list">
+							<rank>95</rank>
+						</item>
 						<item id="applicationsolution_list">
 							<rank>90</rank>
 						</item>
@@ -2338,7 +2362,9 @@
 						<item id="contacts_list">
 							<rank>95</rank>
 						</item>
-
+						<item id="server_list">
+							<rank>95</rank>
+						</item>
 						<item id="applicationsolution_list">
 							<rank>90</rank>
 						</item>
@@ -3856,6 +3882,87 @@
 			]]></code>
 				</method>
 			</methods>
+		</class>
+		<class id="lnkDatabaseToServer" _delta="define">
+			<parent>cmdbAbstractObject</parent>
+			<properties>
+				<is_link>1</is_link>
+				<category>bizmodel</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>lnkdatabasetoserver</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field/>
+				<naming>
+					<attributes>
+						<attribute id="database_id"/>
+						<attribute id="server_id"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon _delta="define">../le-config-mgmt/images/contact.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="database_id"/>
+						<attribute id="server_id"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="database_id" xsi:type="AttributeExternalKey">
+					<sql>database_id</sql>
+					<target_class>Database</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>					
+				</field>
+				<field id="database_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>database_id</extkey_attcode>
+					<target_attcode>friendlyname</target_attcode>				
+				</field>
+				<field id="server_id" xsi:type="AttributeExternalKey">
+					<sql>server_id</sql>
+					<target_class>Server</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>				
+				</field>
+				<field id="server_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>friendlyname</target_attcode>				
+				</field>
+			</fields>
+			<methods/>
+			<presentation>
+				<details>
+					<items>
+						<item id="database_id">
+							<rank>10</rank>
+						</item>
+						<item id="server_id">
+							<rank>20</rank>
+						</item>						
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="database_id">
+							<rank>10</rank>
+						</item>
+						<item id="server_id">
+							<rank>20</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="database_id">
+							<rank>10</rank>
+						</item>
+						<item id="server_id">
+							<rank>20</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
 		</class>
 	</classes>
 	<menus>

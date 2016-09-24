@@ -289,6 +289,20 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkApplicationSolutionToFunctionalCI/Msg:EditApp' => '去APP列表页',	
 ));
 
+// lnkDatabaseToServer
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:lnkDatabaseToServer' => '数据库/服务器',
+	'Class:lnkDatabaseToServer+' => '所有 数据库/服务器 关联',
+	'Class:lnkDatabaseToServer/Attribute:database_id' => '数据库',	
+	'Class:lnkDatabaseToServer/Attribute:server_id' => '服务器',
+	
+	'Class:Server/Attribute:database_list' => '数据库',
+	'Class:Server/Attribute:database_list+' => '此服务器上所有的数据库',
+	'Class:Database/Attribute:server_list' => '依赖的服务器',
+	'Class:Database/Attribute:server_list+' => '此数据库依赖的所有服务器',
+));
+
+
 // ISP
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:ISP' => '运营商',
