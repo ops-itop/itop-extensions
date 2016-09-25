@@ -2843,7 +2843,7 @@
 					<code><![CDATA[
 					public function ComputeValues()
 					{
-						if($this->Get('applicationsolution_id') != 0)
+						if($this->Get('applicationsolution_id') > 0)
 						{
 							$app = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $this->Get('applicationsolution_name'), false);
 							$this->Set("org_id", $app->Get("org_id"));
@@ -3565,6 +3565,10 @@
 					<extkey_attcode>contact_id</extkey_attcode>
 					<target_attcode>email</target_attcode>
 				</field>
+				<field id="contact_phone" xsi:type="AttributeExternalField">
+					<extkey_attcode>contact_id</extkey_attcode>
+					<target_attcode>phone</target_attcode>
+				</field>				
 				<field id="applicationsolution_id" xsi:type="AttributeExternalKey">
 					<sql>applicationsolution_id</sql>
 					<target_class>ApplicationSolution</target_class>
@@ -3710,6 +3714,9 @@
 						<item id="contact_email">
 							<rank>30</rank>
 						</item>
+						<item id="contact_phone">
+							<rank>35</rank>
+						</item>												
 						<item id="applicationsolution_name_cn">
 							<rank>40</rank>
 						</item>
@@ -3730,6 +3737,9 @@
 						<item id="contact_email">
 							<rank>30</rank>
 						</item>
+						<item id="contact_phone">
+							<rank>35</rank>
+						</item>												
 						<item id="applicationsolution_name_cn">
 							<rank>40</rank>
 						</item>
