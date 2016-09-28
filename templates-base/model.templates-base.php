@@ -196,6 +196,118 @@ abstract class Template extends cmdbAbstractObject
 	}
 	 
 	/**
+	 * 根据联系人所在组织的交付模式获取该交付模式的联系人（团队），判断该联系人的团队ID
+	 */
+	public function GetAssignInfo($appId)
+	{
+		$oql = "SELECT lnkContactToApplicationSolution AS l WHERE l.applicationsolution_id=:applicationsolution_id";
+		$oSearch = DBObjectSearch::FromOQL_AllData($oql);
+		$oSet = new DBObjectSet($oSearch, array(), array("applicationsolution_id" => $appId));
+		$oArray = $oSet->ToArrayOfValues();
+		
+		if(!$oArray)
+		{
+			return(false);
+		}
+		
+		$oIds = array();
+		foreach($oArray as $v)
+		{
+			if($v['l.contact_id_finalclass_recall'] == "Person")
+			{
+				array_push($oIds, $v['l.contact_id']);
+			}
+		}
+		
+		// 随机取一个联系人
+		$oWinnerId = $oIds[array_rand($oIds, 1)];
+		$oPerson = MetaModel::GetObject("Person", $oWinnerId);
+		$org_id = $oPerson->Get('org_id');
+		$oOrg = MetaModel::GetObject("Organization", $org_id);
+		$deliverymodel_id = $oOrg->Get('deliverymodel_id');
+		$oDeliveryModel = MetaModel::GetObject("DeliveryModel", $deliverymodel_id);
+		
+		// 用户所属组成的交付模式的contact列表
+		$aim_team = $oDeliveryModel->Get("contacts_list")->ToArrayOfValues();
+		$list_aim_team = array();
+		foreach($aim_team as $v)
+		{
+			array_push($list_aim_team, $v['lnkDeliveryModelToContact.contact_id']);
+		}
+		
+		// 用户的team列表
+		$my_team = $oPerson->Get("team_list")->ToArrayOfValues();
+		$list_my_team = array();
+		foreach($my_team as $v)
+		{
+			array_push($list_my_team, $v['lnkPersonToTeam.team_id']);
+		}
+		
+		$all_team = array_intersect($list_aim_team, $list_my_team);
+		if(!$all_team)
+		{
+			return(false);
+		}
+		$team_id = $list_aim_team[array_rand($all_team, 1)];
+		return(array('team_id'=>$team_id, 'agent_id' => $oWinnerId));
+	}
+	/**
+	 * 创建事件之后，根据事件关联的APP自动更新事件的配置项、联系人
+	 * 并且自动分配事件给该联系人
+	 */
+	public function UpdateIncident($data, $oObject)
+	{
+		if(get_class($oObject) != "Incident")
+		{
+			return;
+		}
+		
+		$ticket_id = $oObject->GetKey();
+		$lnkedAppID = -1;
+		$iTopAPI = new iTopClient();
+		
+		// 链接事件单和app
+		foreach($data as $FieldId=>$FieldData)
+		{
+			if($FieldData['code'] == "functionalcis_list")
+			{
+				// 和applicationsolution建立关联
+				$lnkedAppID = $FieldData['value_obj_key'];
+				// 关联对象和工单
+				$iTopAPI->coreCreate('lnkFunctionalCIToTicket', array(
+					'ticket_id' => $ticket_id,
+					'functionalci_id' => $lnkedAppID,
+				));
+			}
+		}
+		
+		// ticket和事件关联APP的负责人建立关联
+		/*
+		$iTopAPI->coreCreate('lnkContactToTicket', array(
+			'ticket_id' => $ticket_id,
+			'contact_id' => $myContactId,
+		));*/
+		
+		// 自动指派
+		if($lnkedAppID > 0)
+		{
+			$oAssign = $this->GetAssignInfo($lnkedAppID);
+			//die(json_encode($oAssign));
+			if($oAssign)
+			{
+				$iTopAPI->coreApply_stimulus('Incident', $ticket_id, array(
+					'team_id' => $oAssign['team_id'],
+					'agent_id' => $oAssign['agent_id']
+				),'ev_assign');
+			}else
+			{
+				$data = array("public_log" => "Auto Assign Failed");
+				$iTopAPI->coreUpdate("Incident", $ticket_id, $data);
+			}
+		}
+	}
+	
+	/**
 	 *	Get the form data as an array
 	 */
 	public function GetPostedValuesAsArray($oObject)
@@ -317,6 +429,8 @@ abstract class Template extends cmdbAbstractObject
 		
 		//创建对象
 		$this->CreateObject($aValues,$oObject);
+		// 自动指派事件工单
+		$this->UpdateIncident($aValues, $oObject);
 	}
 
 	/**

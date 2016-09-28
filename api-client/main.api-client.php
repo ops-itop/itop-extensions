@@ -109,4 +109,16 @@ class iTopClient {
 			'comment' => $comment
 		));
 	}
+	
+	public function coreApply_stimulus($class,$query,$data,$stimulus,$comment=null) {
+		if (is_null($comment))
+			$comment = 'iTopAPI library apply_stimulus '.$class.' from '.$this->user;
+		return $this->operation('core/apply_stimulus',array(
+			'class' => $class,
+			'key' => $query,
+			'fields' => $data,
+			'stimulus' => $stimulus,
+			'comment' => $comment,
+		));
+	}	
 }
