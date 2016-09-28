@@ -266,6 +266,11 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Contact/Error:ContactEmailMustBeUnique' => '%$1s 此邮箱已被占用',
 ));
 
+// Person
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:Person/Name' => '%1$s%2$s(%3$s)',
+));
+
 // lnkContactToApplicationSolution
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Menu:lnkContactToApplicationSolution' => '联系人/APP',

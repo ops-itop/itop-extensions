@@ -95,6 +95,13 @@
 		</class>
 		<class id="Person">
 			<properties>
+				<naming _delta="redefine">
+					<attributes>
+						<attribute id="first_name"/>
+						<attribute id="name"/>
+						<attribute id="login"/>
+					</attributes>
+				</naming>
 				<reconciliation>
 					<attributes _delta="redefine">
 						<attribute id="name"/>
@@ -111,6 +118,11 @@
 				<field id="location_name" _delta="delete"></field>
 				<field id="employee_number" _delta="delete"></field>
 				<field id="mobile_phone" _delta="delete"></field>
+				<field id="login" xsi:type="AttributeString" _delta="define">
+					<sql>login</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
 			</fields>
 			<presentation>
 				<details>
@@ -150,10 +162,13 @@
 						<item id="email" _delta="redefine">
 							<rank>10</rank>
 						</item>
-						<item id="first_name" _delta="redefine">
+						<item id="friendlyname" _delta="define">
+							<rank>15</rank>
+						</item>
+						<item id="first_name" _delta="delete">
 							<rank>20</rank>
 						</item>
-						<item id="name" _delta="redefine">
+						<item id="name" _delta="delete">
 							<rank>30</rank>
 						</item>
 						<item id="org_id" _delta="redefine">
@@ -190,7 +205,23 @@
 					</items>
 				</list>
 			</presentation>
-
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+					public function DoCheckToWrite()
+					{
+						parent::DoCheckToWrite();
+						// 填充login字段
+						$login = preg_replace("/@.*/","",$this->Get("email"));
+						$this->Set("login", $login);
+					}
+					]]>
+					</code>
+				</method>
+			</methods>
 		</class>
 		<class id="Team">
 			<presentation>
