@@ -48,7 +48,7 @@ function getExpression($values)
 	$ins = implode("','",explode("\n", $values));
 	if($nameClass == "Server")
 	{
-		$expression = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE ip.ipaddress IN ('$ins') UNION SELECT Server AS s WHERE s.hostname IN ('$ins')";
+		$expression = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE ip.ipaddress IN ('$ins') UNION SELECT Server AS s WHERE s.hostname IN ('$ins') OR s.name IN ('$ins')";
 	}else
 	{
 		$expression = "SELECT $nameClass WHERE name IN ('$ins')";
