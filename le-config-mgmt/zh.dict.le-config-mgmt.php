@@ -231,7 +231,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Url/Attribute:require_str' => '返回数据匹配',
 	'Class:Url/Attribute:third_email' => '第三方邮箱',
 	'Class:Url/Attribute:third_phone' => '第三方手机',
-	'Class:Url/Attribute:curl' => 'cURL命令',
+	'Class:Url/Attribute:curl' => 'cURL调试命令',
 	'Menu:Url' => 'URL',
 	'Menu:Url+' => '所有URL',
 	'Class:Url/Attribute:status' => '状态',

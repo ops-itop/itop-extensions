@@ -764,9 +764,14 @@
 					<code><![CDATA[
 					// 用DisplayModifyForm控制页面跳转，配合DoCheckToWrite已经能很好的保证权限控制。
 					// GetAttributeFlags已经不会起作用了。保留作为其他场景下的参考代码。
+					// 2016.10.9 更新: 不允许修改app名称，如果不是新建app，则name字段只读
 					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
 					{
-						if (!self::isAllowedModifyCustom())
+						if (!$this->IsNew() && $sAttCode=="name")
+						{
+							return OPT_ATT_READONLY;
+						}
+						elseif (!self::isAllowedModifyCustom())
 						{
 							return OPT_ATT_READONLY;
 						}
@@ -2978,6 +2983,12 @@
 					
 					// 自动填充curl字段
 					$method = $this->Get("method");
+					$regex = $this->Get("require_str");
+					$grep = "";
+					if($regex != "")
+					{
+						$grep = " | grep -E --color '$regex'";
+					}
 					$headers_arr = json_decode($this->Get("headers"), true);
 					$headers = "";
 					if($headers_arr)
@@ -3001,7 +3012,7 @@
 						{
 							$url = $url . "?" . $params;
 						}
-						$curl = "curl -s -X$method " . $headers . "\"$url\"";
+						$curl = "curl -s -X$method " . $headers . "\"$url\"" . $grep;
 					}else
 					{
 						$url = $this->Get("url");
@@ -3010,7 +3021,7 @@
 							$url = $url . "?" . $params;
 						}
 						$body = str_replace(array("\r\n", "\r", "\n"), "", $this->Get("body"));
-						$curl = "curl -s -X$method " . $headers . "\"$url\"" . " --data '" . $body . "'";
+						$curl = "curl -s -X$method " . $headers . "\"$url\"" . " --data '" . $body . "'" . $grep;
 					}
 					$this->Set("curl", $curl);
 					
