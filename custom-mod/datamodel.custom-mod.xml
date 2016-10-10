@@ -3,6 +3,28 @@
 	<constants>
 	</constants>
 	<classes>
+	<class id="UserRequest">
+	<!--拒绝状态的工单可以被关闭-->
+	<lifecycle>
+		<states>
+			<state id="rejected">
+				<transitions>
+					<transition id="ev_close" _delta="define">
+						<target>closed</target>
+						<actions>
+							<action>
+								<verb>SetCurrentDate</verb>
+								<params>
+									<param xsi:type="attcode">close_date</param>
+								</params>
+							</action>
+						</actions>
+					</transition>
+				</transitions>
+			</state>
+		</states>
+	</lifecycle>
+	</class>
 	</classes>
 	<menus>
 		<menu id="NewUserRequest" xsi:type="NewObjectMenuNode" _delta="redefine">
