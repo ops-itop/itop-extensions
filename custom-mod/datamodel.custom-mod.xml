@@ -22,6 +22,15 @@
 					</transition>
 				</transitions>
 			</state>
+			<!--指派状态的工单可以被拒绝-->
+			<state id="assigned">
+				<transitions>
+					<transition id="ev_reject" _delta="define">
+						<target>rejected</target>
+						<actions/>
+					</transition>
+				</transitions>
+			</state>			
 		</states>
 	</lifecycle>
 	</class>
