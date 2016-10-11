@@ -56,13 +56,17 @@ class iTopClient {
 			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 1);
 		}
 		$jsonResponse = curl_exec($curl);
-		$response = json_decode($jsonResponse,true);
+		//$response = json_decode($jsonResponse,true);
 		curl_close($curl);
+		return $jsonResponse;
+		
+		/*
 		if(!is_array($response))
 			throw new \Exception('Invalid response from server : '.$jsonResponse);
 		if($response['code'] != 0)
 			throw new \Exception('iTop Exception : '.$response['message']);
 		return $response;
+		*/
 	}
 	public function operation($operation, array $data=array()) {
 		$data['operation'] = $operation;

@@ -60,6 +60,11 @@ SetupWebPage::AddModule(
 			//     properties (right after the properties, but before the log if any)
 			//     none (extra data accessed only by programs)
 			'view_extra_data' => 'relations',
+			
+			// 以下全部使用person和team的id
+			'special' => array('上线APP'=>2),
+			'plan' => array(2,3,5),
+			'team_id' => 4
 		),
 	)
 );

@@ -100,7 +100,8 @@ abstract class Template extends cmdbAbstractObject
 	{
 		$classname = $this->Get('relatedclass');
 		
-		//服务器申请不做操作
+		// 服务器申请不做操作
+		// 其他不需要做操作的工单也可以在request template中设置Class为Server，比如事件管理工单
 		if($classname == "Server")
 		{
 			return;
@@ -151,7 +152,7 @@ abstract class Template extends cmdbAbstractObject
 				$fields[$FieldData['code']] = $FieldData['value'];
 			}
 		}
-		$oNew = $iTopAPI->coreCreate($classname, $fields);
+		$oNew = json_decode($iTopAPI->coreCreate($classname, $fields),true);
 		if($oNew['code'] == 0)
 		{
 			foreach($oNew['objects'] as $k=>$v)
@@ -251,6 +252,63 @@ abstract class Template extends cmdbAbstractObject
 		$team_id = $list_aim_team[array_rand($all_team, 1)];
 		return(array('team_id'=>$team_id, 'agent_id' => $oWinnerId));
 	}
+	
+	/**
+	 * 根据配置文件自动指派工单（排班）
+	 */
+	public function UpdateUserRequest($oObject)
+	{
+		if(get_class($oObject) != "UserRequest")
+		{
+			return;
+		}
+		$iTopAPI = new iTopClient();
+		$ticket_id = $oObject->GetKey();
+		$servicesubcategory = $oObject->Get("servicesubcategory_name");
+		$special = MetaModel::GetModuleSetting("templates-base","special");
+		$plan = MetaModel::GetModuleSetting("templates-base", "plan");
+		$team_id = MetaModel::GetModuleSetting("templates-base", "team_id");
+		
+		// get oAssign
+		$agent_id = NULL;
+		if($special)
+		{
+			if(array_key_exists("$servicesubcategory", $special))
+			{
+				$agent_id = $special["$servicesubcategory"];
+			}
+		}elseif($plan)
+		{
+			$week = date("W",time());
+			$len = count($plan);
+			$agent_id = $plan[$week%$len];
+		}
+		
+		$isFailed = true;
+		$msg = "";
+		// 自动指派用户请求
+		if($agent_id && $team_id)
+		{
+			$ret = json_decode($iTopAPI->coreApply_stimulus('UserRequest', $ticket_id, array(
+				'team_id' => $team_id,
+				'agent_id' => $agent_id
+			),'ev_assign'),true);
+			if($ret['code'] == 0)
+			{
+				$isFailed = false;
+			}else
+			{
+				$msg = $ret['message'];
+			}
+		}
+		
+		// 自动指派失败
+		if($isFailed)
+		{
+			$data = array("public_log" => "Auto Assign Failed: $msg");
+			$iTopAPI->coreUpdate("UserRequest", $ticket_id, $data);
+		}
+	}
 	/**
 	 * 创建事件之后，根据事件关联的APP自动更新事件的配置项、联系人
 	 * 并且自动分配事件给该联系人
@@ -288,7 +346,7 @@ abstract class Template extends cmdbAbstractObject
 			'contact_id' => $myContactId,
 		));*/
 		
-		// 自动指派
+		// 自动指派事件工单
 		if($lnkedAppID > 0)
 		{
 			$oAssign = $this->GetAssignInfo($lnkedAppID);
@@ -429,6 +487,8 @@ abstract class Template extends cmdbAbstractObject
 		
 		//创建对象
 		$this->CreateObject($aValues,$oObject);
+		// 自动指派用户请求
+		$this->UpdateUserRequest($oObject);
 		// 自动指派事件工单
 		$this->UpdateIncident($aValues, $oObject);
 	}
