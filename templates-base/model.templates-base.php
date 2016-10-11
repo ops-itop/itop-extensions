@@ -271,13 +271,10 @@ abstract class Template extends cmdbAbstractObject
 		
 		// get oAssign
 		$agent_id = NULL;
-		if($special)
+		if(is_array($special) && array_key_exists("$servicesubcategory", $special))
 		{
-			if(array_key_exists("$servicesubcategory", $special))
-			{
-				$agent_id = $special["$servicesubcategory"];
-			}
-		}elseif($plan)
+			$agent_id = $special["$servicesubcategory"];
+		}elseif(is_array($plan))
 		{
 			$week = date("W",time());
 			$len = count($plan);
