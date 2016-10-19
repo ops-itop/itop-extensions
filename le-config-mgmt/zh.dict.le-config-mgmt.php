@@ -339,7 +339,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Server/Attribute:middleware_list' => '中间件列表',
 	'Class:Server/Attribute:middleware_list+' => '部署在该服务器上的所有中间件',
 	'Class:Middleware/Attribute:server_list' => '依赖的服务器',
-	'Class:Middleware/Attribute:server_list+' => '此对象库依赖的所有服务器',
+	'Class:Middleware/Attribute:server_list+' => '此对象依赖的所有服务器',
 ));
 
 
