@@ -167,6 +167,37 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:ApplicationSolution/Msg:ReturnList' => '返回APP列表',
 ));
 
+// Middleware
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:Middleware' => '数据库',
+	'Menu:Middleware' => '中间件',
+	'Menu:Middleware+' => '所有中间件',
+	'Class:Middleware/Attribute:name' => '名称',
+	'Class:Middleware/Attribute:location' => '地区',
+	'Class:Middleware/Attribute:info' => '详细信息',
+	'Class:Middleware/Attribute:contacts' => '联系人',
+	'Class:Middleware/Attribute:status' => '状态',
+	'Class:Middleware/Attribute:status+' => '',
+	'Class:Middleware/Attribute:status/Value:implementation' => '上线中',
+	'Class:Middleware/Attribute:status/Value:implementation+' => '上线中',
+	'Class:Middleware/Attribute:status/Value:obsolete' => '报废',
+	'Class:Middleware/Attribute:status/Value:obsolete+' => '报废',
+	'Class:Middleware/Attribute:status/Value:production' => '使用中',
+	'Class:Middleware/Attribute:status/Value:production+' => '使用中',
+	'Class:Middleware/Attribute:status/Value:stock' => '库存',
+	'Class:Middleware/Attribute:status/Value:stock+' => '库存',
+));
+
+// MessageQueue
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:MessageQueue' => '消息队列',
+	'Menu:MessageQueue' => '消息队列',
+	'Menu:MessageQueue+' => '所有消息队列',	
+	'Menu:MessageQueue:Count' => '%1$d 个消息队列',
+	//SwiftMQ
+	'Class:SwiftMQ' => 'SwiftMQ',
+	'Class:SwiftMQ/Name' => '%1$s.%2$s',
+));
 // Database
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Database' => '数据库',
@@ -176,6 +207,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Database/Attribute:contacts' => '联系人',
 	'Menu:Database' => '数据库',
 	'Menu:Database+' => '所有数据库',
+	'Menu:Database:Count' => '%1$d 个数据库',
 	'Class:Database/Attribute:status' => '状态',
 	'Class:Database/Attribute:status+' => '',
 	'Class:Database/Attribute:status/Value:implementation' => '上线中',
