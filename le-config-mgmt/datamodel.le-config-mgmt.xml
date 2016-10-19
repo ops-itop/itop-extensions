@@ -903,7 +903,7 @@
 						<item id="vip_list" _delta="define">
 							<rank>6</rank>
 						</item>
-						<item id="database_list">
+						<item id="middleware_list">
 							<rank>8</rank>
 						</item>
 						<item id="documents_list" _delta="redefine">
