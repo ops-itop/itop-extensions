@@ -52,6 +52,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Server/Attribute:cluster_list+' => '该服务器所属集群',
 	'Class:Server/Attribute:vip_list' => 'VIP列表',
 	'Class:Server/Attribute:vip_list+' => '该服务器的所有VIP',
+	'Class:Server/Attribute:middleware_list' => '中间件列表',
+	'Class:Server/Attribute:middleware_list+' => '部署在该服务器上的所有中间件',
+	
 ));
 
 // IPAddress
@@ -326,17 +329,17 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkApplicationSolutionToFunctionalCI/Msg:EditApp' => '去APP列表页',	
 ));
 
-// lnkDatabaseToServer
+// lnkMiddlewareToServer
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
-	'Class:lnkDatabaseToServer' => '数据库/服务器',
-	'Class:lnkDatabaseToServer+' => '所有 数据库/服务器 关联',
-	'Class:lnkDatabaseToServer/Attribute:database_id' => '数据库',	
-	'Class:lnkDatabaseToServer/Attribute:server_id' => '服务器',
+	'Class:lnkMiddlewareToServer' => '中间件/服务器',
+	'Class:lnkMiddlewareToServer+' => '所有 中间件/服务器 关联',
+	'Class:lnkMiddlewareToServer/Attribute:middleware_id' => '中间件',	
+	'Class:lnkMiddlewareToServer/Attribute:server_id' => '服务器',
 	
-	'Class:Server/Attribute:database_list' => '数据库',
-	'Class:Server/Attribute:database_list+' => '此服务器上所有的数据库',
-	'Class:Database/Attribute:server_list' => '依赖的服务器',
-	'Class:Database/Attribute:server_list+' => '此数据库依赖的所有服务器',
+	'Class:Server/Attribute:middleware_list' => '中间件列表',
+	'Class:Server/Attribute:middleware_list+' => '部署在该服务器上的所有中间件',
+	'Class:Middleware/Attribute:server_list' => '依赖的服务器',
+	'Class:Middleware/Attribute:server_list+' => '此对象库依赖的所有服务器',
 ));
 
 
