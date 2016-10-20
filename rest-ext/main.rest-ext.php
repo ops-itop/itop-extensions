@@ -132,8 +132,8 @@ class CustomExtServices implements iRestServiceProvider
 					{
 						continue;
 					}
-					$sSrcKey = get_class($oSrcObj) . '::' . $oSrcObj->Get('friendlyname');
-					$sDestKey = get_class($oDestObj) . '::' . $oDestObj->Get('friendlyname');
+					$sSrcKey = get_class($oSrcObj) . '::' . $oSrcObj->GetKey() . '::' . $oSrcObj->Get('friendlyname');
+					$sDestKey = get_class($oDestObj) . '::' . $oDestObj->GetKey() . '::' . $oDestObj->Get('friendlyname');
 					
 					if ($bEnableRedundancy)
 					{
