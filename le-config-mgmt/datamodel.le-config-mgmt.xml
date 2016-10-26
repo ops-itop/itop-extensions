@@ -346,6 +346,17 @@
 			</relations>
 		</class>
 		<class id="FunctionalCI">
+			<properties>
+				<reconciliation _delta="redefine">
+					<attributes>
+						<attribute id="name"/>
+						<attribute id="friendlyname"/>
+						<attribute id="org_id"/>
+						<attribute id="organization_name"/>
+						<attribute id="finalclass"/>
+					</attributes>
+				</reconciliation>
+			</properties>		
 			<fields>
 				<field id="name" xsi:type="AttributeString" _delta="redefine">
 					<sql>name</sql>

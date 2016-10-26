@@ -326,7 +326,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 // lnkApplicationSolutionToFunctionalCI
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkApplicationSolutionToFunctionalCI/Error:NotAllowDirectCreation' => '不允许直接编辑, 请在APP中维护 APP/功能配置项 关系',
-	'Class:lnkApplicationSolutionToFunctionalCI/Msg:EditApp' => '去APP列表页',	
+	'Class:lnkApplicationSolutionToFunctionalCI/Msg:EditApp' => '去APP列表页',
 ));
 
 // lnkMiddlewareToServer
