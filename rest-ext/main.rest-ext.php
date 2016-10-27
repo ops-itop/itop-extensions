@@ -16,9 +16,30 @@
 // - or no XML file at all supplied by the module
 
 /**
- * Implementation of custom REST services (get_related_person: support custom show_fields)
- */
+ * Implementation of custom REST services (get_related: support custom show_fields)
+ *  
+ *  custom api: ext/get_related
+ *  $class: mandatory, class name
+ *  $key: mandatory, search object
+ *  $relation: impacts or depends on
+ *  $optional: optional, an array with keys:filter,show_relations,output_fields,depth,direction,redundancy
+ *      - filter: array of class name, like array("Person","Server"). only show objects in filter array
+ *      - show_relations: array of class name, like array("Person", "Server"). only show relations about class in the array
+ *      - hide_relations: array of class name, like array("Person", "Server"). hide relation with class in the array 
+ *      - output_fields: array like array("classname"=>"fields")
+ *      - depth: relation depth
+ *      - direction: impacts direction(up or down)
+ *      - redundancy: true of false
+	public function extRelated($class, $query, $relation="impacts", $optional=array())
+	{
+		$mandatory = array('class'=>$class, 'key'=>$query, 'relation'=>$relation);
+		$param = array_merge($mandatory, $optional);
+		return $this->operation('ext/get_related', $param);
+	}
+	
+*/
 
+ 
 class CustomExtServices implements iRestServiceProvider
 {
 	public function ListOperations($sVersion)
@@ -27,19 +48,19 @@ class CustomExtServices implements iRestServiceProvider
 		if (in_array($sVersion, array('1.0', '1.1', '1.2', '1.3')))
 		{
 			$aOps[] = array(
-				'verb' => 'ext/get_related_person',
-				'description' => 'custom service: Get related objects(Person) through the specified relation'
+				'verb' => 'ext/get_related',
+				'description' => 'extend core/get_related: support custom filter of object and relation output'
 			);
 		}
 		return $aOps;
 	}
-	
+		
 	public function ExecOperation($sVersion, $sVerb, $aParams)
 	{
 		$oResult = new RestResultWithObjects();
 		switch ($sVerb)
 		{
-		case 'ext/get_related_person':
+		case 'ext/get_related':
 			$oResult = new RestResultWithRelations();
 			$sClass = RestUtils::GetClass($aParams, 'class');
 			$key = RestUtils::GetMandatoryParam($aParams, 'key');
@@ -47,12 +68,35 @@ class CustomExtServices implements iRestServiceProvider
 			$iMaxRecursionDepth = RestUtils::GetOptionalParam($aParams, 'depth', 20 /* = MAX_RECURSION_DEPTH */);
 			$sDirection = RestUtils::GetOptionalParam($aParams, 'direction', null);
 			$bEnableRedundancy = RestUtils::GetOptionalParam($aParams, 'redundancy', false);
-			// 只取关联的Person
-			$aShowFields = RestUtils::GetFieldList("Person", $aParams, 'output_fields');
-			$bExtendedOutput = (RestUtils::GetOptionalParam($aParams, 'output_fields', '*') == '*+');
-			// 用于画图时隐藏某些Class
-			$aHideClass = RestUtils::GetOptionalParam($aParams, 'hide_classes', array());
+
+			// 用于relation只显示或者隐藏某些relation
+			$aShowRelations = RestUtils::GetOptionalParam($aParams, 'show_relations', array());
+			$aHideRelations = RestUtils::GetOptionalParam($aParams, 'hide_relations', array());
+			
+			// 过滤Object结果，默认只显示Person
+			$sFilter = RestUtils::GetOptionalParam($aParams, 'filter', array("Person"));
+			// output_fields 改为数组，支持传递多个类的output_fields("ClassName" => "name,friendlyname")
+			$sShowFields = RestUtils::GetOptionalParam($aParams, 'output_fields', array());
+			
+			// $sShowFields是关联数组("key"=>"value"形式定义的数组)传参过来是stdClass
+			if(!is_array($sFilter) || !is_object($sShowFields) || !is_array($aShowRelations) || !is_array($aHideRelations))
+			{
+				$oResult->code = RestResult::INTERNAL_ERROR;
+				$oResult->message = "Invalid value: parameter 'filter, show_relations, hide_relations' should be indexed array. parameter output_fields should be Associative array('key'=>'value')";
+				return $oResult;				
+			}
+			
+			$aShowFields = array();
+			$bExtendedOutput = array();
+			foreach($sShowFields as $k => $v)
+			{
+				$aShowFields[$k] = RestUtils::GetFieldList($k, $sShowFields, $k);
+				$bExtendedOutput[$k] = (RestUtils::GetOptionalParam($sShowFields, $k, '*') == '*+');
+			}
+			//$aShowFields = RestUtils::GetFieldList("Person", $aParams, 'output_fields');
+			
 			$bReverse = false;
+			
 
 			if (is_null($sDirection) && ($sRelation == 'depends on'))
 			{
@@ -79,8 +123,7 @@ class CustomExtServices implements iRestServiceProvider
 			{
 				$oResult->code = RestResult::INTERNAL_ERROR;
 				$oResult->message = "Invalid value: '$sDirection' for the parameter 'direction'. Valid values are 'up' and 'down'";
-				return $oResult;
-				
+				return $oResult;				
 			}
 			
 			if ($bEnableRedundancy)
@@ -103,22 +146,31 @@ class CustomExtServices implements iRestServiceProvider
 				if ($oElement instanceof RelationObjectNode)
 				{
 					$oObject = $oElement->GetProperty('object');
-					// 只取关联的Person
-					if ($oObject && get_class($oObject)=="Person")
+					// 只取filter定义的类型
+					if ($oObject && in_array(get_class($oObject), $sFilter))
 					{
+						$k = get_class($oObject);
+						if(!isset($aShowFields[$k]))
+						{
+							$aShowFields[$k] = null;
+						}
+						if(!isset($bExtendedOutput[$k]))
+						{
+							$bExtendedOutput[$k] = false;
+						}
 						if ($bEnableRedundancy)
 						{
 							// Add only the "reached" objects
 							if ($oElement->GetProperty('is_reached'))
 							{
 								$aIndexByClass[get_class($oObject)][$oObject->GetKey()] = null;
-								$oResult->AddObject(0, '', $oObject, $aShowFields, $bExtendedOutput);
+								$oResult->AddObject(0, '', $oObject, $aShowFields[$k], $bExtendedOutput[$k]);
 							}
 						}
 						else
 						{
 							$aIndexByClass[get_class($oObject)][$oObject->GetKey()] = null;
-							$oResult->AddObject(0, '', $oObject, $aShowFields, $bExtendedOutput);
+							$oResult->AddObject(0, '', $oObject, $aShowFields[$k], $bExtendedOutput[$k]);
 						}
 					}
 				}
@@ -127,8 +179,13 @@ class CustomExtServices implements iRestServiceProvider
 					$oSrcObj = $oElement->GetSourceNode()->GetProperty('object');
 					$oDestObj = $oElement->GetSinkNode()->GetProperty('object');
 					
-					// 不显示隐藏的Class
-					if(in_array(get_class($oSrcObj), $aHideClass) || in_array(get_class($oDestObj), $aHideClass))
+					// 指定显示relation的Class, $aShowRelations为空时，不限制显示
+					if($aShowRelations && (!in_array(get_class($oSrcObj), $aShowRelations) || !in_array(get_class($oDestObj), $aShowRelations)))
+					{
+						continue;
+					}
+					// 隐藏某些relation
+					if(in_array(get_class($oSrcObj), $aHideRelations) || in_array(get_class($oDestObj), $aHideRelations))
 					{
 						continue;
 					}
