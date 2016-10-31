@@ -61,13 +61,117 @@ abstract class Template extends cmdbAbstractObject
 
 		// 模板关联的功能配置类
 		MetaModel::Init_AddAttribute(new AttributeEnum("relatedclass", array("allowed_values"=>new ValueSetEnum($sPossibleClasses), "display_style"=>'list', "sql"=>'relatedclass', "default_value"=>'', "is_null_allowed"=>false, "depends_on"=>array(), "always_load_in_tables"=>false)));
-
-		MetaModel::Init_SetZListItems('details', array('name', 'label', 'relatedclass', 'description', 'field_list'));
-		MetaModel::Init_SetZListItems('advanced_search', array('name', 'label', 'description'));
-		MetaModel::Init_SetZListItems('standard_search', array('name', 'label', 'description'));
-		MetaModel::Init_SetZListItems('list', array('name', 'label', 'relatedclass'));
+		// 模板类型(新增或变更)
+		MetaModel::Init_AddAttribute(new AttributeEnum("type", array("allowed_values"=>new ValueSetEnum("new,change,incident"), "display_style"=>'list', "sql"=>'type', "default_value"=>'new', "is_null_allowed"=>false, "depends_on"=>array(), "always_load_in_tables"=>false)));
+		
+		MetaModel::Init_SetZListItems('details', array('name', 'label', 'type', 'relatedclass', 'description', 'field_list'));
+		MetaModel::Init_SetZListItems('advanced_search', array('name', 'type', 'label', 'description'));
+		MetaModel::Init_SetZListItems('standard_search', array('name', 'type', 'label', 'description'));
+		MetaModel::Init_SetZListItems('list', array('name', 'type', 'label', 'relatedclass'));
 	}
 
+	/**
+	 * 变更工单CI归属验证
+	 */
+	public function CheckOwner($value)
+	{
+		$classname = $this->Get('relatedclass');
+		$iTopAPI = new iTopClient();
+		$query = $value;   // $value值是key(id)，不是name
+		$default_depth = array("Domain" => "2", "ApplicationSolution" => "1", "Server" => "3", "PhysicalIP" => "4");
+		$depth = MetaModel::GetModuleSetting('template-base', 'depth', $default_depth);
+		if(!isset($depth[$classname]))
+		{
+			$depth[$classname] = "2";
+		}
+		$optional = array(
+			'output_fields' => array("Person" => "friendlyname,email,phone"),
+			'depth' => $depth[$classname],
+		);
+		$data = $iTopAPI->extRelated($classname, $query, "impacts", $optional);
+		$data = json_decode($data, true);
+		if($data['code'] != 0)
+		{
+			$ret = array("check_errno"=>100, "msg"=>"API-Client返回信息错误");
+			return($ret);
+		}
+		$persons = $data['objects'];
+		if($persons == null)
+		{
+			$persons = array();
+		}
+		$p_id = array();
+		foreach($persons as $person)
+		{
+			array_push($p_id, $person['key']);
+		}
+		$myContactId = UserRights::GetContactId();
+		if(!in_array($myContactId, $p_id))
+		{
+			$this->m_aCheckIssues[] = Dict::Format("Class:".$classname."/Error:".$classname."NotRelatedToYou", $value);
+			$ret = array("check_errno"=>100, "msg"=>"$classname: $value 此对象不在您名下");
+			return($ret);
+		}
+		$ret = array("check_errno"=>0, "msg"=>"");
+		return($ret);
+	}
+	
+	/**
+	 * 变更工单更新CI
+	 */
+	public function UpdateObject($data, $oObject)
+	{
+		// 非change类型不更新
+		if($this->Get('type') != "change")
+		{
+			return;
+		}
+		$ticket_id = $oObject->GetKey();
+		$ticket_description = $oObject->Get('description');
+		$myContactId = UserRights::GetContactId();
+		$fields = array();
+		$fields['description'] = $ticket_description;
+		$classname = $this->Get('relatedclass');
+		$iTopAPI = new iTopClient();
+		
+		$query = "";
+		$extKey = array("businessprocess_id", "record_id");
+		foreach($data as $FieldId=>$FieldData)
+		{
+			// name 为更新时使用的key，不需要再次更新
+			if($FieldData['code'] == 'name')
+			{
+				$query = $FieldData['value_obj_key'];
+				continue;
+			}elseif(in_array($FieldData['code'], $extKey)) // 外键特殊处理
+			{
+				$fields[$FieldData['code']] = $FieldData['value_obj_key'];
+			}
+			elseif(preg_match("/^tips/", $FieldData['code'])) // tips开头字段做特殊处理，用于工单页面提醒信息或者扩展的工单信息
+			{
+				continue;
+			}else
+			{
+				$fields[$FieldData['code']] = $FieldData['value'];
+			}
+		}
+		
+		// 更新对象
+		$oUpdate = $iTopAPI->coreUpdate($classname, $query, $fields);
+			
+		// 关联对象和工单
+		$iTopAPI->coreCreate('lnkFunctionalCIToTicket', array(
+			'ticket_id' => $ticket_id,
+			'functionalci_id' => $query,
+		));
+		
+		// ticket和工单发起人建立关联
+		$iTopAPI->coreCreate('lnkContactToTicket', array(
+			'ticket_id' => $ticket_id,
+			'contact_id' => $myContactId,
+		));
+	}
+	
 	/**
 	 * CI唯一性验证
 	 */
@@ -86,9 +190,11 @@ abstract class Template extends cmdbAbstractObject
 		if ($oSet->Count() > 0)
 		{   
 			$this->m_aCheckIssues[] = Dict::Format("Class:".$classname."/Error:".$classname."MustBeUnique", $value);
-			return(false);
+			$ret = array("check_errno"=>100, "msg"=>"$classname: $value 在CMDB中已存在，不需要再次申请");
+			return($ret);
 		}
-		return(true);
+		$ret = array("check_errno"=>0, "msg"=>"");
+		return($ret);
 	}
 	 
 	/**
@@ -102,7 +208,8 @@ abstract class Template extends cmdbAbstractObject
 		
 		// 服务器申请不做操作
 		// 其他不需要做操作的工单也可以在request template中设置Class为Server，比如事件管理工单
-		if($classname == "Server")
+		// 变更类型工单不需要创建对象
+		if($classname == "Server" || $this->Get('type') == "change")
 		{
 			return;
 		}
@@ -388,9 +495,20 @@ abstract class Template extends cmdbAbstractObject
 					'value' => $value
 				);
 				
-				if($aCode == "name" && !$this->CheckUniqFields($value))
+				$ret = array("check_errno"=>0, "msg"=>"");
+				if($aCode == "name")
 				{
-					return(false);
+					if($this->Get('type') == "change")
+					{
+						$ret = $this->CheckOwner($value);
+					}else
+					{
+						$ret = $this->CheckUniqFields($value);
+					}
+				}
+				if($ret['check_errno'] != 0)
+				{
+					return($ret);
 				}
 
 				if ($oField->Get('input_type') == 'duration')
@@ -439,16 +557,17 @@ abstract class Template extends cmdbAbstractObject
 	public function GetPostedValuesAsText($oObject)
 	{
 		$aValues = $this->GetPostedValuesAsArray($oObject);
-		if(!$aValues)
+		if(isset($aValues['check_errno']))
 		{
 			return($aValues);
 		}
 
 		/*  修改portal 的index.php代码
-			if(!$oTemplate->GetPostedValuesAsText($oRequest))
+			$post_text = $oTemplate->GetPostedValuesAsText($oRequest);
+			if(isset($post_text['check_errno']))
 			{
 				RequestCreationForm($oP, $oUserOrg);
-				$sIssueDesc = Dict::Format('此对象已存在，不能重复申请', implode(', ', $aIssues));
+				$sIssueDesc = Dict::Format($post_text['msg'], implode(', ', $aIssues));
 				$oP->add_ready_script("alert('".addslashes($sIssueDesc)."');");
 				return;
 			}else
@@ -484,6 +603,8 @@ abstract class Template extends cmdbAbstractObject
 		
 		//创建对象
 		$this->CreateObject($aValues,$oObject);
+		// 资源变更类型工单更新变更的对象
+		$this->UpdateObject($aValues, $oObject);		
 		// 自动指派用户请求
 		$this->UpdateUserRequest($oObject);
 		// 自动指派事件工单

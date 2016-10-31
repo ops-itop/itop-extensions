@@ -157,6 +157,9 @@
             <item id="label">
               <rank>30</rank>
             </item>
+			<item id="type">
+				<rank>32</rank>
+			</item>
             <item id="relatedclass">
               <rank>35</rank>
             </item>
@@ -182,6 +185,9 @@
             <item id="label">
               <rank>30</rank>
             </item>
+			<item id="type">
+				<rank>32</rank>
+			</item>			
             <item id="relatedclass">
               <rank>35</rank>
             </item>			
@@ -201,6 +207,9 @@
             <item id="label">
               <rank>30</rank>
             </item>
+			<item id="type">
+				<rank>32</rank>
+			</item>			
           </items>
         </list>
       </presentation>
