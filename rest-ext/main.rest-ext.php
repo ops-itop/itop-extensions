@@ -55,6 +55,29 @@ class CustomExtServices implements iRestServiceProvider
 		return $aOps;
 	}
 		
+	public function MergeGraph(RelationGraph $down, RelationGraph $up)
+	{
+		$oIter1 = new RelationTypeIterator($up, 'Node');
+		foreach($oIter1 as $oNode)
+		{
+			try{
+				$down->_AddNode($oNode);
+			}catch(Exception $e){
+				continue;
+			}
+		}
+		$oIter2 = new RelationTypeIterator($up, 'Edge');
+		foreach($oIter2 as $oEdge)
+		{
+			try{
+				$down->_AddEdge($oEdge);
+			}catch(ExecOperation $e){
+				continue;
+			}
+		}
+		return($down);
+	}
+
 	public function ExecOperation($sVersion, $sVerb, $aParams)
 	{
 		$oResult = new RestResultWithObjects();
@@ -119,10 +142,16 @@ class CustomExtServices implements iRestServiceProvider
 			{
 				$oRelationGraph = $oObjectSet->GetRelatedObjectsUp($sRelation, $iMaxRecursionDepth, $bEnableRedundancy);
 			}
+			else if ($sDirection == 'both')
+			{
+				$oRelationGraph_down = $oObjectSet->GetRelatedObjectsDown($sRelation, $iMaxRecursionDepth, $bEnableRedundancy);
+				$oRelationGraph_up = $oObjectSet->GetRelatedObjectsUp($sRelation, $iMaxRecursionDepth, $bEnableRedundancy);	
+				$oRelationGraph = $this->MergeGraph($oRelationGraph_down, $oRelationGraph_up);
+			}
 			else
 			{
 				$oResult->code = RestResult::INTERNAL_ERROR;
-				$oResult->message = "Invalid value: '$sDirection' for the parameter 'direction'. Valid values are 'up' and 'down'";
+				$oResult->message = "Invalid value: '$sDirection' for the parameter 'direction'. Valid values are 'up' and 'down' and 'both'";
 				return $oResult;				
 			}
 			
