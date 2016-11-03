@@ -99,7 +99,7 @@ class CustomExtServices implements iRestServiceProvider
 			// 过滤Object结果，默认只显示Person
 			$sFilter = RestUtils::GetOptionalParam($aParams, 'filter', array("Person"));
 			// output_fields 改为数组，支持传递多个类的output_fields("ClassName" => "name,friendlyname")
-			$sShowFields = RestUtils::GetOptionalParam($aParams, 'output_fields', array());
+			$sShowFields = RestUtils::GetOptionalParam($aParams, 'output_fields', (object) array("Person" => "friendlyname,email,phone"));
 			
 			// $sShowFields是关联数组("key"=>"value"形式定义的数组)传参过来是stdClass
 			if(!is_array($sFilter) || !is_object($sShowFields) || !is_array($aShowRelations) || !is_array($aHideRelations))
