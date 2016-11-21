@@ -1,5 +1,5 @@
 <?php
-// Copyright (C) 2012 Combodo SARL
+// Copyright (C) 2012-2016 Combodo SARL
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ class AutoCloseTicket implements iBackgroundProcess
 			// Get Resolved user request to be closed automatically according to request_closure_delay set for the customer
 			$iAutoCloseDelay = MetaModel::GetModuleSetting('combodo-autoclose-ticket', 'userrequest_autoclose_delay', '');
 			$oSetUserRequest = new DBObjectSet(DBObjectSearch::FromOQL("SELECT UserRequest AS u WHERE u.status = 'resolved' AND u.resolution_date <= DATE_SUB(NOW(), INTERVAL $iAutoCloseDelay DAY)"));
+			$oSetUserRequest->OptimizeColumnLoad(array()); // Optimize the query, we'll do a reload for each ticket to actually process but it's peanuts
 			while ((time() < $iTimeLimit) && $oToClose = $oSetUserRequest->Fetch())
 			{
 				$oToClose->ApplyStimulus('ev_close');
@@ -55,6 +56,7 @@ class AutoCloseTicket implements iBackgroundProcess
 			// Get Resolved incident to be closed automatically according to incident_closure_delay set for the customer
 			$iAutoCloseDelay = MetaModel::GetModuleSetting('combodo-autoclose-ticket', 'incident_autoclose_delay', '');
 			$oSetIncident = new DBObjectSet(DBObjectSearch::FromOQL("SELECT Incident AS i WHERE i.status = 'resolved' AND i.resolution_date <= DATE_SUB(NOW(), INTERVAL $iAutoCloseDelay DAY)"));
+			$oSetIncident->OptimizeColumnLoad(array()); // Optimize the query, we'll do a reload for each ticket to actually process but it's peanuts
 			while ((time() < $iTimeLimit) && $oToClose = $oSetIncident->Fetch())
 			{
 				$oToClose->ApplyStimulus('ev_close');
