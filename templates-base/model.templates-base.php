@@ -703,7 +703,7 @@ class TemplateField extends cmdbAbstractObject
 		MetaModel::Init_AddAttribute(new AttributeEnum("mandatory", array("allowed_values"=>new ValueSetEnum('yes,no'), "sql"=>"mandatory", "default_value"=>"no", "is_null_allowed"=>false, "depends_on"=>array())));
 		MetaModel::Init_AddAttribute(new AttributeEnum("input_type", array("allowed_values"=>new ValueSetEnum('text,text_area,drop_down_list,radio_buttons,date,date_and_time,duration,read_only,hidden'), "sql"=>"input_type", "default_value"=>"text", "is_null_allowed"=>false, "depends_on"=>array())));
 		MetaModel::Init_AddAttribute(new AttributeText("values", array("allowed_values"=>null, "sql"=>"values", "default_value"=>"", "is_null_allowed"=>true, "depends_on"=>array())));
-		MetaModel::Init_AddAttribute(new AttributeText("initial_value", array("allowed_values"=>null, "sql"=>"initial_value", "default_value"=>"", "is_null_allowed"=>true, "depends_on"=>array())));
+		MetaModel::Init_AddAttribute(new AttributeHTML("initial_value", array("allowed_values"=>null, "sql"=>"initial_value", "default_value"=>"", "is_null_allowed"=>true, "depends_on"=>array())));
 		MetaModel::Init_AddAttribute(new AttributeString("format", array("allowed_values"=>null, "sql"=>"format", "default_value"=>"", "is_null_allowed"=>true, "depends_on"=>array())));
 
 		MetaModel::Init_SetZListItems('details', array('template_id', 'code', 'order', 'label', 'mandatory', 'input_type', 'values', 'initial_value', 'format'));
@@ -870,7 +870,9 @@ class TemplateField extends cmdbAbstractObject
 			break;
 
 		case 'read_only':
-			$sHTMLLabel = htmlentities($value, ENT_QUOTES, 'UTF-8');
+			//$sHTMLLabel = htmlentities($value, ENT_QUOTES, 'UTF-8');
+			$pattern = "/<script>.*<\/script>/i";
+			$sHTMLLabel = preg_replace($pattern, "", $value);
 			$sHTMLValue = "<input type=\"hidden\"name=\"tpl_{$sFieldPrefix}{$sAttCode}{$sNameSuffix}\" value=\"".htmlentities($value, ENT_QUOTES, 'UTF-8')."\" id=\"$iId\"/>".$sHTMLLabel;
 			break;
 
