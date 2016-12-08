@@ -184,13 +184,41 @@ abstract class Template extends cmdbAbstractObject
 		{
 			return(true);
 		}
-		$oql = "SELECT " . $classname . " WHERE name=:name";
+
+		// 部分类使用friendlyname作为唯一性校验
+		// 模块设置 "checkuniq_with_friendlyname" => array(Classname1,Classname2);
+		$namespec = MetaModel::GetNameSpec($classname)[1];
+		$condition = array();
+		$search_arr = array();
+		$friendlyname = array();
+		foreach($namespec as $k => $v)
+		{
+			if(isset($value[$v])){
+				array_push($condition, "$v=:$v");
+				array_push($friendlyname, $value[$v]);
+				$search_arr[$v] = $value[$v];
+			}
+		}
+		$condition_str = implode(" AND ", $condition);
+		$friendlyname = implode(".", $friendlyname);
+
+		$oql_pre = "SELECT " . $classname;
+		$check_friendly = MetaModel::GetModuleSetting("templates-base", "checkuniq_with_friendlyname", array());
+		if(in_array($classname, $check_friendly)) 
+		{
+			$oql = $oql_pre . " WHERE $condition_str";
+		}else
+		{
+			$oql = $oql_pre . " WHERE name=:name";
+			$search_arr = array('name' => $value['name']);
+		}
+
 		$oSearch = DBObjectSearch::FromOQL_AllData($oql);
-		$oSet = new DBObjectSet($oSearch, array(), array('name' => $value));
+		$oSet = new DBObjectSet($oSearch, array(), $search_arr);
 		if ($oSet->Count() > 0)
 		{   
-			$this->m_aCheckIssues[] = Dict::Format("Class:".$classname."/Error:".$classname."MustBeUnique", $value);
-			$ret = array("check_errno"=>100, "msg"=>"$classname: $value 在CMDB中已存在，不需要再次申请");
+			$this->m_aCheckIssues[] = Dict::Format("Class:".$classname."/Error:".$classname."MustBeUnique", $friendlyname);
+			$ret = array("check_errno"=>100, "msg"=>"$classname: $friendlyname 在CMDB中已存在，不需要再次申请");
 			return($ret);
 		}
 		$ret = array("check_errno"=>0, "msg"=>"");
@@ -481,6 +509,7 @@ abstract class Template extends cmdbAbstractObject
 		$oFieldSearch = DBObjectSearch::FromOQL('SELECT TemplateField WHERE template_id = :template_id');
 		$oFieldSearch->AllowAllData();
 		$oFieldSet = new DBObjectSet($oFieldSearch, array('order' => true), array('template_id' => $this->GetKey()));
+		$bValues = array();
 		while($oField = $oFieldSet->Fetch())
 		{
 			$sAttCode = $oField->GetKey();
@@ -494,22 +523,8 @@ abstract class Template extends cmdbAbstractObject
 					'input_type' => $oField->Get('input_type'),
 					'value' => $value
 				);
+				$bValues[$aCode] = $value;
 				
-				$ret = array("check_errno"=>0, "msg"=>"");
-				if($aCode == "name")
-				{
-					if($this->Get('type') == "change")
-					{
-						$ret = $this->CheckOwner($value);
-					}else
-					{
-						$ret = $this->CheckUniqFields($value);
-					}
-				}
-				if($ret['check_errno'] != 0)
-				{
-					return($ret);
-				}
 
 				if ($oField->Get('input_type') == 'duration')
 				{
@@ -547,7 +562,18 @@ abstract class Template extends cmdbAbstractObject
 				}
 			}
 		}
-
+		$ret = array("check_errno"=>0, "msg"=>"");
+		if($this->Get('type') == "change")
+		{
+			$ret = $this->CheckOwner($bValues['name']);
+		}else
+		{
+			$ret = $this->CheckUniqFields($bValues);
+		}
+		if($ret['check_errno'] != 0)
+		{
+			return($ret);
+		}
 		return $aValues;
 	}
 

@@ -64,7 +64,9 @@ SetupWebPage::AddModule(
 			// 以下全部使用person和team的id
 			'special' => array('上线APP'=>2),
 			'plan' => array(2,3,5),
-			'team_id' => 4
+			'team_id' => 4,
+			// 用friendlyname做唯一性校验的类
+			'checkuniq_with_friendlyname' => array("RDS", "MySQL")
 		),
 	)
 );
