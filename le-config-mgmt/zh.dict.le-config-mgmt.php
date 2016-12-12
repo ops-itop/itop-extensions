@@ -191,6 +191,20 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Middleware/Attribute:status/Value:stock+' => '库存',
 ));
 
+// ThirdSrv
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:ThirdSrv' => '第三方服务',
+	'Menu:ThirdSrv' => '第三方服务',
+	'Menu:ThirdSrv+' => '所有第三方服务',	
+	'Menu:ThirdSrv:Count' => '%1$d 个第三方服务',
+	//S3
+	'Class:S3' => 'S3',
+	'Class:S3/Name' => '%1$s.%2$s',
+	//Yunpan
+	'Class:Yunpan' => 'Yunpan',
+	'Class:Yunpan/Name' => '%1$s.%2$s',
+));
+
 // MessageQueue
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:MessageQueue' => '消息队列',

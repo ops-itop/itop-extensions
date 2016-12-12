@@ -43,6 +43,9 @@ MongoDB->Database
 Redis->Database
 MessageQueue->Middleware
 SwiftMQ->MessageQueue
+ThirdSrv->Middleware
+S3->ThirdSrv
+Yunpan->ThirdSrv
 Url->FunctionalCI
 Rack->PhysicalDevice
 ISP->Typology
