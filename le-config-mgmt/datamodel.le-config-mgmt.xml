@@ -2496,6 +2496,16 @@
 					<default_value>yes</default_value>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
+				<field id="business" xsi:type="AttributeEnum" _delta="define">
+					<values>
+						<value id="mobile">mobile</value>
+						<value id="tv">tv</value>
+						<value id="common">common</value>
+					</values>
+					<sql>business</sql>
+					<default_value>TV</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
 			</fields>
 			<methods/>
 			<presentation>

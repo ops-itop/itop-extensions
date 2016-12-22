@@ -257,6 +257,10 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Redis/Attribute:type' => '类型',
 	'Class:Redis/Attribute:name' => '前缀',
 	'Class:Redis/Attribute:persistence' => '是否持久化',
+	'Class:Redis/Attribute:business' => '业务归属',
+	'Class:Redis/Attribute:business/Value:mobile' => '手机业务',
+	'Class:Redis/Attribute:business/Value:tv' => '电视业务',
+	'Class:Redis/Attribute:business/Value:common' => '公共业务',
 ));
 
 // Url
