@@ -2503,7 +2503,7 @@
 						<value id="common">common</value>
 					</values>
 					<sql>business</sql>
-					<default_value>TV</default_value>
+					<default_value>tv</default_value>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
 			</fields>
