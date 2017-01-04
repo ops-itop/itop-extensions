@@ -283,7 +283,7 @@
 					<count_min>0</count_min>
 					<count_max>0</count_max>
 				</field>
-				
+
 			</fields>
 			<presentation>
 				<details>
@@ -301,7 +301,7 @@
 						<item id="rack_list">
 							<rank>100</rank>
 						</item>
-						
+
 					</items>
 				</details>
 				<search>
@@ -363,6 +363,18 @@
 					<default_value>CI名称不能重复</default_value>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
+				<field id="business_criticity" xsi:type="AttributeEnum" _delta="redefine">
+					<values>
+						<value id="high">high</value>
+						<value id="medium">medium</value>
+						<value id="low">low</value>
+						<value id="null">null</value>
+					</values>
+					<sql>business_criticity</sql>
+					<default_value>null</default_value>
+					<is_null_allowed>true</is_null_allowed>
+					<display_style>list</display_style>
+				</field>				
 				<field id="ci_id" xsi:type="AttributeInteger" _delta="define">
 					<sql>ci_id</sql>
 					<default_value>1</default_value>
@@ -722,7 +734,7 @@
 					]]>
 					</code>
 				</method>
-				
+
 				<method id="DisplayModifyForm" _delta="define">
 					<static>false</static>
 					<access>public</access>
@@ -780,9 +792,14 @@
 					// 用DisplayModifyForm控制页面跳转，配合DoCheckToWrite已经能很好的保证权限控制。
 					// GetAttributeFlags已经不会起作用了。保留作为其他场景下的参考代码。
 					// 2016.10.9 更新: 不允许修改app名称，如果不是新建app，则name字段只读
+					// 2017.1.4 更新: 不允许非管理员修改app优先级
 					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
 					{
 						if (!$this->IsNew() && $sAttCode=="name")
+						{
+							return OPT_ATT_READONLY;
+						}
+						elseif (!$this->IsNew() && $sAttCode=="business_criticity" && !UserRights::IsAdministrator())
 						{
 							return OPT_ATT_READONLY;
 						}
@@ -2461,7 +2478,7 @@
 					</attributes>
 				</reconciliation>
 			</properties>
-			
+
 			<fields>
 				<field id="capacity" xsi:type="AttributeString" _delta="define">
 					<sql>capacity</sql>
@@ -2646,7 +2663,7 @@
 						<item id="persistence" _delta="define">
 							<rank>17</rank>
 						</item>
-						
+
 						<item id="contacts">
 							<rank>19</rank>
 						</item>
