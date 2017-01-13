@@ -793,13 +793,10 @@
 					// GetAttributeFlags已经不会起作用了。保留作为其他场景下的参考代码。
 					// 2016.10.9 更新: 不允许修改app名称，如果不是新建app，则name字段只读
 					// 2017.1.4 更新: 不允许非管理员修改app优先级
+					// 2017.1.13 更新: 允许app负责人修改app优先级
 					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
 					{
 						if (!$this->IsNew() && $sAttCode=="name")
-						{
-							return OPT_ATT_READONLY;
-						}
-						elseif (!$this->IsNew() && $sAttCode=="business_criticity" && !UserRights::IsAdministrator())
 						{
 							return OPT_ATT_READONLY;
 						}
