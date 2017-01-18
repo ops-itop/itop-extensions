@@ -44,8 +44,18 @@ function getExpression($values)
 	{
 		$nameClass = "FunctionalCI";
 	}
-	$values = str_replace("\r", "", $values);
-	$ins = implode("','",explode("\n", $values));
+	
+	$values = str_replace(",", "\n", $values);
+	$values = explode("\n", $values);
+	$ins = array();
+	foreach($values as $k => $v)
+	{
+		$trim_v = trim($v);
+		if($trim_v)
+			array_push($ins, $trim_v);
+	}
+	$ins = implode("','",$ins);
+	
 	if($nameClass == "Server")
 	{
 		$expression = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE ip.ipaddress IN ('$ins') UNION SELECT Server AS s WHERE s.hostname IN ('$ins') OR s.name IN ('$ins')";
