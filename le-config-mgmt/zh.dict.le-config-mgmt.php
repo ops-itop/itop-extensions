@@ -172,6 +172,10 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:ApplicationSolution/Attribute:business_criticity/Value:medium' => '二级',
 	'Class:ApplicationSolution/Attribute:business_criticity/Value:high' => '一级',
 	'Class:ApplicationSolution/Attribute:business_criticity/Value:null' => '未定义',
+	'Class:ApplicationSolution/Attribute:business_type' => '业务类型',
+	'Class:ApplicationSolution/Attribute:business_type/Value:tv' => '电视',
+	'Class:ApplicationSolution/Attribute:business_type/Value:mobile' => '手机',
+	'Class:ApplicationSolution/Attribute:business_type/Value:common' => '公共',
 ));
 
 // Middleware
