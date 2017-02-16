@@ -28,7 +28,7 @@
  *      - hide_relations: array of class name, like array("Person", "Server"). hide relation with class in the array 
  *      - output_fields: array like array("classname"=>"fields")
  *      - depth: relation depth
- *      - direction: impacts direction(up or down)
+ *      - direction: impacts direction(up,down or both)
  *      - redundancy: true of false
 	public function extRelated($class, $query, $relation="impacts", $optional=array())
 	{
