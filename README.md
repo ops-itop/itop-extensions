@@ -46,7 +46,7 @@ iTop官方插件定制版
 ![](le-config-mgmt/preview.png)
 
 ## portal-announcement
-第三方插件 [](https://github.com/itop-itsm-ru/portal-announcement) ，用于在legency portal展示公告信息，做了微小改动以支持富文本
+第三方插件 https://github.com/itop-itsm-ru/portal-announcement ，用于在legency portal展示公告信息，做了微小改动以支持富文本
 
 ## precanned-replies & precanned-replies-pro
 iTop官方插件，预定义回复
@@ -86,7 +86,7 @@ rest扩展。新增接口 ext/get_related，扩展了core/get_related接口，�
 */
 ```
 
-[](https://github.com/annProg/cmdbApi) 此项目提供了一个ext/get_related客户端，并且使用dot画出relations的图形，例如使用以下参数调用
+https://github.com/annProg/cmdbApi 此项目提供了一个ext/get_related客户端，并且使用dot画出relations的图形，例如使用以下参数调用
 
 ```
 public.php?type=ip&value=10.0.0.2&filter=Server&show=Server,Cluster,Rack,ApplicationSolution&direction=both&depth=2
