@@ -2,6 +2,7 @@
 
 ## add-user-action-menu
 右上角新增编辑用户资料按钮
+
 ![](add-user-action-menu/preview.png)
 
 ## api-client
@@ -21,6 +22,7 @@ iTop官方插件, 自动关闭工单
 
 ## custom-pages
 提供一个批量查询页面
+
 ![](custom-pages/preview/preview.png)
 
 ## email-reply
@@ -35,10 +37,12 @@ iTop官方插件定制版
 - 排班，用户请求工单自动指派
 - Incident自动指派
 - UserRequest工单申请的资源自动录入CMDB
+
 ![](itop-request-template/preview/preview.png)
 
 ## le-config-mgmt
 定制版数据模型
+
 ![](le-config-mgmt/preview.png)
 
 ## portal-announcement
@@ -131,6 +135,7 @@ public.php?type=ip&value=10.0.0.2&filter=Server&show=Server,Cluster,Rack,Applica
 ```
 
 图片显示如下
+
 ![](rest-ext/preview/preview.png)
 
 ## zh-language
