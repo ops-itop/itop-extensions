@@ -2125,7 +2125,18 @@
 					</attributes>
 				</reconciliation>
 			</properties>
-			<fields/>
+			<fields>
+				<field id="mcluster" xsi:type="AttributeString" _delta="define">
+					<sql>mcluster</sql>
+					<is_null_allowed>true</is_null_allowed>
+					<default_value/>
+				</field>
+				<field id="hcluster" xsi:type="AttributeString" _delta="define">
+					<sql>hcluster</sql>
+					<is_null_allowed>true</is_null_allowed>
+					<default_value/>
+				</field>			
+			</fields>
 			<methods/>
 			<presentation>
 				<details _delta="redefine">
@@ -2136,6 +2147,12 @@
 						<item id="location">
 							<rank>11</rank>
 						</item>
+						<item id="mcluster">
+							<rank>12</rank>
+						</item>
+						<item id="hcluster">
+							<rank>13</rank>
+						</item>						
 						<item id="status">
 							<rank>15</rank>
 						</item>
@@ -2175,7 +2192,12 @@
 						<item id="location">
 							<rank>11</rank>
 						</item>
-
+						<item id="mcluster">
+							<rank>12</rank>
+						</item>
+						<item id="hcluster">
+							<rank>13</rank>
+						</item>
 						<item id="status">
 							<rank>15</rank>
 						</item>
@@ -2205,7 +2227,12 @@
 						<item id="location">
 							<rank>11</rank>
 						</item>
-
+						<item id="mcluster">
+							<rank>12</rank>
+						</item>
+						<item id="hcluster">
+							<rank>13</rank>
+						</item>						
 						<item id="status">
 							<rank>15</rank>
 						</item>

@@ -247,6 +247,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	//RDS
 	'Class:RDS' => 'RDS',
 	'Class:RDS/Name' => '%1$s.%2$s',
+	'Class:RDS/Attribute:mcluster' => '集群',
+	'Class:RDS/Attribute:hcluster' => '可用区',
 	
 	//Monngo
 	'Class:MongoDB' => 'MongoDB',
