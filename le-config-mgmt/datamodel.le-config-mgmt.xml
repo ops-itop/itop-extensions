@@ -933,6 +933,16 @@
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
+				<field id="use_pam" xsi:type="AttributeEnum" _delta="define">
+					<sql>use_pam</sql>
+					<values>
+						<value id="yes">yes</value>
+						<value id="no">no</value>
+					</values>
+					<default_value>no</default_value>
+					<is_null_allowed>true</is_null_allowed>
+					<display_style>list</display_style>
+				</field>				
 			</fields>
 			<presentation>
 				<details>
@@ -1009,6 +1019,9 @@
 										<item id="oslicence_id">
 											<rank>50</rank>
 										</item>
+										<item id="use_pam">
+											<rank>60</rank>
+										</item>
 									</items>
 								</item>
 							</items>
@@ -1083,6 +1096,9 @@
 						</item>
 						<item id="move2production">
 							<rank>120</rank>
+						</item>
+						<item id="use_pam">
+							<rank>130</rank>
 						</item>
 					</items>
 				</search>
@@ -4625,6 +4641,169 @@
 				</list>
 			</presentation>
 
+		</class>
+		<class id="lnkUserToServer" _delta="define">
+			<parent>cmdbAbstractObject</parent>
+			<properties>
+				<is_link>1</is_link>
+				<category>bizmodel</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>lnkusertoserver</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field/>
+				<naming>
+					<attributes>
+						<attribute id="user_id"/>
+						<attribute id="server_id"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon _delta="define">../le-config-mgmt/images/lnkusertoserver.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="user_id"/>
+						<attribute id="server_id"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="user_id" xsi:type="AttributeExternalKey">
+					<sql>user_id</sql>
+					<target_class>User</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="user_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>user_id</extkey_attcode>
+					<target_attcode>login</target_attcode>
+				</field>
+				<field id="user_email" xsi:type="AttributeExternalField">
+					<extkey_attcode>user_id</extkey_attcode>
+					<target_attcode>email</target_attcode>
+				</field>
+				<field id="user_status" xsi:type="AttributeExternalField">
+					<extkey_attcode>user_id</extkey_attcode>
+					<target_attcode>status</target_attcode>
+				</field>				
+				<field id="server_id" xsi:type="AttributeExternalKey">
+					<sql>server_id</sql>
+					<target_class>Server</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="server_ip" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>all_ip</target_attcode>
+				</field>
+				<field id="sudo" xsi:type="AttributeEnum">
+					<sql>sudo</sql>
+					<values>
+						<value id="yes">yes</value>
+						<value id="no">no</value>
+					</values>
+					<default_value>no</default_value>
+					<is_null_allowed>true</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
+				<field id="expiration" xsi:type="AttributeDateTime">
+					<sql>expiration</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+			</fields>
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+						public function DoCheckToWrite()
+						{
+							parent::DoCheckToWrite();
+							// 填充expiration字段
+							$expiration = $this->Get("expiration");
+							$day = (int)MetaModel::GetModuleSetting('le-config-mgmt', 'user_expiration_day', 3);
+							if($expiration == "")
+							{
+								$this->Set("expiration", time()+$day*24*60*60);
+							}
+						}
+					]]>
+					</code>
+				</method>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="user_id">
+							<rank>10</rank>
+						</item>
+						<item id="server_id">
+							<rank>20</rank>
+						</item>
+						<item id="user_status">
+							<rank>30</rank>
+						</item>
+						<item id="sudo">
+							<rank>40</rank>
+						</item>
+						<item id="expiration">
+							<rank>50</rank>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="user_id">
+							<rank>10</rank>
+						</item>
+						<item id="server_id">
+							<rank>20</rank>
+						</item>
+						<item id="user_email">
+							<rank>30</rank>
+						</item>
+						<item id="user_status">
+							<rank>35</rank>
+						</item>
+						<item id="server_ip">
+							<rank>40</rank>
+						</item>
+						<item id="sudo">
+							<rank>50</rank>
+						</item>
+						<item id="expiration">
+							<rank>60</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="user_id">
+							<rank>10</rank>
+						</item>
+						<item id="server_id">
+							<rank>20</rank>
+						</item>
+						<item id="user_email">
+							<rank>30</rank>
+						</item>
+						<item id="user_status">
+							<rank>35</rank>
+						</item>
+						<item id="server_ip">
+							<rank>40</rank>
+						</item>
+						<item id="sudo">
+							<rank>50</rank>
+						</item>
+						<item id="expiration">
+							<rank>60</rank>
+						</item>						
+					</items>
+				</list>
+			</presentation>
 		</class>
 
 		<class id="lnkContactToFunctionalCI">

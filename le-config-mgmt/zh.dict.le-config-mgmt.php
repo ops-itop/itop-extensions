@@ -54,6 +54,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Server/Attribute:vip_list+' => '该服务器的所有VIP',
 	'Class:Server/Attribute:middleware_list' => '中间件列表',
 	'Class:Server/Attribute:middleware_list+' => '部署在该服务器上的所有中间件',
+	'Class:Server/Attribute:use_pam' => 'PAM验证',
 	
 ));
 
@@ -400,6 +401,14 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkServerToCluster/Attribute:cluster_name' => '集群',
 ));
 
+// lnkUserToServer
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:lnkUserToServer' => '服务器登录权限表',
+	'Class:lnkUserToServer/Attribute:server_id' => '服务器',
+	'Class:lnkUserToServer/Attribute:user_id' => '用户账号',
+	'Class:lnkUserToServer/Attribute:sudo' => 'Sudo权限',
+	'Class:lnkUserToServer/Attribute:expiration' => '过期时间',
+));
 
 // FunctionalCI
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
