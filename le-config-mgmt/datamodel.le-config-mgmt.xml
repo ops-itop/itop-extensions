@@ -4786,9 +4786,6 @@
 						<item id="server_id">
 							<rank>20</rank>
 						</item>
-						<item id="user_email">
-							<rank>30</rank>
-						</item>
 						<item id="user_status">
 							<rank>35</rank>
 						</item>

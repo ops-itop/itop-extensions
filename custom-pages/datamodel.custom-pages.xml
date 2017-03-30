@@ -10,7 +10,11 @@
 			<parent>WelcomeMenu</parent>
 			<url>$env-production/custom-pages/batch_query.php</url>
 		</menu>
-		
+		<menu id="WelcomeServerAccount" xsi:type="WebPageMenuNode" _delta="define">
+			<rank>21</rank>
+			<parent>WelcomeMenu</parent>
+			<url>$env-production/custom-pages/server_accounts.php</url>
+		</menu>		
 	</menus>
 	<user_rights>
 		<groups>

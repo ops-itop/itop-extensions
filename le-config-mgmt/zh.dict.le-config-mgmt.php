@@ -403,7 +403,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 
 // lnkUserToServer
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
-	'Class:lnkUserToServer' => '服务器登录权限表',
+	'Class:lnkUserToServer' => '服务器账号',
 	'Class:lnkUserToServer/Attribute:server_id' => '服务器',
 	'Class:lnkUserToServer/Attribute:user_id' => '用户账号',
 	'Class:lnkUserToServer/Attribute:sudo' => 'Sudo权限',
