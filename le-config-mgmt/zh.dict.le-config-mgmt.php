@@ -408,6 +408,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkUserToServer/Attribute:user_id' => '用户账号',
 	'Class:lnkUserToServer/Attribute:sudo' => 'Sudo权限',
 	'Class:lnkUserToServer/Attribute:expiration' => '过期时间',
+	'Class:lnkUserToServer/Error:ThisLnkAlreadyExists' => '此账号已存在，请直接编辑',
 ));
 
 // FunctionalCI

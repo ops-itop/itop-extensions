@@ -39,7 +39,7 @@ $oP->SetBreadCrumbEntry('ui-tool-runquery', Dict::S('Menu:ServerAccountMenu'), D
 $sValues = utils::ReadParam('expression', '', false, 'raw_data');
 $current_user = UserRights::GetUserId();
 $current_person = UserRights::GetContactId();
-$lnkExpression = "SELECT lnkUserToServer WHERE user_id=$current_user";
+$lnkExpression = "SELECT lnkUserToServer WHERE user_id=$current_user AND expiration > NOW()";
 $ServerExpression = "SELECT Server AS s JOIN lnkContactToFunctionalCI AS l ON l.functionalci_id=s.id WHERE l.contact_id=$current_person";
 
 $helpLink = MetaModel::GetModuleSetting('custom-pages', 'helplink', "itop-help");

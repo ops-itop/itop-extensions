@@ -4728,6 +4728,24 @@
 							{
 								$this->Set("expiration", time()+$day*24*60*60);
 							}
+							
+							$aChanges = $this->ListChanges();
+							
+							if($aChanges)
+							{
+								if(!$this->IsNew() && !array_key_exists('user_id', $aChanges) && !array_key_exists('server_id', $aChanges))
+								{
+									return;
+								}
+								// 直接取 Get('friendlyname')取不到  lnkContactToApplicationSolution中也是这样处理的
+								$friendlyname = $this->Get('user_id') . " " . $this->Get('server_id');
+								$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkUserToServer WHERE friendlyname=:friendlyname");
+								$oSet = new DBObjectSet($oSearch, array(), array("friendlyname" => $friendlyname));
+								if ($oSet->Count() > 0)
+								{
+									$this->m_aCheckIssues[] = Dict::Format("Class:lnkUserToServer/Error:ThisLnkAlreadyExists", $friendlyname);
+								}								
+							}
 						}
 					]]>
 					</code>
@@ -5443,6 +5461,11 @@
 					<class id="ApplicationSolution"/>					
 				</classes>
 			</group>
+			<group id="ServerAccount" _delta="define">
+				<classes>
+					<class id="lnkUserToServer"/>
+				</classes>
+			</group>
 		</groups>
 		<profiles>
 			<profile id="4" _delta="delete"></profile>
@@ -5476,6 +5499,12 @@
 							<action id="action:write">allow</action>
 							<action id="stimulus:ev_close">allow</action>
 							<action id="stimulus:ev_reopen">allow</action>
+						</actions>
+					</group>
+					<group id="ServerAccount">
+						<actions>
+							<action id="action:read">deny</action>
+							<action id="action:bulk read">deny</action>
 						</actions>
 					</group>
 					<group id="*">
@@ -5546,6 +5575,12 @@
 							<action id="stimulus:ev_reopen">allow</action>
 						</actions>
 					</group>
+					<group id="ServerAccount">
+						<actions>
+							<action id="action:read">allow</action>
+							<action id="action:bulk read">deny</action>
+						</actions>
+					</group>					
 					<group id="*">
 						<actions>
 							<action id="action:read">allow</action>
@@ -5604,6 +5639,12 @@
 							<action id="stimulus:ev_reopen">allow</action>
 						</actions>
 					</group>
+					<group id="ServerAccount">
+						<actions>
+							<action id="action:read">allow</action>
+							<action id="action:bulk read">deny</action>
+						</actions>
+					</group>					
 					<group id="*">
 						<actions>
 							<action id="action:read">allow</action>
