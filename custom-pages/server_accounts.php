@@ -33,19 +33,219 @@ LoginWebPage::DoLogin(false); // false，不需要管理员权限
 $oAppContext = new ApplicationContext();
 $oP = new iTopWebPage(Dict::S('UI:ServerAccount:Title'));
 $oP->set_base(utils::GetAbsoluteUrlAppRoot().'pages/');
-$oP->SetBreadCrumbEntry('ui-tool-runquery', Dict::S('Menu:ServerAccountMenu'), Dict::S('Menu:ServerAccountMenu+'), '', utils::GetAbsoluteUrlAppRoot().'images/wrench.png');
-
+$oP->SetBreadCrumbEntry('ui-tool-account', Dict::S('Menu:ServerAccountMenu'), Dict::S('Menu:ServerAccountMenu+'), '', utils::GetAbsoluteUrlAppRoot().'images/wrench.png');
+$oP->add_dict_entry('UI:ValueMustBeSet');
+$oP->add_dict_entry('UI:ValueInvalidFormat');
 
 $sValues = utils::ReadParam('expression', '', false, 'raw_data');
 $current_user = UserRights::GetUserId();
 $current_person = UserRights::GetContactId();
-$lnkExpression = "SELECT lnkUserToServer WHERE user_id=$current_user AND expiration > NOW()";
-$ServerExpression = "SELECT Server AS s JOIN lnkContactToFunctionalCI AS l ON l.functionalci_id=s.id WHERE l.contact_id=$current_person";
 
 $helpLink = MetaModel::GetModuleSetting('custom-pages', 'helplink', "itop-help");
 
 $oP->add("<h1>" . Dict::Format('UI:ServerAccount:Title') . "</h1><hr/>");
 $oP->add("<p><a href=\"$helpLink\" _target=\"_blank\">" . Dict::Format('UI:ServerAccount:Help') . "</a></p>");
+$ip_list = utils::ReadParam('ip_list', '', false, 'raw_data');
+$reason = utils::ReadParam('request_reason','',false, 'raw_data');
+
+$rootUrl = utils::GetAbsoluteUrlAppRoot().'env-production/custom-pages/server_accounts.php';
+
+accountsRequest($oP, $ip_list, $reason);
+
+function accountsRequest(&$oP, $ip_list, $reason)
+{
+	global $rootUrl;
+	$ip_regexp = MetaModel::GetModuleSetting('custom-pages', 'ip_regexp', '^\\\s*(([0-9]{1,3}\\.){3}[0-9]{1,3}[\\\n,\\\s]*)*\\\s*([0-9]{1,3}\\.){3}[0-9]{1,3}[\\\n,\\\s]*$');	
+
+	$js = <<<EOF
+var checkSubmitFlg = false;
+function MyOnSubmit(sFormId)
+{
+	window.bInSubmit=true; // This is a submit, make sure that when the page gets unloaded we don't cancel the action
+	var bResult = CheckFields(sFormId, true);
+	if (!bResult)
+	{
+		window.bInSubmit = false; // Submit is/will be canceled
+	}
+	
+	if(checkSubmitFlg == true)
+	{
+		return false;
+	}
+	
+	if(bResult)
+	{
+		checkSubmitFlg = true;
+		window.location.href="$rootUrl";
+	}
+	
+	//return bResult;
+}
+EOF;
+	$oP->add_script($js);
+	$oP->add_ready_script("$('#1_request_reason').bind('validate keyup change', function(evt,sFormId){return ValidateField('1_request_reason','',true,sFormId,'',undefined)});");
+	$oP->add_ready_script("$('#1_ip_list').bind('validate keyup change', function(evt,sFormId){return ValidateField('1_ip_list','$ip_regexp',true,sFormId,'',undefined)});");	
+	$oP->add_ready_script('$("#LnkCollapse_1").click(function() {$("#Collapse_1").slideToggle(\'normal\'); $("#LnkCollapse_1").toggleClass(\'open\');});');
+	
+	$oP->add('<h2><a id="LnkCollapse_1" class="CollapsibleLabel" style="font-size: 14px;">申请登录权限</a></h2><br><div id="Collapse_1" style="display:none"><form method="post" id="form_1" onsubmit="return MyOnSubmit(\'form_1\');" action="' . $rootUrl . '">');
+	$oP->add('<label>申请原因：</label><span id="field_1_request_reason"><div><input type="string" name="request_reason" id="1_request_reason" value="' . $reason . '"><span class="form_validation" id="v_1_request_reason"></span><span class="field_status" id="fstatus_1_request_reason"></span></div></span><br>' );
+	$oP->add('<label>申请IP列表(每行一个或逗号分隔)：</label><br><span id="field_1_ip_list"><div><textarea cols="100" rows="8" id="1_ip_list" name="ip_list">'.htmlentities($ip_list, ENT_QUOTES, "UTF-8").'</textarea><span class="form_validation" id="v_1_ip_list"></span><span class="field_status" id="fstatus_1_ip_list"></span></div></span><br><label>申请账号类型：</label>');
+	$oP->add_select(array("tmp"=>"临时", "permanent"=>"永久"), "select_account_type", "tmp", "120");
+	$oP->add_select(array("nosudo"=>"不需要Sudo", "sudo"=>"需要Sudo"), "select_sudo_type", "nosudo", "120");
+	$oP->add("<br><br><input type=\"submit\" name=\"submit\" value=\"Submit\">\n");
+	$oP->add("</form></div>");
+}
+
+function createTicket(&$oP)
+{
+	if(!$_POST)
+	{
+		return(false);
+	}
+	
+	$ips = $_POST['ip_list'];
+	//$request_reason = $_POST['request_reason'];
+	//$account_type = $_POST['select_account_type'];
+	//$sudo_type = $_POST['select_sudo_type'];
+	
+	$ips = preg_replace('/\s+|,/', '\n' , $ips);
+	$ips = explode("\\n", $ips);
+	$ip_arr = array();
+	foreach ($ips as $k => $v)
+	{
+		$ip = trim($v);
+		if($ip)
+		{
+			$ip_arr[] = $ip;
+		}
+	}
+	
+	$iTopAPI = new iTopClient();
+	$ips = implode("','", $ip_arr);
+	$query_server = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE ip.ipaddress IN ('" . $ips . "')";
+	$servers = $iTopAPI->coreGet("Server", $query_server, "ip_list,contacts_list,friendlyname");
+
+	// 判断用户提交的ip是否有不在cmdb管理的ip
+	$servers = json_decode($servers, true);
+	$not_exists_ips = $ips;
+	if(array_key_exists("objects", $servers) && $servers['objects'])
+	{
+		$iplists = array();
+		foreach($servers['objects'] as $k => $v)
+		{
+			foreach($v['fields']['ip_list'] as $key => $value)
+			{
+				array_push($iplists, $value['ipaddress']);
+			}
+		}
+		
+		$failed_ips = array();
+		
+		foreach($ip_arr as $k => $v)
+		{
+			if(!in_array($v, $iplists))
+			{
+				array_push($failed_ips, $v);
+			}
+		}
+		
+		if(!$failed_ips)
+		{
+			$ticket = DocreateTicket($servers);
+			$oP->add_ready_script("alert(\"$ticket\");");
+			return(true);
+		} else {
+			$not_exists_ips = implode(",", $failed_ips);
+		}
+	}
+	
+	$oP->add_ready_script("alert(\"以下IP：$not_exists_ips 未找到，请确认IP是否正确或联系运维\");");
+	return(false);
+	//$iTopAPI->coreCreate('UserRequest', $request);
+}
+
+function DocreateTicket($servers)
+{
+	// 按照服务器联系人分组，分别建立工单
+	$group_pre = array();
+	$group = array();
+	$all_server = array();  // 用户申请的所有服务器
+	foreach($servers['objects'] as $k => $v)
+	{
+		$gKey = array();
+		foreach($v['fields']['contacts_list'] as $key => $value)
+		{
+			array_push($gKey, $value['contact_id']);
+		}
+		sort($gKey);
+		$gKey_str = implode("_", $gKey);
+		if(!$gKey_str)
+		{
+			$gKey_str = "0";  // 为0说明没有明确的管理员，那么默认归属运维
+		}
+		
+		$group_pre[]=array("key"=>$gKey_str, "server_id" => $v['key'],"server"=>$v['fields']['friendlyname']);
+		$group[$gKey_str] = array();
+		$all_server[] = $v['fields']['friendlyname'];
+	}
+	
+	foreach($group_pre as $k => $v)
+	{
+		$group[$v['key']][] = array("server_id" => $v['server_id'], "server" => $v['server'], "owner" => explode("_", $v['key']));
+	}
+	
+	$iTopAPI = new iTopClient();
+	global $current_user;
+	
+	$oContact = UserRights::GetContactObject();
+	$ret = array();
+	foreach($group as $k => $v)
+	{
+		$sId = array();
+		foreach($v as $sK => $sV)
+		{
+			$sId[] = $sV['server_id'];
+		}
+		$sId = implode(",", $sId);
+		
+		$data = array('caller_id'=>$oContact->GetKey(),
+					  'org_id' => $oContact->Get('org_id'),
+					  'title'=>"服务器登录权限申请-Server IDs：" . substr($sId,0,20),
+					  'description' => $_POST['request_reason'],
+					  'public_log' => "用户申请的所有服务器：<br>" . implode("<br>", $all_server),
+					  
+		);
+		
+		$stat = json_decode($iTopAPI->coreCreate("UserRequest", $data), true);
+		$tId = "";
+		if(array_key_exists('objects', $stat))
+		{
+			foreach($stat['objects'] as $key => $value)
+			{
+				$tId = $value['key'];
+				$ret[$tId] = "工单ID：" . $tId . " " . $value['message'];
+				$lnk = array("ticket_id"=>$tId, "functionalci_id"=>$sId);
+
+			}
+		}
+		$stat_lnk = json_decode($iTopAPI->coreCreate("lnkFunctionalCIToTicket",$lnk), true);
+		if(!array_key_exists("objects", $stat_lnk))
+		{
+			$msg = "链接配置项失败，请联系运维处理";
+			$iTopAPI->coreUpdate("UserRequest", $tId, array("public_log"=>$msg));
+			$ret[$tId] = $ret[$tId] . "  " . $msg;
+		}
+	}
+	return(implode("\\n", $ret));
+	//die(json_encode($ret));
+	//die(json_encode(($group)));
+	
+}
+
+function CreateAccount()
+{
+	
+}
 
 function runOql($sExpression, $title, &$oP)
 {
@@ -167,8 +367,15 @@ function runOql($sExpression, $title, &$oP)
 
 try
 {
+	$lnkExpression = "SELECT lnkUserToServer WHERE user_id=$current_user AND expiration > NOW()";
+	$ServerExpression = "SELECT Server AS s JOIN lnkContactToFunctionalCI AS l ON l.functionalci_id=s.id WHERE l.contact_id=$current_person";
+	$myTicket = "SELECT UserRequest AS t WHERE t.caller_id=$current_person AND status != 'closed' AND title LIKE '服务器登录权限申请-Server%'";
+	
+	runOql($myTicket, Dict::Format('UI:ServerAccount:MyTicket'), $oP);
 	runOql($lnkExpression, Dict::Format('UI:ServerAccount:ServerYouCanLogin'), $oP);
 	runOql($ServerExpression, Dict::Format('UI:ServerAccount:ServerYouManaged'), $oP);
+	createTicket($oP);
+	
 }
 catch(Exception $e)
 {
