@@ -51,11 +51,13 @@ $reason = utils::ReadParam('request_reason','',false, 'raw_data');
 $rootUrl = $appRoot.'env-production/custom-pages/server_accounts.php';
 $succeedUrl = $appRoot . 'env-production/custom-pages/succeed.php';
 
-accountsRequest($oP, $ip_list, $reason);
+
+$select_items = array("tmp" => "临时账号", "permanent" => "长期账号", "no" => "不需要Sudo", "yes" => "需要Sudo");
 
 function accountsRequest(&$oP, $ip_list, $reason)
 {
 	global $rootUrl;
+	global $select_items;
 	$ip_regexp = MetaModel::GetModuleSetting('custom-pages', 'ip_regexp', '^\\\s*(([0-9]{1,3}\\.){3}[0-9]{1,3}[\\\n,\\\s]*)*\\\s*([0-9]{1,3}\\.){3}[0-9]{1,3}[\\\n,\\\s]*$');	
 
 	$oP->add_ready_script("$('#1_request_reason').bind('validate keyup change', function(evt,sFormId){return ValidateField('1_request_reason','',true,sFormId,'',undefined)});");
@@ -65,8 +67,8 @@ function accountsRequest(&$oP, $ip_list, $reason)
 	$oP->add('<h2><a id="LnkCollapse_1" class="CollapsibleLabel" style="font-size: 14px;">申请登录权限</a></h2><br><div id="Collapse_1" style="display:none"><form method="post" id="form_1" onsubmit="return OnSubmit(\'form_1\');">');
 	$oP->add('<label>申请原因：</label><span id="field_1_request_reason"><div><input type="text" name="request_reason" id="1_request_reason" value="' . $reason . '"><span class="form_validation" id="v_1_request_reason"></span><span class="field_status" id="fstatus_1_request_reason"></span></div></span><br>' );
 	$oP->add('<label>申请IP列表(每行一个或逗号分隔)：</label><br><span id="field_1_ip_list"><div><textarea cols="100" rows="8" id="1_ip_list" name="ip_list">'.htmlentities($ip_list, ENT_QUOTES, "UTF-8").'</textarea><span class="form_validation" id="v_1_ip_list"></span><span class="field_status" id="fstatus_1_ip_list"></span></div></span><br><label>申请账号类型：</label>');
-	$oP->add_select(array("tmp"=>"临时", "permanent"=>"永久"), "select_account_type", "tmp", "120");
-	$oP->add_select(array("nosudo"=>"不需要Sudo", "sudo"=>"需要Sudo"), "select_sudo_type", "nosudo", "120");
+	$oP->add_select(array("tmp"=>$select_items['tmp'], "permanent"=>$select_items['permanent']), "select_account_type", "tmp", "120");
+	$oP->add_select(array("no"=>$select_items['no'], "yes"=>$select_items['yes']), "select_sudo_type", "no", "120");
 	$oP->add("<br><br><input type=\"submit\" name=\"submit\" value=\"Submit\">\n");
 	$oP->add("</form></div>");
 }
@@ -145,6 +147,7 @@ function createTicket(&$oP)
 
 function DocreateTicket($servers)
 {
+	global $select_items;
 	// 按照服务器联系人分组，分别建立工单
 	$group_pre = array();
 	$group = array();
@@ -165,7 +168,7 @@ function DocreateTicket($servers)
 		
 		$group_pre[]=array("key"=>$gKey_str, "server_id" => $v['key'],"server"=>$v['fields']['friendlyname']);
 		$group[$gKey_str] = array();
-		$all_server[] = $v['fields']['friendlyname'];
+		$all_server[] = $v['fields']['friendlyname'] . ", " . $select_items[$_POST['select_account_type']] . ", " . $select_items[$_POST['select_sudo_type']];
 	}
 	
 	foreach($group_pre as $k => $v)
@@ -186,7 +189,7 @@ function DocreateTicket($servers)
 		$split = true;
 	}
 	foreach($group as $k => $v)
-	{
+	{		
 		$sId = array();
 		$sHost = array();
 		foreach($v as $sK => $sV)
@@ -195,6 +198,7 @@ function DocreateTicket($servers)
 			$sHost[] = $sV['server'];
 		}
 		sort($sId);
+		$cResult = implode("<br>", CreateAccount($sId));	//创建lnkUserToServer
 		$sId = implode(",", $sId);
 		$sHost = implode("<br>", $sHost);
 		
@@ -206,12 +210,13 @@ function DocreateTicket($servers)
 		$data = array('caller_id'=>$oContact->GetKey(),
 					  'org_id' => $oContact->Get('org_id'),
 					  'title'=>"服务器登录权限申请-Server IDs：" . substr($sId,0,20),
-					  'description' => $_POST['request_reason'],
-					  'public_log' => $public_log . "<h2>用户申请的所有服务器：</h2><br>" . implode("<br>", $all_server),
+					  'description' => $_POST['request_reason'] . "<br><hr><br>" . $select_items[$_POST['select_account_type']] . "  " . $select_items[$_POST['select_sudo_type']],
+					  'public_log' => $public_log . "<h2>用户申请的所有服务器：</h2><br>" . implode("<br>", $all_server) . "<br><br><hr>lnkUserToServer Create Status: <br>" . $cResult,
 					  
 		);
 		
 		$stat = json_decode($iTopAPI->coreCreate("UserRequest", $data), true);
+		//die(json_encode($stat));
 		$tId = "";
 		if(array_key_exists('objects', $stat))
 		{
@@ -224,22 +229,137 @@ function DocreateTicket($servers)
 			}
 		}
 		$stat_lnk = json_decode($iTopAPI->coreCreate("lnkFunctionalCIToTicket",$lnk), true);
+		
 		if(!array_key_exists("objects", $stat_lnk))
 		{
 			$msg = "链接配置项失败，请联系运维处理";
 			$iTopAPI->coreUpdate("UserRequest", $tId, array("public_log"=>$msg));
 			$ret[$tId] = $ret[$tId] . "  " . $msg;
 		}
+		
+		// 自动指派
+		$agents = split("_", $k);
+		$agent_id = (int)$agents[0];
+		$isFailed = true;
+		$msg = "";
+		
+		if($agent_id != 0)
+		{
+			$oAssign = GetAssignInfo($agents);
+			if($oAssign)
+			{
+				$team_id = $oAssign['team_id'];
+				$agent_id = $oAssign['agent_id'];
+			}else 
+			{
+				$isFailed = true;
+				$msg = "GetAssignInfo Failed; ";
+			}
+		}else  // 指派给运维
+		{
+			// 使用template-base中的配置
+			$team_id = MetaModel::GetModuleSetting("templates-base", "team_id");
+			$plan = MetaModel::GetModuleSetting("templates-base", "plan");
+			if(is_array($plan))
+			{
+				$week = date("W", time());
+				$len = count($plan);
+				$agent_id = $plan[$week%$len];
+			}
+		}
+		// 执行指派
+		if($agent_id && $team_id)
+		{
+			$asign = json_decode($iTopAPI->coreApply_stimulus('UserRequest', $tId, array(
+						'team_id' => $team_id,
+						'agent_id' => $agent_id
+					),'ev_assign'),true);
+			if($asign['code'] == 0)
+			{
+				$isFailed = false;
+			}else
+			{
+				$msg = $msg . $asign['message'];
+			}
+		}
+		
+		// 自动指派失败
+		if($isFailed)
+		{
+			$data = array("public_log"=>"Auto Assign Failed: $msg");
+			$iTopAPI->coreUpdate("UserRequest", $tId, $data);	
+		}
 	}
 	return($ret);
-	//die(json_encode($ret));
-	//die(json_encode(($group)));
-	
 }
 
-function CreateAccount()
-{
+/**
+ * 根据联系人所在组织的交付模式获取该交付模式的联系人（团队），判断该联系人的团队ID
+ */
+function GetAssignInfo($oIds)
+{	
+	// 随机取一个联系人
+	$oWinnerId = $oIds[array_rand($oIds, 1)];
+	$oPerson = MetaModel::GetObject("Person", $oWinnerId);
+	$org_id = $oPerson->Get('org_id');
+	$oOrg = MetaModel::GetObject("Organization", $org_id);
+	$deliverymodel_id = $oOrg->Get('deliverymodel_id');
+	$oDeliveryModel = MetaModel::GetObject("DeliveryModel", $deliverymodel_id);
 	
+	// 用户所属组成的交付模式的contact列表
+	$aim_team = $oDeliveryModel->Get("contacts_list")->ToArrayOfValues();
+	$list_aim_team = array();
+	foreach($aim_team as $v)
+	{
+		array_push($list_aim_team, $v['lnkDeliveryModelToContact.contact_id']);
+	}
+	
+	// 用户的team列表
+	$my_team = $oPerson->Get("team_list")->ToArrayOfValues();
+	$list_my_team = array();
+	foreach($my_team as $v)
+	{
+		array_push($list_my_team, $v['lnkPersonToTeam.team_id']);
+	}
+	
+	$all_team = array_intersect($list_aim_team, $list_my_team);
+	if(!$all_team)
+	{
+		return(false);
+	}
+	$team_id = $list_aim_team[array_rand($all_team, 1)];
+	return(array('team_id'=>$team_id, 'agent_id' => $oWinnerId));
+}
+	
+function CreateAccount($data)
+{
+	global $current_user;
+	$iTopAPI = new iTopClient();
+	
+	$sudo = utils::ReadParam('select_sudo_type', 'no', false, 'raw_data');
+	$expiration = utils::ReadParam('select_account_type', 'tmp', false, 'raw_data');
+	if($expiration == "permanent")
+	{
+		$expiration = "1970-01-01 08:00:00";
+	} else
+	{
+		$day = (int)MetaModel::GetModuleSetting('le-config-mgmt', 'user_expiration_day', 3);
+		$expiration = time()+$day*24*60*60;
+	}
+	
+	$msg = array();
+	foreach($data as $k => $v)
+	{
+		$param = array("user_id"=>$current_user, "server_id"=>$v, "sudo"=>$sudo, "expiration"=>$expiration);
+		$ret = $iTopAPI->coreUpdate("lnkUserToServer", "SELECT lnkUserToServer WHERE user_id = $current_user AND server_id = $v", $param);
+		if(json_decode($ret, true)['code'] != 0)
+		{
+			$ret = $iTopAPI->coreCreate("lnkUserToServer", $param);
+		}
+		$ret = json_decode($ret, true);
+		$msg[] = "serverId=" . $v . ":  code: " . $ret['code'] . ", message: " . $ret['message'];
+	}
+	return($msg);
 }
 
 function runOql($sExpression, $title, &$oP)
@@ -366,6 +486,7 @@ try
 	$ServerExpression = "SELECT Server AS s JOIN lnkContactToFunctionalCI AS l ON l.functionalci_id=s.id WHERE l.contact_id=$current_person";
 	$myTicket = "SELECT UserRequest AS t WHERE t.caller_id=$current_person AND status != 'closed' AND title LIKE '服务器登录权限申请-Server%'";
 	
+	accountsRequest($oP, $ip_list, $reason);
 	runOql($myTicket, Dict::Format('UI:ServerAccount:MyTicket'), $oP);
 	runOql($lnkExpression, Dict::Format('UI:ServerAccount:ServerYouCanLogin'), $oP);
 	runOql($ServerExpression, Dict::Format('UI:ServerAccount:ServerYouManaged'), $oP);

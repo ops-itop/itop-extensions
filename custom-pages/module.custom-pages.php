@@ -15,6 +15,7 @@ SetupWebPage::AddModule(
 		// Setup
 		//
 		'dependencies' => array(
+			'templates-base/2.1.4'
 		),
 		'mandatory' => false,
 		'visible' => true,
