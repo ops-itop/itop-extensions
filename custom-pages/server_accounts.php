@@ -32,12 +32,12 @@ LoginWebPage::DoLogin(false); // false，不需要管理员权限
 
 $oAppContext = new ApplicationContext();
 $oP = new iTopWebPage(Dict::S('UI:ServerAccount:Title'));
-$oP->set_base(utils::GetAbsoluteUrlAppRoot().'pages/');
+$appRoot = utils::GetAbsoluteUrlAppRoot();
+$oP->set_base($appRoot.'pages/');
 $oP->SetBreadCrumbEntry('ui-tool-account', Dict::S('Menu:ServerAccountMenu'), Dict::S('Menu:ServerAccountMenu+'), '', utils::GetAbsoluteUrlAppRoot().'images/wrench.png');
 $oP->add_dict_entry('UI:ValueMustBeSet');
 $oP->add_dict_entry('UI:ValueInvalidFormat');
 
-$sValues = utils::ReadParam('expression', '', false, 'raw_data');
 $current_user = UserRights::GetUserId();
 $current_person = UserRights::GetContactId();
 
@@ -48,7 +48,8 @@ $oP->add("<p><a href=\"$helpLink\" _target=\"_blank\">" . Dict::Format('UI:Serve
 $ip_list = utils::ReadParam('ip_list', '', false, 'raw_data');
 $reason = utils::ReadParam('request_reason','',false, 'raw_data');
 
-$rootUrl = utils::GetAbsoluteUrlAppRoot().'env-production/custom-pages/server_accounts.php';
+$rootUrl = $appRoot.'env-production/custom-pages/server_accounts.php';
+$succeedUrl = $appRoot . 'env-production/custom-pages/succeed.php';
 
 accountsRequest($oP, $ip_list, $reason);
 
@@ -57,38 +58,12 @@ function accountsRequest(&$oP, $ip_list, $reason)
 	global $rootUrl;
 	$ip_regexp = MetaModel::GetModuleSetting('custom-pages', 'ip_regexp', '^\\\s*(([0-9]{1,3}\\.){3}[0-9]{1,3}[\\\n,\\\s]*)*\\\s*([0-9]{1,3}\\.){3}[0-9]{1,3}[\\\n,\\\s]*$');	
 
-	$js = <<<EOF
-var checkSubmitFlg = false;
-function MyOnSubmit(sFormId)
-{
-	window.bInSubmit=true; // This is a submit, make sure that when the page gets unloaded we don't cancel the action
-	var bResult = CheckFields(sFormId, true);
-	if (!bResult)
-	{
-		window.bInSubmit = false; // Submit is/will be canceled
-	}
-	
-	if(checkSubmitFlg == true)
-	{
-		return false;
-	}
-	
-	if(bResult)
-	{
-		checkSubmitFlg = true;
-		window.location.href="$rootUrl";
-	}
-	
-	//return bResult;
-}
-EOF;
-	$oP->add_script($js);
 	$oP->add_ready_script("$('#1_request_reason').bind('validate keyup change', function(evt,sFormId){return ValidateField('1_request_reason','',true,sFormId,'',undefined)});");
 	$oP->add_ready_script("$('#1_ip_list').bind('validate keyup change', function(evt,sFormId){return ValidateField('1_ip_list','$ip_regexp',true,sFormId,'',undefined)});");	
 	$oP->add_ready_script('$("#LnkCollapse_1").click(function() {$("#Collapse_1").slideToggle(\'normal\'); $("#LnkCollapse_1").toggleClass(\'open\');});');
 	
-	$oP->add('<h2><a id="LnkCollapse_1" class="CollapsibleLabel" style="font-size: 14px;">申请登录权限</a></h2><br><div id="Collapse_1" style="display:none"><form method="post" id="form_1" onsubmit="return MyOnSubmit(\'form_1\');" action="' . $rootUrl . '">');
-	$oP->add('<label>申请原因：</label><span id="field_1_request_reason"><div><input type="string" name="request_reason" id="1_request_reason" value="' . $reason . '"><span class="form_validation" id="v_1_request_reason"></span><span class="field_status" id="fstatus_1_request_reason"></span></div></span><br>' );
+	$oP->add('<h2><a id="LnkCollapse_1" class="CollapsibleLabel" style="font-size: 14px;">申请登录权限</a></h2><br><div id="Collapse_1" style="display:none"><form method="post" id="form_1" onsubmit="return OnSubmit(\'form_1\');">');
+	$oP->add('<label>申请原因：</label><span id="field_1_request_reason"><div><input type="text" name="request_reason" id="1_request_reason" value="' . $reason . '"><span class="form_validation" id="v_1_request_reason"></span><span class="field_status" id="fstatus_1_request_reason"></span></div></span><br>' );
 	$oP->add('<label>申请IP列表(每行一个或逗号分隔)：</label><br><span id="field_1_ip_list"><div><textarea cols="100" rows="8" id="1_ip_list" name="ip_list">'.htmlentities($ip_list, ENT_QUOTES, "UTF-8").'</textarea><span class="form_validation" id="v_1_ip_list"></span><span class="field_status" id="fstatus_1_ip_list"></span></div></span><br><label>申请账号类型：</label>');
 	$oP->add_select(array("tmp"=>"临时", "permanent"=>"永久"), "select_account_type", "tmp", "120");
 	$oP->add_select(array("nosudo"=>"不需要Sudo", "sudo"=>"需要Sudo"), "select_sudo_type", "nosudo", "120");
@@ -98,6 +73,8 @@ EOF;
 
 function createTicket(&$oP)
 {
+	global $succeedUrl;
+	
 	if(!$_POST)
 	{
 		return(false);
@@ -152,7 +129,9 @@ function createTicket(&$oP)
 		if(!$failed_ips)
 		{
 			$ticket = DocreateTicket($servers);
-			$oP->add_ready_script("alert(\"$ticket\");");
+			$sTicket = json_encode($ticket);
+			header('location:' . $succeedUrl . "?msg=" . $sTicket);
+			//$oP->add_ready_script("alert(\"$sTicket\");");
 			return(true);
 		} else {
 			$not_exists_ips = implode(",", $failed_ips);
@@ -199,20 +178,36 @@ function DocreateTicket($servers)
 	
 	$oContact = UserRights::GetContactObject();
 	$ret = array();
+	
+	// 是否拆分为多个工单
+	$split = false;
+	if(count($group) > 1)
+	{
+		$split = true;
+	}
 	foreach($group as $k => $v)
 	{
 		$sId = array();
+		$sHost = array();
 		foreach($v as $sK => $sV)
 		{
 			$sId[] = $sV['server_id'];
+			$sHost[] = $sV['server'];
 		}
+		sort($sId);
 		$sId = implode(",", $sId);
+		$sHost = implode("<br>", $sHost);
 		
+		$public_log = "";
+		if($split)
+		{
+			$public_log = "<h2>申请登录的机器分属不同管理员，已拆分为多个工单，本工单包含：</h2><br>" . $sHost . "<br><br>";
+		}
 		$data = array('caller_id'=>$oContact->GetKey(),
 					  'org_id' => $oContact->Get('org_id'),
 					  'title'=>"服务器登录权限申请-Server IDs：" . substr($sId,0,20),
 					  'description' => $_POST['request_reason'],
-					  'public_log' => "用户申请的所有服务器：<br>" . implode("<br>", $all_server),
+					  'public_log' => $public_log . "<h2>用户申请的所有服务器：</h2><br>" . implode("<br>", $all_server),
 					  
 		);
 		
@@ -236,7 +231,7 @@ function DocreateTicket($servers)
 			$ret[$tId] = $ret[$tId] . "  " . $msg;
 		}
 	}
-	return(implode("\\n", $ret));
+	return($ret);
 	//die(json_encode($ret));
 	//die(json_encode(($group)));
 	
