@@ -46,7 +46,6 @@ SetupWebPage::AddModule(
 			// Module specific settings go here, if any
 			'grafana_app_url' => 'http://localhost/',
 			'grafana_url_url' => 'http://localhost/',
-			'user_expiration_day' => 3,
 		),
 	)
 );

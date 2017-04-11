@@ -51,7 +51,8 @@ SetupWebPage::AddModule(
 			'helplink' => 'http://localhost',
 			'ip_regexp' => '^\\\s*(([0-9]{1,3}\\.){3}[0-9]{1,3}[\\\n,\\\s]*)*\\\s*([0-9]{1,3}\\.){3}[0-9]{1,3}[\\\n,\\\s]*$',
 			'ticket_title' => '服务器登录权限申请-Server IDs: ',
-			'service_id' => '1'
+			'service_id' => '1',
+			'user_expiration_day' => 3
 		),
 	)
 );

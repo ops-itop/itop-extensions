@@ -355,7 +355,7 @@ function CreateAccount($data)
 		$expiration = "1970-01-01 08:00:00";
 	} else
 	{
-		$day = (int)MetaModel::GetModuleSetting('le-config-mgmt', 'user_expiration_day', 3);
+		$day = (int)MetaModel::GetModuleSetting('custom-pages', 'user_expiration_day', 3);
 		$expiration = time()+$day*24*60*60;
 	}
 	
