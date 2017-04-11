@@ -50,7 +50,8 @@ SetupWebPage::AddModule(
 			// Module specific settings go here, if any
 			'helplink' => 'http://localhost',
 			'ip_regexp' => '^\\\s*(([0-9]{1,3}\\.){3}[0-9]{1,3}[\\\n,\\\s]*)*\\\s*([0-9]{1,3}\\.){3}[0-9]{1,3}[\\\n,\\\s]*$',
-			'ticket_title' => '服务器登录权限申请-Server IDs: '
+			'ticket_title' => '服务器登录权限申请-Server IDs: ',
+			'service_id' => '1'
 		),
 	)
 );

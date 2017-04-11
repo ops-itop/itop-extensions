@@ -209,9 +209,12 @@ function DocreateTicket($servers)
 		{
 			$public_log = "<h2>申请登录的机器分属不同管理员，已拆分为多个工单，本工单包含：</h2><br>" . $sHost . "<br><br>";
 		}
+		// 设置账号申请工单的service_id，如果未配置，默认为 1
+		$service_id = MetaModel::GetModuleSetting('custom-pages', 'service_id', '1');
 		$data = array('caller_id'=>$oContact->GetKey(),
 					  'origin' => 'portal',
 					  'org_id' => $oContact->Get('org_id'),
+					  'service_id' => $service_id,
 					  'title'=>$ticket_title . substr($sId,0,20),
 					  'description' => $_POST['request_reason'] . "<br><hr><br>" . $select_items[$_POST['select_account_type']] . "  " . $select_items[$_POST['select_sudo_type']],
 					  'public_log' => $public_log . "<h2>用户申请的所有服务器：</h2><br>" . implode("<br>", $all_server) . "<br><br><hr>lnkUserToServer Create Status: <br>" . $cResult,
