@@ -488,7 +488,8 @@ function runOql($sExpression, $title, &$oP)
 
 try
 {
-	$lnkExpression = "SELECT lnkUserToServer WHERE user_id=$current_user AND expiration > NOW()";
+	$timestamp_0 = date('Y-m-d H:i:s', 86400);
+	$lnkExpression = "SELECT lnkUserToServer WHERE user_id=$current_user AND (expiration > NOW() OR expiration <= '" . $timestamp_0 . "')";
 	$ServerExpression = "SELECT Server AS s JOIN lnkContactToFunctionalCI AS l ON l.functionalci_id=s.id WHERE l.contact_id=$current_person";
 	$myTicket = "SELECT UserRequest AS t WHERE t.caller_id=$current_person AND status != 'closed' AND title LIKE '服务器登录权限申请-Server%'";
 	
