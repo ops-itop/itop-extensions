@@ -7,6 +7,54 @@
   <classes>
 	<class id="UserRequest">
 		<methods>
+			<method id="DoServerAccount" _delta="define">
+				<static>false</static>
+				<access>public</access>
+				<type>Custom</type>
+				<code><![CDATA[public function DoServerAccount()
+{
+	//检查工单状态的变化，对工单链接的配置项的状态进行变更
+	$aChange = $this->ListChanges();
+	if(array_key_exists('status', $aChange))
+	{
+		if($this->Get('origin') != "portal")
+		{
+			return;
+		}
+		
+		$caller_id = $this->Get('caller_id');
+		$iTopAPI = new iTopClient();
+		// 拿到工单链接的服务器(需要过滤compute方式添加的配置项)
+		$oCIs = $this->Get('functionalcis_list')->ToArrayOfValues();
+		$server_ids = array();
+		foreach($oCIs as $aCI)
+		{
+			$impact_code = $aCI['lnkFunctionalCIToTicket.impact_code'];		
+			$nameClass = $aCI['lnkFunctionalCIToTicket.functionalci_id_finalclass_recall'];			
+			// 如果是计算方式添加的配置项，忽略
+			if($impact_code == "computed" || $nameClass != "Server")
+			{
+				continue;
+			}
+		
+			$oID = $aCI['lnkFunctionalCIToTicket.functionalci_id'];
+			array_push($server_ids, $oID);
+		}
+		
+		$servers = implode("','", $server_ids);
+		$oql = "SELECT lnkUserToServer AS l WHERE l.user_contactid = " . $caller_id . " AND l.server_id IN ('" . $servers . "')";
+		
+		// 工单审批通过，lnkUserToServer即变为enabled状态
+		// server_accounts.php中提交工单并创建或更新lnkUserToServer时将status设置为disabled
+		if($aChange['status'] == "resolved")
+		{
+			$iTopAPI->coreUpdate('lnkUserToServer', $oql, array("status"=>"enabled"));
+		}
+	}				
+}
+				]]>
+				</code>
+			</method>
 			<method id="DoCheckToWrite" _delta="redefine">
 				<static>false</static>
 				<access>public</access>
@@ -19,6 +67,13 @@
       $this->m_aCheckIssues[] = Dict::Format('Class:UserRequest/Error:CannotAssignParentRequestIdToSelf');
     }
 	
+	// 处理服务器账号申请工单(lnkUserToServer)
+	$lnkUserToServer_title = MetaModel::GetModuleSetting('custom-pages', 'ticket_title', "服务器登录权限申请-Server IDs");
+	if(strpos($this->Get('title'), $lnkUserToServer_title) !== false)
+	{
+		$this->DoServerAccount();
+		return;
+	}
 	//检查工单状态的变化，对工单链接的配置项的状态进行变更
 	$aChange = $this->ListChanges();
 	if(array_key_exists('status', $aChange))
@@ -33,6 +88,12 @@
 		$oCIs = $this->Get('functionalcis_list')->ToArrayOfValues();
 		foreach($oCIs as $aCI)
 		{
+			$impact_code = $aCI['lnkFunctionalCIToTicket.impact_code'];
+			// 如果是计算方式添加的配置项，忽略
+			if($impact_code == "computed")
+			{
+				continue;
+			}
 			$nameClass = $aCI['lnkFunctionalCIToTicket.functionalci_id_finalclass_recall'];
 			$oID = $aCI['lnkFunctionalCIToTicket.functionalci_id'];
 			$oObject = MetaModel::GetObject($nameClass, $oID);

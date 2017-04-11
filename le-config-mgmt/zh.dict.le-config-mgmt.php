@@ -401,16 +401,6 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkServerToCluster/Attribute:cluster_name' => '集群',
 ));
 
-// lnkUserToServer
-Dict::Add('ZH CN', 'Chinese', '简体中文', array(
-	'Class:lnkUserToServer' => '服务器账号',
-	'Class:lnkUserToServer/Attribute:server_id' => '服务器',
-	'Class:lnkUserToServer/Attribute:user_id' => '用户账号',
-	'Class:lnkUserToServer/Attribute:sudo' => 'Sudo权限',
-	'Class:lnkUserToServer/Attribute:expiration' => '过期时间',
-	'Class:lnkUserToServer/Error:ThisLnkAlreadyExists' => '此账号已存在，请直接编辑',
-));
-
 // FunctionalCI
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:FunctionalCI/Attribute:ci_id' => 'ID',

@@ -15,7 +15,11 @@ SetupWebPage::AddModule(
 		// Setup
 		//
 		'dependencies' => array(
-			'templates-base/2.1.4'
+			'itop-request-mgmt/2.0.0||itop-request-mgmt-itil/2.0.0',
+			'itop-config-mgmt/2.2.0',
+			'itop-request-template/1.0.1',
+			'templates-base/2.1.4',
+			'api-client/1.0.0'
 		),
 		'mandatory' => false,
 		'visible' => true,
@@ -44,6 +48,9 @@ SetupWebPage::AddModule(
 		//
 		'settings' => array(
 			// Module specific settings go here, if any
+			'helplink' => 'http://localhost',
+			'ip_regexp' => '^\\\s*(([0-9]{1,3}\\.){3}[0-9]{1,3}[\\\n,\\\s]*)*\\\s*([0-9]{1,3}\\.){3}[0-9]{1,3}[\\\n,\\\s]*$',
+			'ticket_title' => '服务器登录权限申请-Server IDs: '
 		),
 	)
 );

@@ -188,6 +188,8 @@ function DocreateTicket($servers)
 	{
 		$split = true;
 	}
+	
+	$ticket_title = MetaModel::GetModuleSetting('custom-pages', 'ticket_title', '服务器登录权限申请-Server IDs: ');
 	foreach($group as $k => $v)
 	{		
 		$sId = array();
@@ -208,8 +210,9 @@ function DocreateTicket($servers)
 			$public_log = "<h2>申请登录的机器分属不同管理员，已拆分为多个工单，本工单包含：</h2><br>" . $sHost . "<br><br>";
 		}
 		$data = array('caller_id'=>$oContact->GetKey(),
+					  'origin' => 'portal',
 					  'org_id' => $oContact->Get('org_id'),
-					  'title'=>"服务器登录权限申请-Server IDs：" . substr($sId,0,20),
+					  'title'=>$ticket_title . substr($sId,0,20),
 					  'description' => $_POST['request_reason'] . "<br><hr><br>" . $select_items[$_POST['select_account_type']] . "  " . $select_items[$_POST['select_sudo_type']],
 					  'public_log' => $public_log . "<h2>用户申请的所有服务器：</h2><br>" . implode("<br>", $all_server) . "<br><br><hr>lnkUserToServer Create Status: <br>" . $cResult,
 					  
@@ -350,7 +353,7 @@ function CreateAccount($data)
 	$msg = array();
 	foreach($data as $k => $v)
 	{
-		$param = array("user_id"=>$current_user, "server_id"=>$v, "sudo"=>$sudo, "expiration"=>$expiration);
+		$param = array("user_id"=>$current_user, "server_id"=>$v, "sudo"=>$sudo, "expiration"=>$expiration, "status"=>"disabled");
 		$ret = $iTopAPI->coreUpdate("lnkUserToServer", "SELECT lnkUserToServer WHERE user_id = $current_user AND server_id = $v", $param);
 		if(json_decode($ret, true)['code'] != 0)
 		{
