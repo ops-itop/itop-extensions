@@ -42,13 +42,48 @@ $params = json_decode($params, true);
 $pages = "";
 if($params)
 {
+	$pages .= <<<EOF
+<div class="ticket_submit">
+<div id="messagetext" class="alert_right">
+<p style="font-size:20px; font-weight:bold;">
+EOF;
+	
 	foreach($params as $sId => $msg)
 	{
-		$pages .= <<<EOF
-<div style="text-align: center;font-size:50px; font-weight:bold;">$msg</div>
-EOF;
+		$pages .= $msg . "<br>";
 	}
+	$pages .= <<<EOF
+</p>
+<p class="alert_btnleft"><a href="$rootUrl">如果您的浏览器没有自动跳转，请点击此链接</a></p>
+</div>
+</div>
+EOF;
 }
+
+$css = <<<EOF
+.alert_right, .alert_error, .alert_info {
+    padding: 6px 0 6px 58px;
+    min-height: 40px;
+    height: auto !important;
+    height: 40px;
+    line-height: 160%;
+    background: url(http://www.tecbbs.com/static/image/common/right.gif) no-repeat 8px 8px;
+    font-size: 14px;
+}
+
+.ticket_submit {
+    margin: 60px auto;
+    padding: 20px;
+    width: 580px;
+    border: 3px solid #F2F2F2;
+    background: #FFF;
+}
+.alert_btnleft {
+    margin-top: 8px;
+}
+EOF;
+
+$oP->add_style($css);
 $oP->add("<h1>" . Dict::Format('UI:ServerAccount:Title') . "</h1><hr/>");
 $oP->add($pages);
 header("refresh:4;url=$rootUrl");
