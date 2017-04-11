@@ -22,6 +22,7 @@
 			return;
 		}
 		
+		$tId = $this->GetKey();
 		$caller_id = $this->Get('caller_id');
 		$iTopAPI = new iTopClient();
 		// 拿到工单链接的服务器(需要过滤compute方式添加的配置项)
@@ -41,14 +42,24 @@
 			array_push($server_ids, $oID);
 		}
 		
-		$servers = implode("','", $server_ids);
-		$oql = "SELECT lnkUserToServer AS l WHERE l.user_contactid = " . $caller_id . " AND l.server_id IN ('" . $servers . "')";
-		
 		// 工单审批通过，lnkUserToServer即变为enabled状态
 		// server_accounts.php中提交工单并创建或更新lnkUserToServer时将status设置为disabled
 		if($aChange['status'] == "resolved")
 		{
-			$iTopAPI->coreUpdate('lnkUserToServer', $oql, array("status"=>"enabled"));
+			$msg = array();
+			$msg[] = "账号状态更新结果";
+			foreach($server_ids as $k => $v)
+			{
+				$oql = "SELECT lnkUserToServer AS l WHERE l.user_contactid = " . $caller_id . " AND l.server_id = " . $v;
+				$ret = $iTopAPI->coreUpdate('lnkUserToServer', $oql, array("status"=>"enabled"));
+				$aMsg = json_decode($ret, true)['message'];
+				if($aMsg == "")
+				{
+					$aMsg = "Success";
+				}
+				$msg[] = "服务器ID " . $v . ": " . $aMsg;
+			}
+			$iTopAPI->coreUpdate('UserRequest', $tId, array("public_log"=>implode("<br>",$msg)));
 		}
 	}				
 }

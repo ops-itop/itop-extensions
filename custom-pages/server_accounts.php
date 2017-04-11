@@ -192,16 +192,16 @@ function DoCreateTicket($servers)
 	$ticket_title = MetaModel::GetModuleSetting('custom-pages', 'ticket_title', '服务器登录权限申请-Server IDs: ');
 	foreach($group as $k => $v)
 	{		
-		$sId = array();
+		$aId = array();
 		$sHost = array();
 		foreach($v as $sK => $sV)
 		{
-			$sId[] = $sV['server_id'];
+			$aId[] = $sV['server_id'];
 			$sHost[] = $sV['server'];
 		}
-		sort($sId);
-		$cResult = implode("<br>", CreateAccount($sId));	//创建lnkUserToServer
-		$sId = implode(",", $sId);
+		sort($aId);
+		$cResult = implode("<br>", CreateAccount($aId));	//创建lnkUserToServer
+		$sId = implode(",", $aId);
 		$sHost = implode("<br>", $sHost);
 		
 		$public_log = "";
@@ -230,8 +230,11 @@ function DoCreateTicket($servers)
 			{
 				$tId = $value['key'];
 				$ret[$tId] = "工单ID：" . $tId . " " . $value['message'];
-				$lnk = array("ticket_id"=>$tId, "functionalci_id"=>$sId);
-
+			}
+			$lnk = array("functionalcis_list" => array());
+			foreach($aId as $key => $value)
+			{
+				$lnk["functionalcis_list"][] = array("functionalci_id"=>$value);
 			}
 		}else
 		{
@@ -239,7 +242,7 @@ function DoCreateTicket($servers)
 			$ret[$tId] = $ret[$tId] . "  " . $msg;
 			return($ret);
 		}
-		$stat_lnk = json_decode($iTopAPI->coreCreate("lnkFunctionalCIToTicket",$lnk), true);
+		$stat_lnk = json_decode($iTopAPI->coreUpdate("UserRequest",$tId, $lnk), true);
 		
 		if(!array_key_exists("objects", $stat_lnk))
 		{
