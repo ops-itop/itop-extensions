@@ -430,7 +430,7 @@ function runOql($sExpression, $title, &$oP)
 	{
 		
 		$oResultBlock = new DisplayBlock($oFilter, 'list', false);
-		$oResultBlock->Display($oP, $title);
+		$oResultBlock->Display($oP, $title, array("menu"=>false));
 
 		// Breadcrumb
 		//$iCount = $oResultBlock->GetDisplayedCount();
