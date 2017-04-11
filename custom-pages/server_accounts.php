@@ -130,7 +130,7 @@ function createTicket(&$oP)
 		
 		if(!$failed_ips)
 		{
-			$ticket = DocreateTicket($servers);
+			$ticket = DoCreateTicket($servers);
 			$sTicket = json_encode($ticket);
 			header('location:' . $succeedUrl . "?msg=" . $sTicket);
 			//$oP->add_ready_script("alert(\"$sTicket\");");
@@ -145,7 +145,7 @@ function createTicket(&$oP)
 	//$iTopAPI->coreCreate('UserRequest', $request);
 }
 
-function DocreateTicket($servers)
+function DoCreateTicket($servers)
 {
 	global $select_items;
 	// 按照服务器联系人分组，分别建立工单
@@ -233,14 +233,20 @@ function DocreateTicket($servers)
 				$lnk = array("ticket_id"=>$tId, "functionalci_id"=>$sId);
 
 			}
+		}else
+		{
+			$msg = "工单创建失败，请联系运维处理" . "<p>" . $stat['message'] . "</p>";
+			$ret[$tId] = $ret[$tId] . "  " . $msg;
+			return($ret);
 		}
 		$stat_lnk = json_decode($iTopAPI->coreCreate("lnkFunctionalCIToTicket",$lnk), true);
 		
 		if(!array_key_exists("objects", $stat_lnk))
 		{
-			$msg = "链接配置项失败，请联系运维处理";
+			$msg = "链接配置项失败，请联系运维处理" . "<p>" . $stat_lnk['message'] . "</p>";
 			$iTopAPI->coreUpdate("UserRequest", $tId, array("public_log"=>$msg));
 			$ret[$tId] = $ret[$tId] . "  " . $msg;
+			return($ret);
 		}
 		
 		// 自动指派
