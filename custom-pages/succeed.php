@@ -67,7 +67,7 @@ $css = <<<EOF
     height: auto !important;
     height: 40px;
     line-height: 160%;
-    background: url(http://www.tecbbs.com/static/image/common/right.gif) no-repeat 8px 8px;
+    background: url(../env-production/custom-pages/images/right.gif) no-repeat 8px 8px;
     font-size: 14px;
 }
 
