@@ -21,9 +21,12 @@ iTop官方插件, 自动关闭工单
 - 删除新portal的location_id
 
 ## custom-pages
-提供一个批量查询页面
+### 提供一个批量查询页面
 
 ![](custom-pages/preview/preview.png)
+
+### 服务器账号管理
+![](custom-pages/preview/account.png)
 
 ## email-reply
 iTop官方插件，工单更新时可以邮件通知
