@@ -143,3 +143,8 @@ public.php?type=ip&value=10.0.0.2&filter=Server&show=Server,Cluster,Rack,Applica
 
 ## zh-language
 中文翻译
+
+## kknowitop-trigger-on-update
+触发器(对象更新时)
+
+fork from https://github.com/vbkunin/knowitop-trigger-on-update
