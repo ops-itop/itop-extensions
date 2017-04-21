@@ -147,4 +147,9 @@ public.php?type=ip&value=10.0.0.2&filter=Server&show=Server,Cluster,Rack,Applica
 ## kknowitop-trigger-on-update
 触发器(对象更新时)
 
-fork from https://github.com/vbkunin/knowitop-trigger-on-update
+Fork from https://github.com/vbkunin/knowitop-trigger-on-update
+
+## action-shell-exec
+执行脚本的动作
+
+Fork from https://github.com/itop-itsm-ru/action-shell-exec
