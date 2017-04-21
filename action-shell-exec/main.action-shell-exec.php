@@ -105,6 +105,7 @@ class ActionShellExec extends Action
           if ($sVarValue == $aParam[1]) {
             $sVarValue = '';
             // Значит ApplyParams не нашел такого плейсхолдера
+			// 所以ApplyParams没有发现这种плейсхолдер
             if ($this->IsBeingTested() && !is_null($oLog))
               $oLog->Set('log', $oLog->Get('log')."There is no value for placeholder: $aParam[1]\n");
           }
@@ -133,7 +134,7 @@ class ActionShellExec extends Action
     catch(Exception $e)
     {
       ApplicationContext::SetUrlMakerClass($sPreviousUrlMaker);
-      throw $e; // Ошибка выбрасывается на верхний уровень и записывается в лог оповещения.
+      throw $e; // Ошибка выбрасывается на верхний уровень и записывается в лог оповещения. （分散到上层的错误写入日志和警报。）
     }
     ApplicationContext::SetUrlMakerClass($sPreviousUrlMaker);
   }
