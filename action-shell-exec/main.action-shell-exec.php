@@ -128,7 +128,17 @@ class ActionShellExec extends Action
         if (!is_null($oLog)) $oLog->Set('log', $oLog->Get('log')."Start executing shell command:\n$sCMD");
         return "Script will be started.";
       }
-      if (!is_null($oLog)) $oLog->Set('log', shell_exec($sCMD));
+      if (!is_null($oLog))
+	  {
+		if(function_exists("shell_exec"))
+		{
+			$oLog_log = shell_exec($sCMD);
+		}else
+		{
+			$oLog_log = "shell_exec() has been disabled for security reasons";
+		}
+		$oLog->Set('log', $oLog_log);
+	  }
       return "Script $sScriptPath successfully started.";
     }
     catch(Exception $e)

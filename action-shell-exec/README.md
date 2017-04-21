@@ -27,3 +27,28 @@ Can be used in linux.
 ### Links
 - [iTop ITSM & CMDB по-русски](http://community.itop-itsm.ru)
 - [Combodo iTop](http://www.combodo.com/itop)
+
+## demo
+demo script(shell)
+
+```
+#!/bin/bash
+d=`cd $(dirname $0);pwd`
+cd $d
+ds=`date +%Y%m%d-%H%M%S`
+
+echo "$ds  $THIS_NAME - $THIS_HOSTNAME"
+echo "$ds  $THIS_NAME - $THIS_HOSTNAME" >> demo.log
+```
+
+demo script(php). 需要读取环境变量
+
+```
+#!/usr/bin/php
+<?
+$THIS_HOSTNAME = getenv("THIS_HOSTNAME");
+$THIS_NAME = getenv("THIS_NAME");
+echo "$THIS_HOSTNAME $THIS_NAME";
+?>
+```
+
