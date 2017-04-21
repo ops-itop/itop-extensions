@@ -176,3 +176,32 @@ $THIS_NAME = getenv("THIS_NAME");
 echo "$THIS_HOSTNAME $THIS_NAME";
 ?>
 ```
+
+### 异步任务
+
+假设脚本需要执行很长时间
+
+```
+#!/usr/bin/php
+<?
+$THIS_HOSTNAME = getenv("THIS_HOSTNAME");
+$THIS_NAME = getenv("THIS_NAME");
+$log = "php.log";
+sleep(15);
+file_put_contents($log, "$THIS_HOSTNAME $THIS_NAME\n", FILE_APPEND);
+?>
+```
+
+如上代码，实测此时itop前端要等待15至16秒之间，因此考虑用shell脚本包裹一下，实现后台异步执行真正的任务
+
+```
+#!/bin/bash
+d=`cd $(dirname $0);pwd`
+cd $d
+ds=`date +%Y%m%d-%H%M%S`
+
+echo "$ds  $THIS_NAME - $THIS_HOSTNAME"
+echo "$ds  $THIS_NAME - $THIS_HOSTNAME" >> demo.log
+#./demo.php &   # 这种做法无效，需要下一行那样
+./demo.php &>/dev/null  &
+```
