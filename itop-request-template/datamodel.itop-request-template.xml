@@ -14,6 +14,8 @@
 				<code><![CDATA[public function DoServerAccount()
 {
 	//检查工单状态的变化，对工单链接的配置项的状态进行变更
+	// 已经使用 action-shell-exec调用cmdbApi/actions 下的脚本来实现
+	// 此函数弃用，代码暂时保留。。
 	$aChange = $this->ListChanges();
 	if(array_key_exists('status', $aChange))
 	{
@@ -79,12 +81,13 @@
     }
 	
 	// 处理服务器账号申请工单(lnkUserToServer)
+	/*
 	$lnkUserToServer_title = MetaModel::GetModuleSetting('custom-pages', 'ticket_title', "服务器登录权限申请-Server IDs");
 	if(strpos($this->Get('title'), $lnkUserToServer_title) !== false)
 	{
 		$this->DoServerAccount();
 		return;
-	}
+	}*/
 	//检查工单状态的变化，对工单链接的配置项的状态进行变更
 	$aChange = $this->ListChanges();
 	if(array_key_exists('status', $aChange))
