@@ -102,13 +102,15 @@ class ActionShellExec extends Action
         if (count($aParam) == 2) {
           $sVarName = $aParam[0];
           $sVarValue = MetaModel::ApplyParams($aParam[1], $aContextArgs);
+          /* 不检查是否有此变量，用于自定义变量。例如指定SCRIPT_NAME=demo.php，可以在shell脚本中调用一个后台
+           * 执行的php脚本。注意，变量赋值不要带引号，插件会自动加上引号
           if ($sVarValue == $aParam[1]) {
             $sVarValue = '';
             // Значит ApplyParams не нашел такого плейсхолдера
-			// 所以ApplyParams没有发现这种плейсхолдер
+            // 所以ApplyParams没有发现这种плейсхолдер
             if ($this->IsBeingTested() && !is_null($oLog))
               $oLog->Set('log', $oLog->Get('log')."There is no value for placeholder: $aParam[1]\n");
-          }
+          }*/
         } else {
           $sVarName = $aParam[0];
           $sVarValue = MetaModel::ApplyParams($aParam[0], $aContextArgs);
