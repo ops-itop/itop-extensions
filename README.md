@@ -202,6 +202,7 @@ ds=`date +%Y%m%d-%H%M%S`
 
 echo "$ds  $THIS_NAME - $THIS_HOSTNAME"
 echo "$ds  $THIS_NAME - $THIS_HOSTNAME" >> demo.log
-#./demo.php &   # 这种做法无效，需要下一行那样
+#./demo.php &   # 这种做法无效，需要下一行那样(启动子脚本，必须要使用&和指定输出(只好是定向到/dev/null)
 ./demo.php &>/dev/null  &
 ```
+
