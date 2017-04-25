@@ -54,6 +54,8 @@ $succeedUrl = $appRoot . 'env-production/custom-pages/succeed.php';
 
 $select_items = array("tmp" => "临时账号", "permanent" => "长期账号", "no" => "不需要Sudo", "yes" => "需要Sudo");
 
+$spt = array();
+
 function accountsRequest(&$oP, $ip_list, $reason)
 {
 	global $rootUrl;
@@ -99,16 +101,21 @@ function createTicket(&$oP)
 		}
 	}
 	
+	global $spt;
 	$iTopAPI = new iTopClient();
 	$ips = implode("','", $ip_arr);
 	$query_server = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE ip.ipaddress IN ('" . $ips . "')";
+	$t1 = microtime(true);
 	$servers = $iTopAPI->coreGet("Server", $query_server, "ip_list,contacts_list,friendlyname");
+	$t2 = microtime(true);
+	$spt['query_server'] = $t2 - $t1;
 
 	// 判断用户提交的ip是否有不在cmdb管理的ip
 	$servers = json_decode($servers, true);
 	$not_exists_ips = $ips;
 	if(array_key_exists("objects", $servers) && $servers['objects'])
 	{
+		$t1 = microtime(true);
 		$iplists = array();
 		foreach($servers['objects'] as $k => $v)
 		{
@@ -127,10 +134,20 @@ function createTicket(&$oP)
 				array_push($failed_ips, $v);
 			}
 		}
-		
+		$t2 = microtime(true);
+		$spt['checkIp'] = $t2 - $t1;
+
 		if(!$failed_ips)
 		{
+			$t1 = microtime(true);
 			$ticket = DoCreateTicket($servers);
+			$t2 = microtime(true);
+			$spt['DoCreateTicket'] = $t2 - $t1;
+
+			// 直接退出，显示耗时分析，使用时取消die函数注释
+			//die(json_encode($spt));
+			// 分析各个过程时间
+
 			$sTicket = json_encode($ticket);
 			header('location:' . $succeedUrl . "?msg=" . $sTicket);
 			//$oP->add_ready_script("alert(\"$sTicket\");");
@@ -148,6 +165,7 @@ function createTicket(&$oP)
 function DoCreateTicket($servers)
 {
 	global $select_items;
+	global $spt;
 	// 按照服务器联系人分组，分别建立工单
 	$group_pre = array();
 	$group = array();
@@ -200,7 +218,11 @@ function DoCreateTicket($servers)
 			$sHost[] = $sV['server'];
 		}
 		sort($aId);
+		$t1 = microtime(true);
 		$cResult = implode("<br>", CreateAccount($aId));	//创建lnkUserToServer
+		$t2 = microtime(true);
+		$spt["CreateAccount-$k: In DoCreateTicket"] = $t2 - $t1;
+
 		$sId = implode(",", $aId);
 		$sHost = implode("<br>", $sHost);
 		
@@ -220,8 +242,10 @@ function DoCreateTicket($servers)
 					  'public_log' => $public_log . "<h2>用户申请的所有服务器：</h2><br>" . implode("<br>", $all_server) . "<br><br><hr>lnkUserToServer Create Status: <br>" . $cResult,
 					  
 		);
-		
+		$t1 = microtime(true);
 		$stat = json_decode($iTopAPI->coreCreate("UserRequest", $data), true);
+		$t2 = microtime(true);
+		$spt["coreCreate-UserRequest-$k: In DoCreateTicket"] = $t2 - $t1;
 		//die(json_encode($stat));
 		$tId = "";
 		if(array_key_exists('objects', $stat))
@@ -242,7 +266,10 @@ function DoCreateTicket($servers)
 			$ret[$tId] = $ret[$tId] . "  " . $msg;
 			return($ret);
 		}
+		$t1 = microtime(true);
 		$stat_lnk = json_decode($iTopAPI->coreUpdate("UserRequest",$tId, $lnk), true);
+		$t2 = microtime(true);
+		$spt["UserRequest-Lnk-$k: In DoCreateTicket"] = $t2 - $t1;
 		
 		if(!array_key_exists("objects", $stat_lnk))
 		{
@@ -260,7 +287,10 @@ function DoCreateTicket($servers)
 		
 		if($agent_id != 0)
 		{
+			$t1 = microtime(true);
 			$oAssign = GetAssignInfo($agents);
+			$t2 = microtime(true);
+			$spt["GetAssignInfo-$k: In DoCreateTicket"] = $t2 - $t1;
 			if($oAssign)
 			{
 				$team_id = $oAssign['team_id'];
@@ -285,10 +315,13 @@ function DoCreateTicket($servers)
 		// 执行指派
 		if($agent_id && $team_id)
 		{
+			$t1 = microtime(true);
 			$asign = json_decode($iTopAPI->coreApply_stimulus('UserRequest', $tId, array(
 						'team_id' => $team_id,
 						'agent_id' => $agent_id
 					),'ev_assign'),true);
+			$t2 = microtime(true);
+			$spt["runAssign-$k: In DoCreateTicket"] = $t2 - $t1;
 			if($asign['code'] == 0)
 			{
 				$isFailed = false;
@@ -502,12 +535,31 @@ try
 	$ServerExpression = "SELECT Server AS s JOIN lnkContactToFunctionalCI AS l ON l.functionalci_id=s.id WHERE l.contact_id=$current_person";
 	$myTicket = "SELECT UserRequest AS t WHERE t.caller_id=$current_person AND status != 'closed' AND title LIKE '服务器登录权限申请-Server%'";
 	
+	$t1 = microtime(true);
 	accountsRequest($oP, $ip_list, $reason);
+	$t2 = microtime(true);
+	$spt['accountsRequest'] = $t2 - $t1;
+
+	$t1 = microtime(true);
 	runOql($myTicket, Dict::Format('UI:ServerAccount:MyTicket'), $oP);
+	$t2 = microtime(true);
+	$spt['runOql-MyTicket'] = $t2 - $t1;
+
+	$t1 = microtime(true);
 	runOql($lnkExpression, Dict::Format('UI:ServerAccount:ServerYouCanLogin'), $oP);
+	$t2 = microtime(true);
+	$spt['runOql-ServerYouCanLogin'] = $t2 - $t1;
+
+	$t1 = microtime(true);
 	runOql($ServerExpression, Dict::Format('UI:ServerAccount:ServerYouManaged'), $oP);
+	$t2 = microtime(true);
+	$spt['runOql-ServerYouManaged'] = $t2 - $t1;
+
+
+	$t1 = microtime(true);
 	createTicket($oP);
-	
+	$t2 = microtime(true);
+	$spt['createTicket'] = $t2 - $t1;
 }
 catch(Exception $e)
 {
