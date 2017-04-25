@@ -22,6 +22,31 @@
  * @annhe.net
  */
 
+/*
+ CreateAccount需要一个个的创建，随着申请ip数量的增加不断增加，最终将达到php最大执行时间，
+ 返回502.应使用action-shell-exec将这些操作放到后台执行。
+ 计划如下:
+ 1. 将工单链接配置项直接放到工单创建里进行
+ 2. 工单描述信息改为json格式，{"reason":"", "sudo":"", "type":"", "user_expiration_day":""}, action-shell-exec脚本根据此信息创建lnkUserToServer
+ 3. 工单指派也用action-shell-exec来执行，放到lnkUserToServer创建之后，由于api无法读取模块配置，考虑在description字段的json串中传递模块配置
+{
+  "accountsRequest": 0.0002591609954834,
+  "runOql-MyTicket": 0.091748952865601,
+  "runOql-ServerYouCanLogin": 0.033130168914795,
+  "runOql-ServerYouManaged": 0.019325971603394,
+  "query_server": 0.85208892822266,
+  "checkIp": 0.00003814697265625,
+  "DoCreateTicketSplit": [
+    {
+      "CreateAccount": 8.1583299636841,
+      "coreCreate-UserRequest": 0.87500500679016,
+      "UserRequest-Lnk": 3.2651250362396,
+      "runAssign": 1.1295990943909
+    }
+  ],
+  "DoCreateTicket": 13.428774118423
+}
+*/
 require_once('../../approot.inc.php');
 require_once(APPROOT.'/application/application.inc.php');
 require_once(APPROOT.'/application/itopwebpage.class.inc.php');
@@ -166,6 +191,7 @@ function DoCreateTicket($servers)
 {
 	global $select_items;
 	global $spt;
+	$spt['DoCreateTicketSplit'] = array();
 	// 按照服务器联系人分组，分别建立工单
 	$group_pre = array();
 	$group = array();
@@ -209,7 +235,8 @@ function DoCreateTicket($servers)
 	
 	$ticket_title = MetaModel::GetModuleSetting('custom-pages', 'ticket_title', '服务器登录权限申请-Server IDs: ');
 	foreach($group as $k => $v)
-	{		
+	{
+		$spt['DoCreateTicketSplit'][$k] = array();		
 		$aId = array();
 		$sHost = array();
 		foreach($v as $sK => $sV)
@@ -218,11 +245,14 @@ function DoCreateTicket($servers)
 			$sHost[] = $sV['server'];
 		}
 		sort($aId);
+		
+		/* 创建lnkUserToServer放到action-shell脚本中后台执行
 		$t1 = microtime(true);
 		$cResult = implode("<br>", CreateAccount($aId));	//创建lnkUserToServer
 		$t2 = microtime(true);
-		$spt["CreateAccount-$k: In DoCreateTicket"] = $t2 - $t1;
-
+		$spt['DoCreateTicketSplit'][$k]["CreateAccount"] = $t2 - $t1;
+		*/
+		
 		$sId = implode(",", $aId);
 		$sHost = implode("<br>", $sHost);
 		
@@ -233,19 +263,37 @@ function DoCreateTicket($servers)
 		}
 		// 设置账号申请工单的service_id，如果未配置，默认为 1
 		$service_id = MetaModel::GetModuleSetting('custom-pages', 'service_id', '1');
+		// 工单链接的服务器
+		$functionalcis_list = array();
+		foreach($aId as $key => $value)
+		{
+			$functionalcis_list[] = array("functionalci_id"=>$value);
+		}
+		
+		// 由于需要action-shell执行创建lnkUserToServer, Assign等后台任务，需要传递一些变量，通过description来传递
+		$description = array("reason" => utils::ReadParam('request_reason', '', false, 'raw_data'), 
+							"type" => utils::ReadParam('select_account_type', 'tmp', false, 'raw_data'),
+							"sudo" => utils::ReadParam('select_sudo_type', 'no', false, 'raw_data'),
+							"expiration_day" => (int)MetaModel::GetModuleSetting('custom-pages', 'user_expiration_day', 3),
+							"ops_team_id" => MetaModel::GetModuleSetting("templates-base", "team_id"),
+							"ops_oncall" => MetaModel::GetModuleSetting("templates-base", "plan"),
+							"admin" => $k
+							);
+		$description = json_encode($description);
+		
 		$data = array('caller_id'=>$oContact->GetKey(),
 					  'origin' => 'portal',
+					  'functionalcis_list' => $functionalcis_list,
 					  'org_id' => $oContact->Get('org_id'),
 					  'service_id' => $service_id,
 					  'title'=>$ticket_title . substr($sId,0,20),
-					  'description' => $_POST['request_reason'] . "<br><hr><br>" . $select_items[$_POST['select_account_type']] . "  " . $select_items[$_POST['select_sudo_type']],
-					  'public_log' => $public_log . "<h2>用户申请的所有服务器：</h2><br>" . implode("<br>", $all_server) . "<br><br><hr>lnkUserToServer Create Status: <br>" . $cResult,
-					  
+					  'description' => $description,
+					  'public_log' => $public_log . "<h2>用户申请的所有服务器：</h2><br>" . implode("<br>", $all_server),
 		);
 		$t1 = microtime(true);
 		$stat = json_decode($iTopAPI->coreCreate("UserRequest", $data), true);
 		$t2 = microtime(true);
-		$spt["coreCreate-UserRequest-$k: In DoCreateTicket"] = $t2 - $t1;
+		$spt['DoCreateTicketSplit'][$k]["coreCreate-UserRequest"] = $t2 - $t1;
 		//die(json_encode($stat));
 		$tId = "";
 		if(array_key_exists('objects', $stat))
@@ -255,21 +303,17 @@ function DoCreateTicket($servers)
 				$tId = $value['key'];
 				$ret[$tId] = "工单ID：" . $tId . " " . $value['message'];
 			}
-			$lnk = array("functionalcis_list" => array());
-			foreach($aId as $key => $value)
-			{
-				$lnk["functionalcis_list"][] = array("functionalci_id"=>$value);
-			}
 		}else
 		{
 			$msg = "工单创建失败，请联系运维处理" . "<p>" . $stat['message'] . "</p>";
 			$ret[$tId] = $ret[$tId] . "  " . $msg;
 			return($ret);
 		}
+		/* 直接在工单创建时添加链接配置项, 下面代码作废
 		$t1 = microtime(true);
 		$stat_lnk = json_decode($iTopAPI->coreUpdate("UserRequest",$tId, $lnk), true);
 		$t2 = microtime(true);
-		$spt["UserRequest-Lnk-$k: In DoCreateTicket"] = $t2 - $t1;
+		$spt['DoCreateTicketSplit'][$k]["UserRequest-Lnk"] = $t2 - $t1;
 		
 		if(!array_key_exists("objects", $stat_lnk))
 		{
@@ -277,9 +321,10 @@ function DoCreateTicket($servers)
 			$iTopAPI->coreUpdate("UserRequest", $tId, array("public_log"=>$msg));
 			$ret[$tId] = $ret[$tId] . "  " . $msg;
 			return($ret);
-		}
+		}*/
 		
 		// 自动指派
+		/* 使用actino-shell在后台执行，以下代码作废
 		$agents = split("_", $k);
 		$agent_id = (int)$agents[0];
 		$isFailed = true;
@@ -290,7 +335,7 @@ function DoCreateTicket($servers)
 			$t1 = microtime(true);
 			$oAssign = GetAssignInfo($agents);
 			$t2 = microtime(true);
-			$spt["GetAssignInfo-$k: In DoCreateTicket"] = $t2 - $t1;
+			$spt['DoCreateTicketSplit'][$k]["GetAssignInfo"] = $t2 - $t1;
 			if($oAssign)
 			{
 				$team_id = $oAssign['team_id'];
@@ -321,7 +366,7 @@ function DoCreateTicket($servers)
 						'agent_id' => $agent_id
 					),'ev_assign'),true);
 			$t2 = microtime(true);
-			$spt["runAssign-$k: In DoCreateTicket"] = $t2 - $t1;
+			$spt['DoCreateTicketSplit'][$k]["runAssign"] = $t2 - $t1;
 			if($asign['code'] == 0)
 			{
 				$isFailed = false;
@@ -337,6 +382,7 @@ function DoCreateTicket($servers)
 			$data = array("public_log"=>"Auto Assign Failed: $msg");
 			$iTopAPI->coreUpdate("UserRequest", $tId, $data);	
 		}
+		*/
 	}
 	return($ret);
 }
