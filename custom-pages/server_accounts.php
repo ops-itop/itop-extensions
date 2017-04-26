@@ -279,7 +279,7 @@ function DoCreateTicket($servers)
 							"ops_oncall" => MetaModel::GetModuleSetting("templates-base", "plan"),
 							"admin" => $k
 							);
-		$description = json_encode($description);
+		$description = json_encode($description, JSON_UNESCAPED_UNICODE); // 中文不转义，否则reason会被转码
 		
 		$data = array('caller_id'=>$oContact->GetKey(),
 					  'origin' => 'portal',
