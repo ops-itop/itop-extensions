@@ -210,3 +210,6 @@ echo "$ds  $THIS_NAME - $THIS_HOSTNAME" >> demo.log
 对插件做了修改，支持自定义变量，例如定义 `SCRIPT_NAME=demo.php`，然后在shell脚本中调用 `./$SCRIPT_NAME &>/dev/null &`，这样做可以避免为每一个异步php脚本重复写shell包裹脚本.
 
 注意，变量定义时不要带引号，插件会自动加上引号。
+
+## trigger-on-delete
+触发器(对象删除时)
