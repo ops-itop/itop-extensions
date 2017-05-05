@@ -491,7 +491,6 @@
 				</method>
 
 			</methods>
-
 			<relations>
 				<relation id="impacts">
 					<neighbours>
@@ -638,6 +637,9 @@
 						<item id="status" _delta="define">
 							<rank>20</rank>
 						</item>
+						<item id="contacts" _delta="define">
+							<rank>21</rank>
+						</item>						
 						<item id="businessprocess_id" _delta="define">
 							<rank>16</rank>
 						</item>
@@ -664,8 +666,10 @@
 						<item id="businessprocess_id" _delta="define">
 							<rank>6</rank>
 						</item>
+						<item id="contacts" _delta="define">
+							<rank>21</rank>
+						</item>						
 					</items>
-
 				</list>
 			</presentation>
 			<relations>
@@ -1062,7 +1066,6 @@
 						<item id="name">
 							<rank>1</rank>
 						</item>
-
 						<item id="hostname">
 							<rank>20</rank>
 						</item>
@@ -1100,6 +1103,9 @@
 						<item id="use_pam">
 							<rank>130</rank>
 						</item>
+						<item id="contacts" _delta="define">
+							<rank>150</rank>
+						</item>						
 					</items>
 				</search>
 				<list _delta="redefine">
@@ -1110,23 +1116,26 @@
 						<item id="all_ip">
 							<rank>25</rank>
 						</item>
-
 						<item id="cpu">
 							<rank>3</rank>
 						</item>
 						<item id="ram">
 							<rank>5</rank>
 						</item>
-
 						<item id="status">
 							<rank>21</rank>
 						</item>
-
 						<item id="rack_id">
 							<rank>40</rank>
 						</item>
 						<item id="model_id">
 							<rank>60</rank>
+						</item>
+						<item id="contacts" _delta="define">
+							<rank>65</rank>
+						</item>
+						<item id="use_pam" _delta="define">
+							<rank>66</rank>
 						</item>
 						<item id="org_id">
 							<rank>70</rank>
@@ -1617,6 +1626,9 @@
 						<item id="record_id" _delta="define">
 							<rank>16</rank>
 						</item>
+						<item id="contacts" _delta="define">
+							<rank>17</rank>
+						</item>						
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
@@ -1641,7 +1653,7 @@
 						</item>
 						<item id="record_id" _delta="define">
 							<rank>16</rank>
-						</item>						
+						</item>	
 						<item id="contacts">
 							<rank>19</rank>
 						</item>
@@ -1793,6 +1805,9 @@
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
+						<item id="contacts" _delta="define">
+							<rank>19</rank>
+						</item>						
 						<item id="status">
 							<rank>30</rank>
 						</item>
@@ -1818,6 +1833,9 @@
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
+						<item id="contacts" _delta="define">
+							<rank>19</rank>
+						</item>						
 						<item id="status">
 							<rank>30</rank>
 						</item>
@@ -2076,7 +2094,9 @@
 						<item id="info">
 							<rank>18</rank>
 						</item>
-
+						<item id="contacts" _delta="define">
+							<rank>19</rank>
+						</item>
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
@@ -2099,7 +2119,6 @@
 						<item id="location">
 							<rank>11</rank>
 						</item>
-
 						<item id="status">
 							<rank>15</rank>
 						</item>
@@ -2220,7 +2239,9 @@
 						<item id="info">
 							<rank>18</rank>
 						</item>
-
+						<item id="contacts" _delta="define">
+							<rank>19</rank>
+						</item>
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
@@ -2349,7 +2370,9 @@
 						<item id="info">
 							<rank>18</rank>
 						</item>
-
+						<item id="contacts" _delta="define">
+							<rank>19</rank>
+						</item>
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
@@ -2372,7 +2395,6 @@
 						<item id="location">
 							<rank>11</rank>
 						</item>
-
 						<item id="status">
 							<rank>15</rank>
 						</item>
@@ -2473,7 +2495,9 @@
 						<item id="info">
 							<rank>18</rank>
 						</item>
-
+						<item id="contacts" _delta="define">
+							<rank>19</rank>
+						</item>
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
@@ -2678,7 +2702,9 @@
 						<item id="info">
 							<rank>18</rank>
 						</item>
-
+						<item id="contacts" _delta="define">
+							<rank>19</rank>
+						</item>
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
@@ -2943,7 +2969,9 @@
 						<item id="info">
 							<rank>18</rank>
 						</item>
-
+						<item id="contacts" _delta="define">
+							<rank>19</rank>
+						</item>
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
@@ -3189,7 +3217,9 @@
 						<item id="info">
 							<rank>18</rank>
 						</item>
-
+						<item id="contacts" _delta="define">
+							<rank>19</rank>
+						</item>
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
@@ -3311,7 +3341,9 @@
 						<item id="info">
 							<rank>18</rank>
 						</item>
-
+						<item id="contacts" _delta="define">
+							<rank>19</rank>
+						</item>
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
@@ -3654,6 +3686,9 @@
 						<item id="status">
 							<rank>15</rank>
 						</item>
+						<item id="contacts" _delta="define">
+							<rank>19</rank>
+						</item>						
 						<item id="org_id">
 							<rank>20</rank>
 						</item>
@@ -3682,6 +3717,9 @@
 						<item id="status">
 							<rank>15</rank>
 						</item>
+						<item id="contacts" _delta="define">
+							<rank>19</rank>
+						</item>						
 						<item id="org_id">
 							<rank>20</rank>
 						</item>

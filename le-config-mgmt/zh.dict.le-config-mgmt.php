@@ -404,4 +404,5 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 // FunctionalCI
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:FunctionalCI/Attribute:ci_id' => 'ID',
+	'Class:FunctionalCI/Attribute:contacts' => '联系人',
 ));
