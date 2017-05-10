@@ -1,10 +1,5 @@
 <?php
-/**
- * Localized data
- *
- * @copyright   Copyright (C) 2013 XXXXX
- * @license     http://opensource.org/licenses/AGPL-3.0
- */
+// Copyright (C) 2010-2016 Combodo SARL
 
 Dict::Add('FR FR', 'French', 'Français', array(
 	'Class:ServiceSubcategory/Attribute:requesttemplates_list' => 'Modèles de requête',
@@ -26,11 +21,13 @@ Dict::Add('FR FR', 'French', 'Français', array(
 	'Class:RequestTemplate/Attribute:servicesubcategory_id+' => '',
 	'Class:RequestTemplate/Attribute:servicesubcategory_name' => 'Nom sous catégorie de service',
 	'Class:RequestTemplate/Attribute:servicesubcategory_name+' => '',
+	'Class:UserRequest/Attribute:service_details' => 'Détails sur le service',
+	'Class:UserRequest/Attribute:service_details+' => 'Informations additionnelles dépendantes du service choisi',
+	'Class:Incident/Attribute:service_details' => 'Détails sur le service',
+	'Class:Incident/Attribute:service_details+' => 'Informations additionnelles dépendantes du service choisi',
 ));
 
 Dict::Add('FR FR', 'French', 'Français', array(
 	'Menu:RequestTemplate' => 'Modèles de requête',
 	'Menu:RequestTemplate+' => 'Tous les modèles de requête',
 ));
-
-?>

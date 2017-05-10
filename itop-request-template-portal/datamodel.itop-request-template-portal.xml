@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.3">
+    <classes>
+        <class id="UserRequest" _delta="if_exists">
+            <lifecycle>
+                <!-- If the modern portal is NOT installed, leave the custom fields RO: same behavior between the console and the legacy portal -->
+                <!-- If the modern portal gets installed, the module itop-request-template-portal enables the field in RW mode -->
+                <states>
+                    <state id="new">
+                        <flags>
+                            <attribute id="service_details">
+                                <read_only _delta="delete"/>
+                            </attribute>
+                        </flags>
+                    </state>
+                    <state id="closed">
+                        <flags>
+                            <!-- service_id/servicesubcategory_id become read-only when the ticket is closed, implement the same behavior for service_details -->
+                            <attribute id="service_details" _delta="define">
+                                <read_only/>
+                            </attribute>
+                        </flags>
+                    </state>
+                </states>
+            </lifecycle>
+        </class>
+        <class id="Incident" _delta="if_exists">
+            <lifecycle>
+                <!-- If the modern portal is NOT installed, leave the custom fields RO: same behavior between the console and the legacy portal -->
+                <!-- If the modern portal gets installed, the module itop-request-template-portal enables the field in RW mode -->
+                <states>
+                    <state id="new">
+                        <flags>
+                            <attribute id="service_details">
+                                <read_only _delta="delete"/>
+                            </attribute>
+                        </flags>
+                    </state>
+                    <state id="closed">
+                        <flags>
+                            <!-- service_id/servicesubcategory_id become read-only when the ticket is closed, implement the same behavior for service_details -->
+                            <attribute id="service_details" _delta="define">
+                                <read_only/>
+                            </attribute>
+                        </flags>
+                    </state>
+                </states>
+            </lifecycle>
+        </class>
+    </classes>
+	<module_designs>
+		<module_design id="itop-portal">
+			<forms>
+				<form id="ticket-create">
+					<twig>
+						<div id="service_details_placeholder" _delta="redefine">
+							<div class="form_field" data-field-id="service_details">
+							</div>
+						</div>
+					</twig>
+				</form>
+			</forms>
+		</module_design>
+	</module_designs>
+</itop_design>

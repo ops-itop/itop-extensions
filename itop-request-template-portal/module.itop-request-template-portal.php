@@ -5,28 +5,27 @@
 
 SetupWebPage::AddModule(
 	__FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-	'itop-request-template/2.0.0',
+	'itop-request-template-portal/1.0.0',
 	array(
 		// Identification
 		//
-		'label' => 'Request Templates',
+		'label' => 'Bridge - Request Templates + Modern Portal',
 		'category' => 'business',
 
 		// Setup
 		//
 		'dependencies' => array(
-			'itop-service-mgmt/2.0.0||itop-service-mgmt-provider/2.0.0',	
-			'itop-request-mgmt/1.0.0||itop-request-mgmt-itil/1.0.0||itop-incident-mgmt-itil/1.0.0',
-			'itop-profiles-itil/1.0.0',
+			'itop-portal/1.0.0',
+			'itop-request-template/2.0.0',
 		),
 		'mandatory' => false,
-		'visible' => true,
+		'visible' => false, // To prevent auto-install but shall not be listed in the install wizard
+		'auto_select' => 'SetupInfo::ModuleIsSelected("itop-portal") && SetupInfo::ModuleIsSelected("itop-request-template")',
 
 		// Components
 		//
 		'datamodel' => array(
-			'model.itop-request-template.php',
-			'main.itop-request-template.php',
+			//'model.itop-request-template-portal.php'
 		),
 		'webservice' => array(
 			
