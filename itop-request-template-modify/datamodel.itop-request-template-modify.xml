@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.3">
+  <constants>
+  </constants>
+  <classes>
+	<class id="RequestTemplate">
+		<fields>
+			<field id="relatedclass" xsi:type="AttributeCustomFields" _delta="define">
+				<handler_class>ListFunctionalCIHandler</handler_class>
+			</field>
+		</fields>
+		<presentation>
+			<details>
+				<items>
+					<item id="relatedclass" _delta="define">
+						<rank>30</rank>
+					</item>
+				</items>
+			</details>
+			<list>
+				<items>
+					<item id="relatedclass" _delta="define">
+						<rank>30</rank>
+					</item>
+				</items>
+			</list>
+		</presentation>
+	</class>
+  </classes>
+  <menus>
+  </menus>
+  <user_rights>
+    <groups>
+    </groups>
+    <profiles>
+    </profiles>
+  </user_rights>
+</itop_design>
