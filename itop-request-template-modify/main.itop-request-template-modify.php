@@ -21,48 +21,6 @@
  * Add OnCheckToWrite on name or friendlyname.
  */
 
-class ListFunctionalCIHandler extends CustomFieldsHandler
-{
-	public function GetForTemplate($aValues, $sVerb, $bLocalize = true)
-	{}
-	public function GetAsHTML($aValues, $bLocalize = true)
-	{}
-	public function GetAsXML($aValues, $bLocalize = true)
-	{}
-	public function GetAsCSV($aValues, $sSeparator = ',', $sTextQualifier = '"', $bLocalize = true)
-	{}
-	public function ReadValues(DBObject $oHostObject)
-	{}
-	public function WriteValues(DBObject $oHostObject, $aValues)
-	{}
-	public function DeleteValues(DBObject $oHostObject)
-	{}
-	public function CompareValues($aValuesA, $aValuesB)
-	{}
-	public function GetValueFingerprint()
-	{}
-	public function BuildForm(DBObject $oHostObject, $sFormId)
-	{
-		$aSubClasses = MetaModel::EnumChildClasses('FunctionalCI', ENUM_CHILD_CLASSES_EXCLUDETOP);
-		$aPossibleClasses = array();
-		foreach($aSubClasses as $sCandidateClass)
-		{
-			if (!MetaModel::IsAbstract($sCandidateClass))
-			{
-				array_push($aPossibleClasses, $sCandidateClass);
-			}
-		}
-		//$sPossibleClasses = implode(",",$aPossibleClasses);
-		
-		$iFunctionalCI = isset($this->aValues['functionalci_id']) ? $this->aValues['functionalci_id'] : 0;
-		$this->oForm = new \Combodo\iTop\Form\Form($sFormId);
-		$oField = new Combodo\iTop\Form\Field\SelectField('functionalci_id');
-		$oField->SetChoices($aPossibleClasses);
-		$oField->SetCurrentValue("iFunctionalCI");
-		$this->oForm->AddField($oField);
-	}
-}
-
 class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 {
 	public function OnCheckToWrite($oObject)

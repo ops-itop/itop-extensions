@@ -5,8 +5,10 @@
   <classes>
 	<class id="RequestTemplate">
 		<fields>
-			<field id="relatedclass" xsi:type="AttributeCustomFields" _delta="define">
-				<handler_class>ListFunctionalCIHandler</handler_class>
+			<field id="relatedclass" xsi:type="AttributeClassCustom" _delta="define">
+				<sql>relatedclass</sql>
+				<default_value>bizmodel</default_value>
+				<is_null_allowed>false</is_null_allowed>
 			</field>
 		</fields>
 		<presentation>

@@ -1,0 +1,4 @@
+# 自定义Attribute
+
+## AttributeClassCustom
+ 由于setup/compiler.class.inc.php中写死了编译的Attribute类型，AttributeClass不能正确编译,这里自定义一个AttributeClassCustom，将default_value作为class_category，可以走编译的默认行为
