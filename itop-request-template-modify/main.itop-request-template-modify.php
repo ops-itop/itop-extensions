@@ -35,7 +35,17 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 		
 		$template = MetaModel::GetObject("RequestTemplate", $template_id);
 		$errmsg = array();
-		$check = $this->CheckUniqFields($template, $user_data);
+		
+		if($template->Get('type') == "new")
+		{
+			$check = $this->CheckUniqFields($template, $user_data);
+		}elseif($template->Get('type') == "change")
+		{
+			$check = $this->CheckOwner($template, $user_data);
+		}else
+		{
+			return($errmsg);
+		}
 		if($check['check_errno'] != 0)
 		{
 			$errmsg[] = $check['msg'];
@@ -54,8 +64,8 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 		$classname = $template->Get('relatedclass');
 		
 		$ret = array("check_errno"=>0, "msg"=>"");
-		//服务器申请不做校验
-		if($classname == "Server")
+		//服务器申请不做校验 只有新增类的工单校验唯一性
+		if($classname == "Server" || $template->Get('type')!="new")
 		{
 			return($ret);
 		}
@@ -91,6 +101,56 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 		if ($oSet->Count() > 0)
 		{   
 			$ret = array("check_errno"=>100, "msg"=>"$classname: $friendlyname " . Dict::S("UI:CheckUniqFields:Failed"));
+		}
+		return($ret);
+	}
+
+	/**
+	 * 变更工单CI归属验证
+	 */
+	public function CheckOwner($template, $value)
+	{
+		$classname = $template->Get('relatedclass');
+		$ret = array("check_errno" => 0, "msg" => "");
+		// 只有变更工单验证归属
+		if($template->Get('type')!= "change")
+		{
+			return($ret);
+		}
+		$iTopAPI = new iTopClient();
+		$query = $value['name'];   // $value值是key(id)，不是name
+		$name = MetaModel::GetObject($classname, $query)->Get('friendlyname');
+		$default_depth = array("Domain" => "2", "ApplicationSolution" => "1", "Server" => "3", "PhysicalIP" => "4");
+		$depth = MetaModel::GetModuleSetting('itop-request-template-modify', 'depth', $default_depth);
+		if(!isset($depth[$classname]))
+		{
+			$depth[$classname] = "2";
+		}
+		$optional = array(
+			'output_fields' => array("Person" => "friendlyname,email,phone"),
+			'depth' => $depth[$classname],
+		);
+		$data = $iTopAPI->extRelated($classname, $query, "impacts", $optional);
+		$data = json_decode($data, true);
+		if($data['code'] != 0)
+		{
+			$ret = array("check_errno"=>100, "msg"=>Dict::S("UI:CheckOwner:APIError") . ": " . $data['message']);
+			return($ret);
+		}
+		$persons = $data['objects'];
+		if($persons == null)
+		{
+			$persons = array();
+		}
+		$p_id = array();
+		foreach($persons as $person)
+		{
+			array_push($p_id, $person['key']);
+		}
+		$myContactId = UserRights::GetContactId();
+		if(!in_array($myContactId, $p_id))
+		{
+			$ret = array("check_errno"=>100, "msg"=>"$classname: $name " . Dict::S("UI:CheckOwner:Failed"));
 		}
 		return($ret);
 	}	
