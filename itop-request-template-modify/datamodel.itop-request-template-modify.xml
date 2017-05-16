@@ -5,10 +5,24 @@
   <classes>
 	<class id="RequestTemplate">
 		<fields>
+			<!--模板关联的类，关联的类将在新建或者更新对象时使用-->
 			<field id="relatedclass" xsi:type="AttributeClassCustom" _delta="define">
 				<sql>relatedclass</sql>
 				<default_value>bizmodel</default_value>
 				<is_null_allowed>false</is_null_allowed>
+			</field>
+			
+			<!--模板涉及操作的类型（新增或者变更）-->
+			<field id="type" xsi:type="AttributeEnum" _delta="define">
+				<sql>type</sql>
+				<values>
+					<value id="new">new</value>
+					<value id="change">change</value>
+					<value id="incident">incident</value>
+				</values>
+				<default_value></default_value>
+				<is_null_allowed>false</is_null_allowed>
+				<display_style>list</display_style>
 			</field>
 		</fields>
 		<presentation>
@@ -17,6 +31,9 @@
 					<item id="relatedclass" _delta="define">
 						<rank>30</rank>
 					</item>
+					<item id="type" _delta="define">
+						<rank>31</rank>
+					</item>					
 				</items>
 			</details>
 			<list>
@@ -24,6 +41,9 @@
 					<item id="relatedclass" _delta="define">
 						<rank>30</rank>
 					</item>
+					<item id="type" _delta="define">
+						<rank>31</rank>
+					</item>					
 				</items>
 			</list>
 		</presentation>
