@@ -92,6 +92,15 @@
 					</form>
 				</brick>
 			</bricks>
+			<classes>
+				<class id="Location" _delta="redefine">
+					<scopes>
+						<scope id="all">
+							<oql_view><![CDATA[SELECT Location]]></oql_view>
+						</scope>
+					</scopes>
+				</class>				
+			</classes>
 		</module_design>
 	</module_designs>
 </itop_design>

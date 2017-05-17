@@ -25,6 +25,11 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 {
 	public function OnCheckToWrite($oObject)
 	{
+		// 只有新建工单才检查，否则其他人无法编辑公共日志
+		if(!$oObject->IsNew())
+		{
+			return(parent::OnCheckToWrite($oObject));
+		}
 		if(!array_key_exists("service_details", MetaModel::ListAttributeDefs(get_class($oObject))))
 		{
 			return(parent::OnCheckToWrite($oObject));
@@ -33,6 +38,11 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 		$template_id = $service_details['template_id'];
 		$user_data = $service_details['user_data'];
 		
+		// 没有模板的服务不检查
+		if(!$template_id)
+		{
+			return(parent::OnCheckToWrite($oObject));
+		}
 		$template = MetaModel::GetObject("RequestTemplate", $template_id);
 		$errmsg = array();
 		
