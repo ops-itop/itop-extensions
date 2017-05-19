@@ -17,6 +17,7 @@ SetupWebPage::AddModule(
 		'dependencies' => array(
 			'itop-request-template/2.0.0',
 			'attribute-custom/1.0.0',
+			'itop-tickets/2.2.0',
 			'api-client/1.0.0'
 		),
 		'mandatory' => false,

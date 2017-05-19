@@ -57,4 +57,82 @@
     <profiles>
     </profiles>
   </user_rights>
+	<module_designs>
+	  <module_design id="itop-portal" xsi:type="portal">
+		<forms>
+			<form id="ticket-create">
+				<twig _delta="redefine">
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form_field" data-field-id="service_id" data-field-flags="mandatory">
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form_field" data-field-id="servicesubcategory_id" data-field-flags="mandatory">
+							</div>
+						</div>
+					</div>
+					<!--
+						request-template的read-only字段支持JavaScript，需要时可以添加一个read-only字段.
+						服务器类工单同时支持列表勾选和直接输入IP，在request template的readonly字段提供2个按钮，响应用户点击，
+						设置列表和文本框的可见性, 例如：
+						<div class="btn-group"><button class="btn btn-primary form_btn_transition" type="button" name="le_server_list" onclick="displayList()"><span class="glyphicon glyphicon-list"></span>  &nbsp;&nbsp;从列表勾选机器</button><button class="btn btn-info form_btn_transition" type="button" name="le_server_textarea" onclick="displayTextarea()"><span class="glyphicon glyphicon-text-height"></span>  &nbsp;&nbsp;直接输入IP地址</button></div>
+					-->					
+					<script type="text/javascript">
+						// 初始状态都隐藏
+						$().ready(function(){
+							$("div[data-field-id=request_template_ip_textarea]").attr("style", "display:none");
+						});
+						
+						$("div[data-field-id=request_template_ip_textarea]").hide();
+						function displayList()
+						{
+							$("#le_server_accounts_request").attr("style", "display:block");
+							$("div[data-field-id=request_template_ip_textarea]").attr("style", "display:none");
+						}
+						function displayTextarea()
+						{
+							$("#le_server_accounts_request").attr("style", "display:none");
+							$("div[data-field-id=request_template_ip_textarea]").attr("style", "display:block");							
+						}
+					</script>
+					
+					<div id="service_details_placeholder">
+					</div>
+					<div id="le_server_accounts_request" style="display:none">
+						<div class="form_field" data-field-id="functionalcis_list">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form_field" data-field-id="impact">
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form_field" data-field-id="urgency">
+							</div>
+						</div>
+					</div>
+					<div>
+						<div class="form_field" data-field-id="title">
+						</div>
+						<div class="form_field" data-field-id="description">
+						</div>
+						<div class="form_field" data-field-id="contacts_list">
+						</div>
+					</div>
+				</twig>
+			</form>
+		</forms>
+		<classes>
+			<class id="FunctionalCI" _delta="define">
+			  <scopes>
+				<scope id="all">
+				  <oql_view><![CDATA[SELECT FunctionalCI WHERE finalclass="Server"]]></oql_view>
+				</scope>
+			  </scopes>
+			</class>
+		</classes>
+	  </module_design>
+	</module_designs>	  
 </itop_design>
