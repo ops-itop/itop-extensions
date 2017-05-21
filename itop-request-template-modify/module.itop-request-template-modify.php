@@ -10,13 +10,14 @@ SetupWebPage::AddModule(
 		// Identification
 		//
 		'label' => 'Modify of Request Templates',
-		'category' => 'business',
+		'category' => 'portal',
 
 		// Setup
 		//
 		'dependencies' => array(
 			'itop-request-template/2.0.0',
 			'attribute-custom/1.0.0',
+			'itop-portal-base/1.0.0',
 			'itop-tickets/2.2.0',
 			'api-client/1.0.0'
 		),
