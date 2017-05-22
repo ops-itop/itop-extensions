@@ -48,6 +48,262 @@
 			</list>
 		</presentation>
 	</class>
+		<class id="lnkServerToTicket" _delta="define">
+			<parent>cmdbAbstractObject</parent>
+			<properties>
+				<is_link>1</is_link>
+				<category>bizmodel</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>lnkservertoticket</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field/>
+				<naming>
+					<attributes>
+						<attribute id="ticket_id"/>
+						<attribute id="server_id"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon/>
+				<reconciliation>
+					<attributes>
+						<attribute id="ticket_id"/>
+						<attribute id="server_id"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="ticket_id" xsi:type="AttributeExternalKey">
+					<sql>ticket_id</sql>
+					<target_class>Ticket</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="ticket_ref" xsi:type="AttributeExternalField">
+					<extkey_attcode>ticket_id</extkey_attcode>
+					<target_attcode>ref</target_attcode>
+				</field>
+				<field id="ticket_title" xsi:type="AttributeExternalField">
+					<extkey_attcode>ticket_id</extkey_attcode>
+					<target_attcode>title</target_attcode>
+				</field>
+				<field id="server_id" xsi:type="AttributeExternalKey">
+					<sql>server_id</sql>
+					<target_class>Server</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="server_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="server_hostname" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>hostname</target_attcode>
+				</field>
+				<field id="server_org" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>org_id</target_attcode>
+				</field>
+				<field id="server_contacts" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>contacts</target_attcode>
+				</field>
+				<field id="server_location" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>rack_id</target_attcode>
+				</field>
+				<field id="server_status" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>status</target_attcode>
+				</field>
+				<field id="server_model" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>model_id</target_attcode>
+				</field>
+				<field id="server_cpu" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>cpu</target_attcode>
+				</field>
+				<field id="server_ram" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>ram</target_attcode>
+				</field>
+				<field id="server_ip" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>all_ip</target_attcode>
+				</field>
+				<field id="server_pam" xsi:type="AttributeExternalField">
+					<extkey_attcode>server_id</extkey_attcode>
+					<target_attcode>use_pam</target_attcode>
+				</field>
+			</fields>
+			<methods/>
+			<presentation>
+				<details>
+					<items>
+						<item id="ticket_id">
+							<rank>10</rank>
+						</item>
+						<item id="server_id">
+							<rank>20</rank>
+						</item>
+						<item id="server_name">
+							<rank>30</rank>
+						</item>
+						<item id="server_hostname">
+							<rank>35</rank>
+						</item>
+						<item id="server_location">
+							<rank>40</rank>
+						</item>
+						<item id="server_model">
+							<rank>45</rank>
+						</item>
+						<item id="server_contacts">
+							<rank>50</rank>
+						</item>
+						<item id="server_ip">
+							<rank>55</rank>
+						</item>
+						<item id="server_cpu">
+							<rank>60</rank>
+						</item>
+						<item id="server_ram">
+							<rank>65</rank>
+						</item>
+						<item id="server_pam">
+							<rank>70</rank>
+						</item>
+						<item id="server_org">
+							<rank>80</rank>
+						</item>
+						<item id="server_status">
+							<rank>90</rank>
+						</item>						
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="ticket_id">
+							<rank>10</rank>
+						</item>
+						<item id="server_id">
+							<rank>20</rank>
+						</item>
+						<item id="server_name">
+							<rank>30</rank>
+						</item>
+						<item id="server_hostname">
+							<rank>35</rank>
+						</item>
+						<item id="server_location">
+							<rank>40</rank>
+						</item>
+						<item id="server_model">
+							<rank>45</rank>
+						</item>
+						<item id="server_contacts">
+							<rank>50</rank>
+						</item>
+						<item id="server_ip">
+							<rank>55</rank>
+						</item>
+						<item id="server_cpu">
+							<rank>60</rank>
+						</item>
+						<item id="server_ram">
+							<rank>65</rank>
+						</item>
+						<item id="server_pam">
+							<rank>70</rank>
+						</item>
+						<item id="server_org">
+							<rank>80</rank>
+						</item>
+						<item id="server_status">
+							<rank>90</rank>
+						</item>	
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="ticket_id">
+							<rank>10</rank>
+						</item>
+						<item id="server_id">
+							<rank>20</rank>
+						</item>
+						<item id="server_name">
+							<rank>30</rank>
+						</item>
+						<item id="server_hostname">
+							<rank>35</rank>
+						</item>
+						<item id="server_location">
+							<rank>40</rank>
+						</item>
+						<item id="server_model">
+							<rank>45</rank>
+						</item>
+						<item id="server_contacts">
+							<rank>50</rank>
+						</item>
+						<item id="server_ip">
+							<rank>55</rank>
+						</item>
+						<item id="server_cpu">
+							<rank>60</rank>
+						</item>
+						<item id="server_ram">
+							<rank>65</rank>
+						</item>
+						<item id="server_pam">
+							<rank>70</rank>
+						</item>
+						<item id="server_org">
+							<rank>80</rank>
+						</item>
+						<item id="server_status">
+							<rank>90</rank>
+						</item>	
+					</items>
+				</list>
+			</presentation>
+		</class>
+		<class id="Ticket">
+			<fields>
+				<field id="server_list" xsi:type="AttributeLinkedSetIndirect" _delta="define">
+					<linked_class>lnkServerToTicket</linked_class>
+					<ext_key_to_me>ticket_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>server_id</ext_key_to_remote>
+					<duplicates/>					
+				</field>
+			</fields>
+			<presentation>
+				<details>
+					<items>
+						<item id="server_list" _delta="define">
+							<rank>145</rank>
+						</item>
+					</items>
+				</details>
+			</presentation>
+		</class>
+		<class id="UserRequest">
+			<presentation>
+				<details>
+					<items>
+						<item id="server_list" _delta="define">
+							<rank>145</rank>
+						</item>
+					</items>
+				</details>
+			</presentation>			
+		</class>
   </classes>
   <menus>
   </menus>
@@ -89,7 +345,7 @@
 					<div id="service_details_placeholder">
 					</div>
 					<div id="le_server_accounts_request" style="display:none">
-						<div class="form_field" data-field-id="functionalcis_list">
+						<div class="form_field" data-field-id="server_list">
 						</div>
 					</div>
 					<div class="row">
@@ -120,6 +376,16 @@
 				  <oql_view><![CDATA[SELECT FunctionalCI WHERE finalclass="Server"]]></oql_view>
 				</scope>
 			  </scopes>
+			</class>
+			<class id="Organization">
+				<scopes>
+					<scope id="admin" _delta="define">
+						<oql_view><![CDATA[SELECT Organization]]></oql_view>
+						<allowed_profiles>
+							<allowed_profile id="Administrator"/>
+						</allowed_profiles>
+					</scope>
+				</scopes>
 			</class>
 		</classes>
 	  </module_design>
