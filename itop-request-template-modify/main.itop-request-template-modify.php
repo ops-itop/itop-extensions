@@ -43,26 +43,115 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 		{
 			return(parent::OnCheckToWrite($oObject));
 		}
+		
 		$template = MetaModel::GetObject("RequestTemplate", $template_id);
 		$errmsg = array();
-		
+		$check = array();
+		if(array_key_exists("request_template_ip_textarea", $user_data))
+		{
+			// 约定涉及IP的工单模板中IP列表code为 request_template_ip_textarea, 当存在此code时，检查IP是否在CMDB中管理
+			$check[] = $this->CheckIP($oObject, $user_data["request_template_ip_textarea"]);
+		}	
 		if($template->Get('type') == "new")
 		{
-			$check = $this->CheckUniqFields($template, $user_data);
+			$check[] = $this->CheckUniqFields($template, $user_data);
 		}elseif($template->Get('type') == "change")
 		{
-			$check = $this->CheckOwner($template, $user_data);
+			$check[] = $this->CheckOwner($template, $user_data);
 		}else
 		{
 			return($errmsg);
 		}
-		if($check['check_errno'] != 0)
+		foreach($check as $k => $v)
 		{
-			$errmsg[] = $check['msg'];
+			if($v['check_errno'] != 0)
+			{
+				$errmsg[] = $v['msg'];
+			}
 		}
 		return($errmsg);
 	}
 	
+	/**
+	 * IP存在性验证, 并添加至server_list(action中统一从server_list取服务器)
+	 * 另外，为了使用影响分析，还应将server_list复制一份到functionalcis_list
+	 * @param $ips 用户提交的IP
+	 * @return array("check_errno"=>(0|100), "msg"=>errmsg)
+	 */
+	public function CheckIP($oObject, $ips)
+	{
+		$ips = preg_replace('/\s+|,/', '\n', $ips);
+		$ips = explode("\\n", $ips);
+		$ip_arr = array();
+		foreach($ips as $k => $v)
+		{
+			$ip = trim($v);
+			if($ip)
+			{
+				$ip_arr[] = $ip;
+			}
+		}
+		$ret = array("check_errno"=>0, "msg"=>"");
+		
+		$iTopAPI = new iTopClient();
+		$ips = implode("','", $ip_arr);
+		$query_server = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE ip.ipaddress IN ('" . $ips . "')";
+		$servers = $iTopAPI->coreGet("Server", $query_server, "ip_list,contacts_list,friendlyname");
+		
+		$servers = json_decode($servers, true);
+		$not_exists_ips = $ips;
+
+		$server_list = $oObject->Get('server_list');
+		$oSet = array();
+			
+		if(array_key_exists("objects", $servers) && $servers['objects'])
+		{
+			$iplists = array();
+			foreach($servers['objects'] as $k => $v)
+			{
+				$lnk = MetaModel::NewObject('lnkServerToTicket');
+				$lnk->Set("server_id", $v['key']);
+				$lnk->Set("ticket_id", $oObject->GetKey());
+				$oSet[] = $lnk;
+				foreach($v['fields']['ip_list'] as $key => $value)
+				{
+					array_push($iplists, $value['ipaddress']);
+				}
+			}
+			$server_list->AddObjectArray($oSet);
+			$oObject->Set("server_list", $server_list);
+
+			$oSetFunc = array();
+			foreach($server_list->ToArrayOfValues() as $k => $v)
+			{
+				$lnk = MetaModel::NewObject('lnkFunctionalCIToTicket');
+				$lnk->Set("functionalci_id", $v['lnkServerToTicket.server_id']);
+				$lnk->Set("ticket_id", $oObject->GetKey());
+				$oSetFunc[] = $lnk;
+			}
+			$functionalcis_list = $oObject->Get("functionalcis_list");
+			$functionalcis_list->AddObjectArray($oSetFunc);
+			$oObject->Set("functionalcis_list", $functionalcis_list);
+
+			$failed_ips = array();
+			
+			foreach($ip_arr as $k => $v)
+			{
+				if(!in_array($v, $iplists))
+				{
+					array_push($failed_ips, $v);
+				}
+			}
+			if($failed_ips)
+			{
+				$not_exists_ips = implode(",", $failed_ips);
+				$ret = array("check_errno"=>100, "msg"=>Dict::Format("UI:CheckIP:Failed", $not_exists_ips));
+			}
+		}
+		
+		return($ret);
+	}
+	 
 	/**
 	 * CI唯一性验证
 	 * @param $template The template this UserRequest linked
