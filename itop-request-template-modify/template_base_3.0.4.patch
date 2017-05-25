@@ -1,0 +1,11 @@
+--- ./../templates-base/model.templates-base.php	2017-05-17 14:03:21.858531525 +0800
++++ /tmp/model.templates-base.php	2017-05-25 16:04:03.782700724 +0800
+@@ -45,7 +45,7 @@
+ 
+ 		MetaModel::Init_AddAttribute(new AttributeString("name", array("allowed_values"=>null, "sql"=>"name", "default_value"=>"", "is_null_allowed"=>false, "depends_on"=>array())));
+ 		MetaModel::Init_AddAttribute(new AttributeString("label", array("allowed_values"=>null, "sql"=>"label", "default_value"=>"", "is_null_allowed"=>false, "depends_on"=>array())));
+-		MetaModel::Init_AddAttribute(new AttributeString("description", array("allowed_values"=>null, "sql"=>"description", "default_value"=>"", "is_null_allowed"=>true, "depends_on"=>array())));
++		MetaModel::Init_AddAttribute(new AttributeText("description", array("allowed_values"=>null, "sql"=>"description", "default_value"=>"", "is_null_allowed"=>true, "depends_on"=>array())));
+ 		MetaModel::Init_AddAttribute(new AttributeLinkedSet("field_list", array("linked_class"=>"TemplateField", "ext_key_to_me"=>"template_id", "allowed_values"=>null, "count_min"=>0, "count_max"=>0,"edit_mode"=>LINKSET_EDITMODE_INPLACE, "depends_on"=>array())));
+ 
+ 		MetaModel::Init_SetZListItems('details', array('name', 'label', 'description', 'field_list'));
