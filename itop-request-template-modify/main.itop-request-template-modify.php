@@ -51,13 +51,22 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 		{
 			// 约定涉及IP的工单模板中IP列表code为 request_template_ip_textarea, 当存在此code时，检查IP是否在CMDB中管理
 			$check[] = $this->CheckIP($oObject, $user_data["request_template_ip_textarea"]);
-		}	
+		}
 		if($template->Get('type') == "new")
 		{
 			$check[] = $this->CheckUniqFields($template, $user_data);
 		}elseif($template->Get('type') == "change")
 		{
 			$check[] = $this->CheckOwner($template, $user_data);
+		}elseif($template->Get('type') == "incident")
+		{
+			if(!array_key_exists("functionalcis_list", $user_data))
+			{
+				$check[] = array("check_errno"=>100, "msg"=>Dict::S("UI:IncidentTemplate:CodeError"));
+			}else{
+				$appId = $user_data['functionalcis_list'];
+				$this->IncidentFunctionalCIs($oObject, $appId);
+			}
 		}else
 		{
 			return($errmsg);
@@ -72,6 +81,24 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 		return($errmsg);
 	}
 	
+	/**
+	 * 事件管理工单，写入functionalcis_list
+	 * @param $oObject 工单
+	 */
+	public function IncidentFunctionalCIs($oObject, $appId) 
+	{
+		$functionalcis_list = $oObject->Get('functionalcis_list');
+		$oSet = array();
+		$lnk = MetaModel::NewObject('lnkFunctionalCIToTicket');
+		$lnk->Set("functionalci_id", $appId);
+		$lnk->Set("ticket_id", $oObject->GetKey());
+		$oSet[] = $lnk;
+		
+		$functionalcis_list->AddObjectArray($oSet);
+		
+		$oObject->Set("functionalcis_list", $functionalcis_list);
+	}
+	 
 	/**
 	 * IP存在性验证, 并添加至server_list(action中统一从server_list取服务器)
 	 * 另外，为了使用影响分析，还应将server_list复制一份到functionalcis_list
