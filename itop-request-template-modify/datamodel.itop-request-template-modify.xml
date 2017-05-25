@@ -302,7 +302,55 @@
 						</item>
 					</items>
 				</details>
-			</presentation>			
+			</presentation>
+			<methods>
+				<method id="GetAttributeFlags" _delta="define">
+					<status>false</status>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+						// 不允许用户修改service_details，修改内容应放在public_log里
+						// service_details用来为action-shell-exec传递参数
+						public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+						{
+							$ro = array("service_details", "description", "servicesubcategory_id", "service_id", "title", "origin", "caller_id");
+							$ro = MetaModel::GetModuleSetting('itop-request-template-modify', 'fields_ro', $ro);
+							if(!$this->IsNew() && in_array($sAttCode, $ro))
+							{
+								return OPT_ATT_READONLY;
+							}else{
+								return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+							}
+						}
+						
+					]]></code>
+				</method>
+			</methods>
+		</class>
+		<class id="Incident">
+			<methods>
+				<method id="GetAttributeFlags" _delta="define">
+					<status>false</status>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+						// 不允许用户修改service_details，修改内容应放在public_log里
+						// service_details用来为action-shell-exec传递参数
+						public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+						{
+							$ro = array("service_details", "description", "servicesubcategory_id", "service_id", "title", "origin", "caller_id");
+							$ro = MetaModel::GetModuleSetting('itop-request-template-modify', 'fields_ro', $ro);
+							if(!$this->IsNew() && in_array($sAttCode, $ro))
+							{
+								return OPT_ATT_READONLY;
+							}else{
+								return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+							}
+						}
+						
+					]]></code>
+				</method>
+			</methods>		
 		</class>
   </classes>
   <menus>
