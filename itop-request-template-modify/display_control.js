@@ -1,4 +1,10 @@
 $().ready(function(){
+	var mode = $(".modal-body").find("form").attr('id');
+	var index = mode.indexOf('objectform-ticket-create-');
+	if(index < 0)
+	{
+		return;
+	}
 	$("div[data-field-id='request_template_ip_textarea']").attr("style", "display:none");
 	displayTipsButton();
 	displayTips();
@@ -24,8 +30,12 @@ function displayTipsButton()
 function displayTips()
 {
 	var inputval = $("div[data-field-id='template_data']").find("input").val();
+	if(!inputval)
+	{
+		return;
+	}
 	var tips = $.parseJSON(inputval);
-	if(tips.description.indexOf("提示</label>") > 0)
+	if(tips.description.indexOf("提示</label>") >= 0)
 	{
 		$("div[data-field-id='user_data']").before(tips.description);
 	}
