@@ -50,7 +50,10 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 		if(array_key_exists("request_template_ip_textarea", $user_data))
 		{
 			// 约定涉及IP的工单模板中IP列表code为 request_template_ip_textarea, 当存在此code时，检查IP是否在CMDB中管理
-			$check[] = $this->CheckIP($oObject, $user_data["request_template_ip_textarea"]);
+			$user_ips = $user_data['request_template_ip_textarea'];
+			$check[] = $this->CheckIP($oObject, $user_ips);
+			$service_details['user_data']['request_template_ip_textarea'] = $user_ips;
+			$oObject->Set("service_details", $service_details);
 		}
 		if($template->Get('type') == "new")
 		{
@@ -102,12 +105,13 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 	/**
 	 * IP存在性验证, 并添加至server_list(action中统一从server_list取服务器)
 	 * 另外，为了使用影响分析，还应将server_list复制一份到functionalcis_list
+	 * server_list中勾选的机器最后应该写入service_details，这样对处理工单的人更方便
 	 * @param $ips 用户提交的IP
 	 * @return array("check_errno"=>(0|100), "msg"=>errmsg)
 	 */
-	public function CheckIP($oObject, $ips)
+	public function CheckIP($oObject, &$user_ips)
 	{
-		$ips = preg_replace('/\s+|,/', '\n', $ips);
+		$ips = preg_replace('/\s+|,/', '\n', $user_ips);
 		$ips = explode("\\n", $ips);
 		$ip_arr = array();
 		foreach($ips as $k => $v)
@@ -130,7 +134,7 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 
 		$server_list = $oObject->Get('server_list');
 		$oSet = array();
-			
+		$new_user_ips = array();
 		if(array_key_exists("objects", $servers) && $servers['objects'])
 		{
 			$iplists = array();
@@ -155,6 +159,7 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 				$lnk->Set("functionalci_id", $v['lnkServerToTicket.server_id']);
 				$lnk->Set("ticket_id", $oObject->GetKey());
 				$oSetFunc[] = $lnk;
+				$new_user_ips[] = $v['lnkServerToTicket.server_hostname'];
 			}
 			$functionalcis_list = $oObject->Get("functionalcis_list");
 			$functionalcis_list->AddObjectArray($oSetFunc);
@@ -175,7 +180,7 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 				$ret = array("check_errno"=>100, "msg"=>Dict::Format("UI:CheckIP:Failed", $not_exists_ips));
 			}
 		}
-		
+		$user_ips = implode("\n", $new_user_ips);
 		return($ret);
 	}
 	 

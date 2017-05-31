@@ -19,6 +19,7 @@
 					<value id="new">new</value>
 					<value id="change">change</value>
 					<value id="incident">incident</value>
+					<value id="server">server</value>
 				</values>
 				<default_value></default_value>
 				<is_null_allowed>false</is_null_allowed>
@@ -313,7 +314,7 @@
 						// service_details用来为action-shell-exec传递参数
 						public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
 						{
-							$ro = array("service_details", "description", "servicesubcategory_id", "service_id", "title", "origin", "caller_id");
+							$ro = array("service_details", "description", "servicesubcategory_id", "service_id", "title", "origin", "caller_id", "server_list");
 							$ro = MetaModel::GetModuleSetting('itop-request-template-modify', 'fields_ro', $ro);
 							if(!$this->IsNew() && in_array($sAttCode, $ro))
 							{
@@ -338,7 +339,7 @@
 						// service_details用来为action-shell-exec传递参数
 						public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
 						{
-							$ro = array("service_details", "description", "servicesubcategory_id", "service_id", "title", "origin", "caller_id");
+							$ro = array("service_details", "description", "servicesubcategory_id", "service_id", "title", "origin", "caller_id", "server_list");
 							$ro = MetaModel::GetModuleSetting('itop-request-template-modify', 'fields_ro', $ro);
 							if(!$this->IsNew() && in_array($sAttCode, $ro))
 							{
@@ -357,8 +358,40 @@
   </menus>
   <user_rights>
     <groups>
+		<group id="lnkServerToTicket" _delta="define">
+			<classes>
+				<class id="lnkServerToTicket"></class>
+			</classes>
+		</group>
     </groups>
     <profiles>
+		<profile id="102">
+			<groups>
+				<group id="lnkServerToTicket" _delta="define">
+					<actions>
+						<action id="action:write">allow</action>
+					</actions>
+				</group>
+			</groups>
+		</profile>
+		<profile id="103">
+			<groups>
+				<group id="lnkServerToTicket" _delta="define">
+					<actions>
+						<action id="action:write">allow</action>
+					</actions>
+				</group>
+			</groups>
+		</profile>
+		<profile id="104">
+			<groups>
+				<group id="lnkServerToTicket" _delta="define">
+					<actions>
+						<action id="action:write">allow</action>
+					</actions>
+				</group>
+			</groups>
+		</profile>		
     </profiles>
   </user_rights>
 	<module_designs>
