@@ -113,73 +113,81 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 	{
 		$ips = preg_replace('/\s+|,/', '\n', $user_ips);
 		$ips = explode("\\n", $ips);
-		$ip_arr = array();
-		foreach($ips as $k => $v)
-		{
-			$ip = trim($v);
-			if($ip)
-			{
-				$ip_arr[] = $ip;
-			}
-		}
 		$ret = array("check_errno"=>0, "msg"=>"");
-		
-		$iTopAPI = new iTopClient();
-		$ips = implode("','", $ip_arr);
-		$query_server = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE ip.ipaddress IN ('" . $ips . "')";
-		$servers = $iTopAPI->coreGet("Server", $query_server, "ip_list,contacts_list,friendlyname");
-		
-		$servers = json_decode($servers, true);
-		$not_exists_ips = $ips;
-
 		$server_list = $oObject->Get('server_list');
-		$oSet = array();
-		$new_user_ips = array();
-		if(array_key_exists("objects", $servers) && $servers['objects'])
+
+		if(count($ips)>0)
 		{
-			$iplists = array();
-			foreach($servers['objects'] as $k => $v)
+			$ip_arr = array();
+			foreach($ips as $k => $v)
 			{
-				$lnk = MetaModel::NewObject('lnkServerToTicket');
-				$lnk->Set("server_id", $v['key']);
-				$lnk->Set("ticket_id", $oObject->GetKey());
-				$oSet[] = $lnk;
-				foreach($v['fields']['ip_list'] as $key => $value)
+				$ip = trim($v);
+				if($ip)
 				{
-					array_push($iplists, $value['ipaddress']);
+					$ip_arr[] = $ip;
 				}
 			}
-			$server_list->AddObjectArray($oSet);
-			$oObject->Set("server_list", $server_list);
-
-			$oSetFunc = array();
-			foreach($server_list->ToArrayOfValues() as $k => $v)
-			{
-				$lnk = MetaModel::NewObject('lnkFunctionalCIToTicket');
-				$lnk->Set("functionalci_id", $v['lnkServerToTicket.server_id']);
-				$lnk->Set("ticket_id", $oObject->GetKey());
-				$oSetFunc[] = $lnk;
-				$new_user_ips[] = $v['lnkServerToTicket.server_hostname'];
-			}
-			$functionalcis_list = $oObject->Get("functionalcis_list");
-			$functionalcis_list->AddObjectArray($oSetFunc);
-			$oObject->Set("functionalcis_list", $functionalcis_list);
-
-			$failed_ips = array();
 			
-			foreach($ip_arr as $k => $v)
+			$iTopAPI = new iTopClient();
+			$ips = implode("','", $ip_arr);
+			$query_server = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE ip.ipaddress IN ('" . $ips . "')";
+			$servers = $iTopAPI->coreGet("Server", $query_server, "ip_list,contacts_list,friendlyname");
+			
+			$servers = json_decode($servers, true);
+			$not_exists_ips = $ips;
+
+			$oSet = array();
+			if(array_key_exists("objects", $servers) && $servers['objects'])
 			{
-				if(!in_array($v, $iplists))
+				// ip加入server_list
+				$iplists = array();
+				foreach($servers['objects'] as $k => $v)
 				{
-					array_push($failed_ips, $v);
+					$lnk = MetaModel::NewObject('lnkServerToTicket');
+					$lnk->Set("server_id", $v['key']);
+					$lnk->Set("ticket_id", $oObject->GetKey());
+					$oSet[] = $lnk;
+					foreach($v['fields']['ip_list'] as $key => $value)
+					{
+						array_push($iplists, $value['ipaddress']);
+					}
 				}
-			}
-			if($failed_ips)
-			{
-				$not_exists_ips = implode(",", $failed_ips);
-				$ret = array("check_errno"=>100, "msg"=>Dict::Format("UI:CheckIP:Failed", $not_exists_ips));
+				$server_list->AddObjectArray($oSet);
+				$oObject->Set("server_list", $server_list);
+				
+				// 判断ip是否在cmdb
+				$failed_ips = array();
+				foreach($ip_arr as $k => $v)
+				{
+					if(!in_array($v, $iplists))
+					{
+						array_push($failed_ips, $v);
+					}
+				}
+				if($failed_ips)
+				{
+					$not_exists_ips = implode(",", $failed_ips);
+					$ret = array("check_errno"=>100, "msg"=>Dict::Format("UI:CheckIP:Failed", $not_exists_ips));
+					return($ret);
+				}
 			}
 		}
+		
+		// server_list复制到functionalcis_list
+		$new_user_ips = array();		
+		$oSetFunc = array();
+		foreach($server_list->ToArrayOfValues() as $k => $v)
+		{
+			$lnk = MetaModel::NewObject('lnkFunctionalCIToTicket');
+			$lnk->Set("functionalci_id", $v['lnkServerToTicket.server_id']);
+			$lnk->Set("ticket_id", $oObject->GetKey());
+			$oSetFunc[] = $lnk;
+			$new_user_ips[] = $v['lnkServerToTicket.server_hostname'];
+		}
+		$functionalcis_list = $oObject->Get("functionalcis_list");
+		$functionalcis_list->AddObjectArray($oSetFunc);
+		$oObject->Set("functionalcis_list", $functionalcis_list);
+		
 		$user_ips = implode("\n", $new_user_ips);
 		return($ret);
 	}
