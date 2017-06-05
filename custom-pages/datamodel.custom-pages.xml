@@ -3,28 +3,6 @@
 	<constants>
 	</constants>
 	<classes>
-		<class id="UserRequest">
-			<methods>
-				<method id="GetAttributeFlags" _delta="define">
-					<static>false</static>
-					<access>public</access>
-					<type>Overload-iDisplay</type>
-					<code><![CDATA[
-						// 不允许用户修改工单描述，修改内容应放在public_log里
-						// 工单描述在账号申请工单里用来为action-shell-exec传递参数
-						public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
-						{
-							if(!$this->IsNew() && $sAttCode=="description")
-							{
-								return OPT_ATT_READONLY;
-							}else{
-								return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
-							}
-						}
-					]]></code>
-				</method>
-			</methods>
-		</class>
 		<class id="lnkUserToServer" _delta="define">
 			<parent>cmdbAbstractObject</parent>
 			<properties>

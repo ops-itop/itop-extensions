@@ -5,19 +5,16 @@
 
 SetupWebPage::AddModule(
 	__FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-	'itop-request-template/2.0.0',
+	'attribute-custom/1.0.0',
 	array(
 		// Identification
 		//
-		'label' => 'Request Templates',
+		'label' => 'Custom Attribute',
 		'category' => 'business',
 
 		// Setup
 		//
 		'dependencies' => array(
-			'itop-service-mgmt/2.0.0||itop-service-mgmt-provider/2.0.0',	
-			'itop-request-mgmt/1.0.0||itop-request-mgmt-itil/1.0.0||itop-incident-mgmt-itil/1.0.0',
-			'itop-profiles-itil/1.0.0',
 		),
 		'mandatory' => false,
 		'visible' => true,
@@ -25,8 +22,7 @@ SetupWebPage::AddModule(
 		// Components
 		//
 		'datamodel' => array(
-			'model.itop-request-template.php',
-			'main.itop-request-template.php',
+			'main.attribute-custom.php',
 		),
 		'webservice' => array(
 			

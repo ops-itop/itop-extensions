@@ -1,0 +1,1 @@
+Here are some themes from www.bootswatch.com that you can try. Simply change the css file name in datamodel.sample-portal-new-theme.xml

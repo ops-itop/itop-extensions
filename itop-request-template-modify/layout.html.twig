@@ -1,0 +1,13 @@
+{# layout.html.twig #}
+{# custom Base layout #}
+
+{% extends 'itop-portal-base/portal/src/views/layout.html.twig' %}
+
+{% block pPageReadyScripts %}
+	{{ parent() }}
+	// 引入js文件控制服务器类工单的申请方式：从functionalci_list勾选，或者直接输入IP
+	$('body').on('loaded.bs.modal', function(){
+		var displayJs = "{{ app['combodo.absolute_url'] }}" + "env-production/itop-request-template-modify/display_control.js";
+		$.getScript(displayJs);
+	});
+{% endblock %}

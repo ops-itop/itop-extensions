@@ -1,10 +1,5 @@
 <?php
-/**
- * Localized data
- *
- * @copyright   Copyright (C) 2013 XXXXX
- * @license     http://opensource.org/licenses/AGPL-3.0
- */
+// Copyright (C) 2010-2016 Combodo SARL
 
 Dict::Add('EN US', 'English', 'English', array(
 	'Class:ServiceSubcategory/Attribute:requesttemplates_list' => 'Request templates',
@@ -26,11 +21,13 @@ Dict::Add('EN US', 'English', 'English', array(
 	'Class:RequestTemplate/Attribute:servicesubcategory_id+' => '',
 	'Class:RequestTemplate/Attribute:servicesubcategory_name' => 'Service sub category name',
 	'Class:RequestTemplate/Attribute:servicesubcategory_name+' => '',
+	'Class:UserRequest/Attribute:service_details' => 'Service details',
+	'Class:UserRequest/Attribute:service_details+' => 'Additionnal information depending on the service',
+	'Class:Incident/Attribute:service_details' => 'Service details',
+	'Class:Incident/Attribute:service_details+' => 'Additionnal information depending on the service',
 ));
 
 Dict::Add('EN US', 'English', 'English', array(
 	'Menu:RequestTemplate' => 'Request templates',
 	'Menu:RequestTemplate+' => 'All request templates',
 ));
-
-?>
