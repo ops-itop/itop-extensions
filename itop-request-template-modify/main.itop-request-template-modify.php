@@ -55,7 +55,7 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 			$service_details['user_data']['request_template_ip_textarea'] = $user_ips;
 			$oObject->Set("service_details", $service_details);
 		}
-		if($template->Get('type') == "new")
+		if($template->Get('type') == "new" && array_key_exists("name", $user_data))
 		{
 			$check[] = $this->CheckUniqFields($template, $user_data);
 		}elseif($template->Get('type') == "change")
