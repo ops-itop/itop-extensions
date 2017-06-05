@@ -46,6 +46,7 @@ function getExpression($values)
 	}
 	
 	$values = str_replace(",", "\n", $values);
+	$values = str_replace(" ", "\n", $values);
 	$values = explode("\n", $values);
 	$ins = array();
 	foreach($values as $k => $v)

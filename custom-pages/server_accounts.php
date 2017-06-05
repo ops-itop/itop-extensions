@@ -18,7 +18,7 @@
 
 
 /**
- * 服务器账号管理
+ * 服务器账号管理（工单流程废弃，统一到enhancedportal，此页面仅暂时做展示）
  * @annhe.net
  */
 
@@ -67,9 +67,11 @@ $current_user = UserRights::GetUserId();
 $current_person = UserRights::GetContactId();
 
 $helpLink = MetaModel::GetModuleSetting('custom-pages', 'helplink', "itop-help");
+$ticketLink = $appRoot . 'pages/exec.php/browse/services?exec_module=itop-portal&exec_page=index.php';
 
 $oP->add("<h1>" . Dict::Format('UI:ServerAccount:Title') . "</h1><hr/>");
 $oP->add("<p><a href=\"$helpLink\" _target=\"_blank\">" . Dict::Format('UI:ServerAccount:Help') . "</a></p>");
+$oP->add("<p><a href=\"$ticketLink\" _target=\"_blank\">" . Dict::Format('UI:ServerAccount:Create') . "</a></p>");
 $ip_list = utils::ReadParam('ip_list', '', false, 'raw_data');
 $reason = utils::ReadParam('request_reason','',false, 'raw_data');
 
@@ -581,10 +583,12 @@ try
 	$ServerExpression = "SELECT Server AS s JOIN lnkContactToFunctionalCI AS l ON l.functionalci_id=s.id WHERE l.contact_id=$current_person";
 	$myTicket = "SELECT UserRequest AS t WHERE t.caller_id=$current_person AND status != 'closed' AND title LIKE '服务器登录权限申请-Server%'";
 	
+	/*
 	$t1 = microtime(true);
 	accountsRequest($oP, $ip_list, $reason);
 	$t2 = microtime(true);
 	$spt['accountsRequest'] = $t2 - $t1;
+	*/
 
 	$t1 = microtime(true);
 	runOql($myTicket, Dict::Format('UI:ServerAccount:MyTicket'), $oP);

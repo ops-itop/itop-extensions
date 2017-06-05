@@ -22,6 +22,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'UI:ServerAccount:ServerYouManaged' => '我是管理员的服务器列表',
 	'UI:ServerAccount:MyTicket' => '我的账号申请工单',
 	'UI:ServerAccount:Help' => '点此查看帮助',
+	'UI:ServerAccount:Create' => '提交账号申请工单',
 	'Menu:ServerAccountMenu' => '服务器账号',
 	'Menu:ServerAccountMenu+' => '服务器账号',
 	'Menu:WelcomeServerAccount' => '服务器账号',
