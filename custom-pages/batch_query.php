@@ -55,11 +55,23 @@ function getExpression($values)
 		if($trim_v)
 			array_push($ins, $trim_v);
 	}
+	$origIns = $ins;
 	$ins = implode("','",$ins);
 	
 	if($nameClass == "Server")
 	{
 		$expression = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE ip.ipaddress IN ('$ins') UNION SELECT Server AS s WHERE s.hostname IN ('$ins') OR s.name IN ('$ins')";
+	}elseif($nameClass == "IPBlock")
+	{
+		$where = array();
+		foreach($origIns as $k => $v)
+		{
+			$ipblock = trim($v);
+			$ipblock = preg_replace('#0.0.0/8|0.0/16|0/24|0/25|128/25#s', "%", trim($v));
+			$where[] = "ip.ipaddress LIKE '" . $ipblock . "'";
+		}
+		$where = implode(" OR ", $where);
+		$expression = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE " . $where;
 	}else
 	{
 		$expression = "SELECT $nameClass WHERE name IN ('$ins')";
@@ -141,6 +153,7 @@ try
 		}
 	}
 
+	$aPossibleClasses["IPBlock"] = "IP段";
 	$oP->add("<br><form method=\"post\">\n");
 	$oP->add(Dict::S('UI:BatchQuery:SelectClass')."<br>");
 	$oP->add("<br>");
