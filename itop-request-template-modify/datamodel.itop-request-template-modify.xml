@@ -500,6 +500,14 @@
 			</form>			
 		</forms>
 		<classes>
+			<class id="Ticket">
+				<scopes>
+					<scope id="all" _delta="redefine">
+						<oql_view><![CDATA[SELECT Ticket AS T WHERE (T.caller_id = :current_contact_id OR T.agent_id = :current_contact_id) AND T.finalclass IN ('UserRequest', 'Incident')]]></oql_view>
+						<oql_edit><![CDATA[SELECT Ticket AS T]]></oql_edit>					
+					</scope>
+				</scopes>
+			</class>
 			<class id="FunctionalCI" _delta="define">
 			  <scopes>
 				<scope id="all">
