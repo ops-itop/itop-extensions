@@ -36,13 +36,13 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 		}
 		$service_details = $oObject->Get('service_details')->GetValues();
 		$template_id = $service_details['template_id'];
-		$user_data = $service_details['user_data'];
 		
 		// 没有模板的服务不检查
-		if(!$template_id)
+		if(!$template_id || !array_key_exists('user_data', $service_details))
 		{
 			return(parent::OnCheckToWrite($oObject));
 		}
+		$user_data = $service_details['user_data'];
 		
 		$template = MetaModel::GetObject("RequestTemplate", $template_id);
 		$errmsg = array();
