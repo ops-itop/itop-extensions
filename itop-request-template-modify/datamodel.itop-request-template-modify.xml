@@ -498,6 +498,16 @@
 				</div>
 			  </twig>
 			</form>			
+			<form id="ticket-apply-stimulus">
+			  <twig _delta="redefine">
+				<div>
+				  <div class="form_field" data-field-id="team_id" data-field-flags="">
+									</div>
+				  <div class="form_field" data-field-id="agent_id" data-field-flags="">
+									</div>
+				</div>
+			  </twig>
+			</form>
 		</forms>
 		<classes>
 			<class id="Ticket">
