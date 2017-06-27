@@ -61,7 +61,7 @@ function getExpression($values)
 	if($nameClass == "Server")
 	{
 		$expression = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE ip.ipaddress IN ('$ins') UNION SELECT Server AS s WHERE s.hostname IN ('$ins') OR s.name IN ('$ins')";
-	}elseif($nameClass == "IPBlock")
+	}elseif(strpos($nameClass, "IPBlock") > -1)
 	{
 		$where = array();
 		foreach($origIns as $k => $v)
@@ -71,7 +71,11 @@ function getExpression($values)
 			$where[] = "ip.ipaddress LIKE '" . $ipblock . "'";
 		}
 		$where = implode(" OR ", $where);
-		$expression = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE " . $where;
+		if($nameClass == "IPBlock") {
+			$expression = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE " . $where;
+		}elseif($nameClass == "IPBlock-VIP") {
+			$expression = "SELECT VirtualIP AS ip WHERE " . $where;
+		}
 	}else
 	{
 		$expression = "SELECT $nameClass WHERE name IN ('$ins')";
@@ -154,6 +158,7 @@ try
 	}
 
 	$aPossibleClasses["IPBlock"] = "IP段";
+	$aPossibleClasses["IPBlock-VIP"] = "IP段-VIP";
 	$oP->add("<br><form method=\"post\">\n");
 	$oP->add(Dict::S('UI:BatchQuery:SelectClass')."<br>");
 	$oP->add("<br>");
