@@ -55,7 +55,7 @@
 				<field id="qoq_cycle" xsi:type="AttributeDuration">
 					<sql>qoq_cycle</sql>
 					<default_value></default_value>
-					<is_null_allowed>true</is_null_allowed>
+					<is_null_allowed>false</is_null_allowed>
 				</field>
 				<field id="threshold" xsi:type="AttributeDecimal">
 					<sql>threshold</sql>
@@ -71,6 +71,24 @@
 				</field>
 			</fields>
 			<methods>
+				<method id="ComputeValues">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+						public function ComputeValues()
+						{
+							$method = $this->Get('method');
+							if($method != 'qoq_fall' && $method != 'qoq_rise')
+							{
+								$this->Set('qoq_cycle', 60);
+								
+							}
+							return parent::ComputeValues();
+						}
+					]]>
+					</code>
+				</method>
 				<method id="DisplayFormCustom">
 					<static>false</static>
 					<access>public</access>
@@ -78,7 +96,14 @@
 					<code><![CDATA[
 						public function DisplayFormCustom($oPage)
 						{
-							$oPage->add_ready_script("var qoq_cycle = $('[id$=_qoq_cycle]');qoq_cycle.hide();$('[name=attr_method]').bind('change', function(){var alert_method = $('[name=attr_method]').val();if(alert_method == 'qoq_fall' || alert_method == 'qoq_rise') qoq_cycle.show(); else qoq_cycle.hide();});");
+							$oPage->add_ready_script("var qoq_cycle = $('[id$=_qoq_cycle]');".
+								"function qoq_cycleDisplay() {".
+								"var alert_method = $('[name=attr_method]').val();".
+								"qoq_cycle.hide();".
+								"if(alert_method == 'qoq_fall' || alert_method == 'qoq_rise') ".
+								"qoq_cycle.show();}".
+								"qoq_cycleDisplay();".
+								"$('[name=attr_method]').bind('change', qoq_cycleDisplay);");
 						}
 					]]>
 					</code>
