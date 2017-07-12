@@ -16,6 +16,7 @@
 					<attributes>
 						<attribute id="alerttype_name"/>
 						<attribute id="method"/>
+						<attribute id="qoq_cycle"/>
 						<attribute id="threshold"/>
 					</attributes>
 				</naming>
@@ -54,8 +55,8 @@
 				</field>
 				<field id="qoq_cycle" xsi:type="AttributeDuration">
 					<sql>qoq_cycle</sql>
-					<default_value></default_value>
-					<is_null_allowed>false</is_null_allowed>
+					<default_value>1800</default_value>
+					<is_null_allowed>true</is_null_allowed>
 				</field>
 				<field id="threshold" xsi:type="AttributeDecimal">
 					<sql>threshold</sql>
@@ -71,6 +72,63 @@
 				</field>
 			</fields>
 			<methods>
+				<method id="DoCheckToWrite">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+						public function DoCheckToWrite()
+						{
+							parent::DoCheckToWrite();
+							$finalclass = get_class($this);
+							$nameSpec = MetaModel::GetNameSpec($finalclass);
+							$sFormat = preg_replace('/%[1-9]\$s/', '%s', $nameSpec['0']);
+							$sArg = $nameSpec['1'];
+							$oArg = array();							
+							$aChanges = $this->ListChanges();
+							$isChange = false;
+							
+							foreach($aChanges as $key => $val)
+							{
+								$extKeyFriends = MetaModel::GetExtKeyFriends($finalclass, $key);
+								foreach($extKeyFriends as $k=>$v)
+								{   
+									if(in_array($k, $sArg))
+									{   
+										$isChange = true;
+									}
+								}
+								 
+								if(in_array($key, $sArg))
+								{   
+									$isChange = true;
+								}								
+							}
+							
+							foreach($sArg as $value)
+							{
+								$v = $this->Get($value);
+								if($value == "threshold")
+								{
+									$v = number_format($v, 2);
+								}
+								$oArg[] = $v;
+							}
+							$sRule = vsprintf("$sFormat", $oArg);
+							
+							if($isChange)
+							{
+								$oSearch = DBObjectSearch::FromOQL_AllData("SELECT $finalclass WHERE friendlyname=:friendlyname");
+								$oSet = new DBObjectSet($oSearch, array(), array('friendlyname' => $sRule));
+								if ($oSet->Count() > 0)
+								{
+									$this->m_aCheckIssues[] = Dict::Format("Class:".$finalclass."/Error:".$finalclass."MustBeUnique", $sRule);
+								}									
+							}
+						}
+					]]>
+					</code>
+				</method>
 				<method id="ComputeValues">
 					<static>false</static>
 					<access>public</access>
