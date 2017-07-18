@@ -1,10 +1,19 @@
-# server_accounts 文档
+## custom-pages
+### 提供一个批量查询页面
+
+![](preview/preview.png)
+
+### 服务器账号管理
+![](preview/account.png)
+
+### server_accounts 文档
+**此部分应该已过期**
 
 账号管理工单流程分为工单提交，创建账号，自动指派几个过程，其中，创建账号操作很费时，因此借助除非其和action-shell-exec插件把耗时操作放到后台执行。
 
 动作调用的脚本在 [cmdbApi/actions](https://github.com/annProg/cmdbApi/tree/master/actions) 目录下
 
-## 需要配置如下触发器及动作
+#### 需要配置如下触发器及动作
 
 | 触发器 | 过滤条件 | 动作 |
 | ------ | -------- | ---- |
