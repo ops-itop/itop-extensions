@@ -177,7 +177,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:ApplicationSolution/Attribute:business_type/Value:tv' => '电视',
 	'Class:ApplicationSolution/Attribute:business_type/Value:mobile' => '手机',
 	'Class:ApplicationSolution/Attribute:business_type/Value:common' => '公共',
-	'Class:Url/ApplicationSolution:Monitor' => '监控',
+	'Class:ApplicationSolution/Tab:Monitor' => '监控',
 ));
 
 // Middleware
