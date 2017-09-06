@@ -177,6 +177,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:ApplicationSolution/Attribute:business_type/Value:tv' => '电视',
 	'Class:ApplicationSolution/Attribute:business_type/Value:mobile' => '手机',
 	'Class:ApplicationSolution/Attribute:business_type/Value:common' => '公共',
+	'Class:Url/ApplicationSolution:Monitor' => '监控',
 ));
 
 // Middleware
@@ -311,6 +312,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Url/Error:CanOnlyUpdateUrlOfYours' => '只能编辑自己名下APP的URL',
 	'Class:Url/Error:UrlMustBeUnique' => '%1s 已被占用，monitor_node.method.app.url组合必须唯一',
 	'Class:Url/Name' => '%1$s.%2$s.%3$s.%4$s',
+	'Class:Url/Tab:Monitor' => '监控',
 
 ));
 

@@ -384,7 +384,7 @@
 				<field id="contacts" xsi:type="AttributeString" _delta="define">
 					<sql>contacts</sql>
 					<is_null_allowed>true</is_null_allowed>
-					<default_value/>
+					<default_value>null</default_value>
 				</field>
 			</fields>
 			<methods>
@@ -795,15 +795,16 @@
 						parent::DisplayBareRelations($oPage, $bEditMode);
 						
 						$grafana = trim(MetaModel::GetModuleSetting('le-config-mgmt', 'grafana_app_url', 'http://localhost/'));
+						$iframeHeight = trim(MetaModel::GetModuleSetting('le-config-mgmt', 'iframe_height', '1000px'));
 						$app = $this->Get('name');
 						$tabUrl = $grafana . "?var-app=$app.8080";
-						$iframe_start = '<iframe style="border:0;padding:0;margin:0;width:100%;height:500px;overflow:auto" ';
+						$iframe_start = '<iframe style="border:0;padding:0;margin:0;width:100%;height:' . $iframeHeight . ';overflow:auto" ';
 						$iframe_end = '</iframe></div>';
 						$addStr = $iframe_start . 'src=' . '"' . $tabUrl . '"' . '>' . $iframe_end;
 						if (!$bEditMode)
 						{
-							$oPage->SetCurrentTab('监控');
-							$oPage->add('<div id="grafana_app_url" style="width:100%;height:500px;">');
+							$oPage->SetCurrentTab(Dict::S('Class:ApplicationSolution/Tab:Monitor'));
+							$oPage->add('<div id="grafana_app_url" style="width:100%;height:' . $iframeHeight . ';">');
 							$oPage->add($addStr);
 						}
 					}]]></code>
@@ -3742,18 +3743,19 @@
 						parent::DisplayBareRelations($oPage, $bEditMode);
 						
 						$grafana = trim(MetaModel::GetModuleSetting('le-config-mgmt', 'grafana_url_url', 'http://localhost/'));
+						$iframeHeight = trim(MetaModel::GetModuleSetting('le-config-mgmt', 'iframe_height', '1000px'));
 						$app = $this->Get('applicationsolution_name');
 						$monitor_node = $this->Get('monitor_node');
 						$url = urlencode($this->Get('url'));
 						$method = $this->Get('method');
 						$tabUrl = $grafana . "?var-monit_node=$monitor_node&var-app=$app&var-url=$url&method=$method";
-						$iframe_start = '<iframe style="border:0;padding:0;margin:0;width:100%;height:500px;overflow:auto" ';
+						$iframe_start = '<iframe style="border:0;padding:0;margin:0;width:100%;height:' . $iframeHeight . ';overflow:auto" ';
 						$iframe_end = '</iframe></div>';
 						$addStr = $iframe_start . 'src=' . '"' . $tabUrl . '"' . '>' . $iframe_end;
 						if (!$bEditMode)
 						{
-							$oPage->SetCurrentTab('监控');
-							$oPage->add('<div id="grafana_url_url" style="width:100%;height:500px;">');
+							$oPage->SetCurrentTab(Dict::S('Class:Url/Tab:Monitor'));
+							$oPage->add('<div id="grafana_url_url" style="width:100%;height:' . $iframeHeight . ';">');
 							$oPage->add($addStr);
 						}
 					}]]></code>
