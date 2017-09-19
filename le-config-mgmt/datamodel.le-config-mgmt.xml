@@ -109,6 +109,7 @@
 						<attribute id="org_name"/>
 						<attribute id="email"/>
 						<attribute id="phone"/>
+						<attribute id="qq"/>
 					</attributes>
 				</reconciliation>
 			</properties>
@@ -119,6 +120,11 @@
 				<field id="mobile_phone" _delta="delete"></field>
 				<field id="login" xsi:type="AttributeString" _delta="define">
 					<sql>login</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="qq" xsi:type="AttributeString" _delta="define">
+					<sql>qq</sql>
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
@@ -146,6 +152,9 @@
 									<rank>10</rank>
 									<items>
 										<item id="mobile_phone" _delta="delete"></item>
+										<item id="qq" _delta="define">
+											<rank>20</rank>
+										</item>
 									</items>
 								</item>
 							</items>
@@ -193,6 +202,9 @@
 						</item>
 						<item id="phone" _delta="redefine">
 							<rank>20</rank>
+						</item>
+						<item id="qq" _delta="define">
+							<rank>25</rank>
 						</item>
 						<item id="status" _delta="redefine">
 							<rank>30</rank>
