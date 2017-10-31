@@ -28,6 +28,7 @@ SetupWebPage::AddModule(
 		//
 		'datamodel' => array(
 			'model.custom-pages.php',
+			'main.custom-pages.php',
 		),
 		'webservice' => array(
 			

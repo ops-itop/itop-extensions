@@ -27,6 +27,10 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Menu:ServerAccountMenu+' => '服务器账号',
 	'Menu:WelcomeServerAccount' => '服务器账号',
 
+	'UI:PersonVerification:Title' => '用户资料验证',
+	'Menu:PersonVerificationMenu' => '用户资料验证',
+	'Menu:PersonVerificationMenu+' => '用户资料验证',
+
 ));
 
 // lnkUserToServer

@@ -228,6 +228,17 @@
 						// 填充login字段
 						$login = preg_replace("/@.*/","",$this->Get("email"));
 						$this->Set("login", $login);
+
+						// 检查资料完整性
+						$default_regular = array("org_name"=>"SSO登录用户", "phone"=>"", "qq"=>"");
+						$verify_regular = MetaModel::GetModuleSetting('cuistom-pages', 'verify_regular', $default_regular);
+						foreach($verify_regular as $key => $val) {
+							if(trim($this->Get($key)) == $val) {
+								$_SESSION['verify_user'] = 0;
+								break;
+							}
+						}
+
 					}
 					]]>
 					</code>
