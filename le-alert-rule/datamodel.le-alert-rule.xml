@@ -21,7 +21,7 @@
 					</attributes>
 				</naming>
 				<display_template/>
-				<icon/>
+				<icon _delta="define">images/alertrule.png</icon>
 				<reconciliation>
 					<attributes>
 						<attribute id="alerttype_name"></attribute>
