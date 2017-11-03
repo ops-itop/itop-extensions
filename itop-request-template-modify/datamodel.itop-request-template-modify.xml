@@ -517,7 +517,7 @@
 						<oql_edit><![CDATA[SELECT Ticket AS T]]></oql_edit>					
 					</scope>
 					<scope id="admin" _delta="define">
-					  <oql_view><![CDATA[SELECT Ticket AS T]]></oql_view>
+					  <oql_view><![CDATA[SELECT Ticket AS T WHERE T.finalclass IN ('UserRequest', 'Incident')]]></oql_view>
 					  <oql_edit><![CDATA[SELECT Ticket AS T]]></oql_edit>
 					  <allowed_profiles>
 						<allowed_profile id="Administrator"/>
