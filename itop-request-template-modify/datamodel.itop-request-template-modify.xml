@@ -516,6 +516,14 @@
 						<oql_view><![CDATA[SELECT Ticket AS T WHERE (T.caller_id = :current_contact_id OR T.agent_id = :current_contact_id) AND T.finalclass IN ('UserRequest', 'Incident')]]></oql_view>
 						<oql_edit><![CDATA[SELECT Ticket AS T]]></oql_edit>					
 					</scope>
+					<scope id="admin" _delta="define">
+					  <oql_view><![CDATA[SELECT Ticket AS T]]></oql_view>
+					  <oql_edit><![CDATA[SELECT Ticket AS T]]></oql_edit>
+					  <allowed_profiles>
+						<allowed_profile id="Administrator"/>
+					  </allowed_profiles>
+					</scope>
+					
 				</scopes>
 			</class>
 			<class id="FunctionalCI" _delta="define">
