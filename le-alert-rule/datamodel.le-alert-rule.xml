@@ -47,6 +47,7 @@
 						<value id="qps">qps</value>
 						<value id="qoq_rise">qoq_rise</value>
 						<value id="qoq_fall">qoq_fall</value>
+						<value id="value">value</value>
 					</values>
 					<sql>method</sql>
 					<default_value>ratio</default_value>

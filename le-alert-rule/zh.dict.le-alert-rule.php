@@ -26,6 +26,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:AlertRule/Attribute:method/Value:qoq_fall' => '环比下降',
 	'Class:AlertRule/Attribute:method/Value:qoq_rise' => '环比上涨',
 	'Class:AlertRule/Attribute:method/Value:qps' => '每秒请求量',
+	'Class:AlertRule/Attribute:method/Value:value' => '数值',
 	'Class:AlertRule/Attribute:method/Value:ratio' => '占总请求量的比重',
 	'Class:AlertRule/Attribute:qoq_cycle' => '周期',
 	'Class:AlertRule/Attribute:threshold' => '阈值',
