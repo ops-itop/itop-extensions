@@ -1124,6 +1124,9 @@
 						<item id="move2production">
 							<rank>120</rank>
 						</item>
+						<item id="end_of_warranty">
+							<rank>125</rank>
+						</item>
 						<item id="use_pam">
 							<rank>130</rank>
 						</item>
