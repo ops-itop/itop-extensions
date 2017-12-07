@@ -61,7 +61,9 @@ function getExpression($values)
 	if($nameClass == "Server")
 	{
 		$expression = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE ip.ipaddress IN ('$ins') UNION SELECT Server AS s WHERE s.hostname IN ('$ins') OR s.name IN ('$ins')";
-	}elseif(strpos($nameClass, "IPBlock") > -1)
+	} elseif($nameClass == "RDS") {
+		$expression = "SELECT $nameClass WHERE name IN ('$ins') OR mcluster IN ('$ins')";
+	} elseif(strpos($nameClass, "IPBlock") > -1)
 	{
 		$where = array();
 		foreach($origIns as $k => $v)
