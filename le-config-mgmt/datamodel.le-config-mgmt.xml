@@ -1133,6 +1133,12 @@
 						<item id="contacts" _delta="define">
 							<rank>150</rank>
 						</item>						
+						<item id="cpu">
+							<rank>155</rank>
+						</item>						
+						<item id="ram">
+							<rank>160</rank>
+						</item>						
 					</items>
 				</search>
 				<list _delta="redefine">
