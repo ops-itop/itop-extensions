@@ -1139,6 +1139,9 @@
 						<item id="ram">
 							<rank>160</rank>
 						</item>						
+						<item id="osversion_id">
+							<rank>165</rank>
+						</item>						
 					</items>
 				</search>
 				<list _delta="redefine">
@@ -1154,6 +1157,9 @@
 						</item>
 						<item id="ram">
 							<rank>5</rank>
+						</item>
+						<item id="osversion_id">
+							<rank>7</rank>
 						</item>
 						<item id="status">
 							<rank>21</rank>
