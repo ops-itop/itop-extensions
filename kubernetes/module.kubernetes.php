@@ -15,7 +15,8 @@ SetupWebPage::AddModule(
 		// Setup
 		//
 		'dependencies' => array(
-			'itop-config-mgmt/2.2.0'	
+			'itop-config-mgmt/2.2.0',
+			'le-config-mgmt/1.0.0'
 		),
 		'mandatory' => false,
 		'visible' => true,
