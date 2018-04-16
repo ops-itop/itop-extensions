@@ -145,8 +145,8 @@
 				<db_final_class_field>finalclass</db_final_class_field>
 				<naming>
 					<attributes>
-						<attribute id="k8snamespace_id"/>					
-						<attribute id="applicationsolution_id"/>
+						<attribute id="k8snamespace_name"/>					
+						<attribute id="applicationsolution_name"/>
 					</attributes>
 				</naming>
 				<display_template/>
@@ -174,7 +174,7 @@
 					<sql>applicationsolution_id</sql>
 					<target_class>ApplicationSolution</target_class>
 					<is_null_allowed>false</is_null_allowed>
-					<filter>SELECT ApplicationSolution AS app JOIN lnkPersonToSecret AS l ON l.applicationsolution_id = app.id WHERE l.contact_id = :current_contact_id</filter>
+					<filter>SELECT ApplicationSolution AS app JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id = app.id WHERE l.contact_id = :current_contact_id</filter>
 					<on_target_delete>DEL_AUTO</on_target_delete>
 					<allow_target_creation>false</allow_target_creation>
 				</field>
@@ -187,11 +187,11 @@
 						<value id="web">Web</value>
 					</values>
 					<sql>type</sql>
-					<default_value>web</default_value>
+					<default_value>Web</default_value>
 					<is_null_allowed>false</is_null_allowed>
 					<display_style>list</display_style>
 				</field>
-				<field id="image" xsi:type="AttributeURL">
+				<field id="image" xsi:type="AttributeString">
 					<sql>image</sql>
 					<default_value/>
 					<is_null_allowed>false</is_null_allowed>
@@ -221,6 +221,14 @@
 					<default_value>3</default_value>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
+				<field id="ingress_list" xsi:type="AttributeLinkedSet">
+					<linked_class>Ingress</linked_class>
+					<ext_key_to_me>deployment_id</ext_key_to_me>
+					<edit_mode>add_only</edit_mode>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<duplicates/>					
+				</field>								
 			</fields>
 			<methods>
 			</methods>
@@ -259,6 +267,9 @@
 						</item>
 						<item id="url">
 							<rank>100</rank>
+						</item>
+						<item id="ingress_list">
+							<rank>110</rank>
 						</item>
 					</items>
 				</details>
@@ -313,9 +324,6 @@
 						<item id="status">
 							<rank>30</rank>
 						</item>
-						<item id="image">
-							<rank>40</rank>
-						</item>
 						<item id="replicas">
 							<rank>50</rank>
 						</item>
@@ -344,8 +352,8 @@
 				<db_final_class_field>finalclass</db_final_class_field>
 				<naming>
 					<attributes>
-						<attribute id="applicationsolution_id"/>
-						<attribute id="domain_id"/>
+						<attribute id="deployment_name"/>
+						<attribute id="domain_name"/>
 						<attribute id="location"/>
 					</attributes>
 				</naming>
@@ -353,13 +361,25 @@
 				<icon>images/ingress.png</icon>
 				<reconciliation>
 					<attributes>
-						<attribute id="applicationsolution_id"/>
+						<attribute id="deployment_id"/>
 						<attribute id="domain_id"/>
 						<attribute id="location"/>
 					</attributes>
 				</reconciliation>
 			</properties>
 			<fields>
+				<field id="deployment_id" xsi:type="AttributeExternalKey">
+					<sql>deployment_id</sql>
+					<target_class>Deployment</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<filter>SELECT Deployment WHERE applicationsolution_id = :this->applicationsolution_id AND k8snamespace_id=:this->k8snamespace_id</filter>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>					
+				</field>
+				<field id="deployment_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>deployment_id</extkey_attcode>
+					<target_attcode>friendlyname</target_attcode>
+				</field>
 				<field id="k8snamespace_id" xsi:type="AttributeExternalKey">
 					<sql>k8snamespace_id</sql>
 					<target_class>K8sNamespace</target_class>
@@ -375,7 +395,7 @@
 					<sql>applicationsolution_id</sql>
 					<target_class>ApplicationSolution</target_class>
 					<is_null_allowed>false</is_null_allowed>
-					<filter>SELECT ApplicationSolution AS app JOIN lnkPersonToSecret AS l ON l.applicationsolution_id = app.id WHERE l.contact_id = :current_contact_id</filter>
+					<filter>SELECT ApplicationSolution AS app JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id = app.id WHERE l.contact_id = :current_contact_id</filter>
 					<on_target_delete>DEL_AUTO</on_target_delete>
 					<allow_target_creation>false</allow_target_creation>
 				</field>
@@ -392,6 +412,10 @@
 					<dependencies>
 						<attribute id="applicationsolution_id"/>
 					</dependencies>
+				</field>
+				<field id="domain_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>domain_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
 				</field>
 				<field id="location" xsi:type="AttributeString">
 					<sql>location</sql>
@@ -422,6 +446,9 @@
 						<item id="k8snamespace_id">
 							<rank>10</rank>
 						</item>
+						<item id="deployment_id">
+							<rank>16</rank>
+						</item>
 						<item id="applicationsolution_id">
 							<rank>15</rank>
 						</item>
@@ -453,6 +480,9 @@
 						<item id="k8snamespace_id">
 							<rank>10</rank>
 						</item>
+						<item id="deployment_id">
+							<rank>16</rank>
+						</item>						
 						<item id="applicationsolution_id">
 							<rank>15</rank>
 						</item>
@@ -481,6 +511,9 @@
 						<item id="k8snamespace_id">
 							<rank>10</rank>
 						</item>
+						<item id="deployment_id">
+							<rank>16</rank>
+						</item>						
 						<item id="applicationsolution_id">
 							<rank>15</rank>
 						</item>
@@ -592,9 +625,6 @@
 				</search>
 				<list>
 					<items>
-						<item id="name">
-							<rank>10</rank>
-						</item>
 						<item id="description">
 							<rank>15</rank>
 						</item>
@@ -624,7 +654,6 @@
 					</attributes>
 				</naming>
 				<display_template/>
-				<icon>images/secret.png</icon>
 				<reconciliation>
 					<attributes>
 						<attribute id="name"/>
@@ -692,12 +721,6 @@
 						<item id="note">
 							<rank>15</rank>
 						</item>
-						<item id="deployment_list">
-							<rank>40</rank>
-						</item>
-						<item id="ingress_list">
-							<rank>40</rank>
-						</item>					
 					</items>
 				</search>
 				<list>
@@ -902,5 +925,37 @@
 		</class>		
 	</classes>
 	<menus>
+		<menu id="Kubernetes" xsi:type="MenuGroup" _delta="define">
+		  <rank>21</rank>
+		</menu>
+		<menu id="Deployment" xsi:type="OQLMenuNode" _delta="define">
+			<rank>10</rank>
+			<parent>Kubernetes</parent>
+			<oql>SELECT Deployment</oql>
+		</menu>
+		<menu id="Ingress" xsi:type="OQLMenuNode" _delta="define">
+			<rank>10</rank>
+			<parent>Kubernetes</parent>
+			<oql>SELECT Ingress</oql>
+		</menu>
+		<menu id="Secret" xsi:type="OQLMenuNode" _delta="define">
+			<rank>10</rank>
+			<parent>Kubernetes</parent>
+			<oql>SELECT Secret</oql>
+		</menu>	
+		<menu id="Typology" xsi:type="DashboardMenuNode">
+			<definition>
+				<cells>
+					<cell id="0">
+						<dashlets>
+							<dashlet id="k8snamespace" xsi:type="DashletBadge" _delta="define">
+								<rank>9</rank>
+								<class>K8sNamespace</class>
+							</dashlet>
+						</dashlets>
+					</cell>
+				</cells>
+			</definition>
+		</menu>		
 	</menus>
 </itop_design>
