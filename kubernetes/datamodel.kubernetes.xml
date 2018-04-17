@@ -23,6 +23,16 @@
 				</reconciliation>
 			</properties>
 			<fields>
+				<field id="status" xsi:type="AttributeEnum">
+					<values>
+						<value id="production">production</value>
+						<value id="stock">stock</value>
+					</values>
+					<sql>status</sql>
+					<default_value>production</default_value>
+					<is_null_allowed>true</is_null_allowed>
+					<display_style>list</display_style>
+				</field>			
 				<field id="description" xsi:type="AttributeText">
 				  <sql>description</sql>
 				  <default_value/>
@@ -46,6 +56,26 @@
 				</field>
 			</fields>
 			<methods>
+				<method id="ComputeValues" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+					public function ComputeValues()
+					{
+						if(MetaModel::IsValidKeyAttCode($this->Get('finalclass'), 'applicationsolution_id') && $this->Get('applicationsolution_id') > 0)
+						{
+							$app = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $this->Get('applicationsolution_name'), false);
+							$this->Set("org_id", $app->Get("org_id"));
+						} 
+						else {
+							$this->Set("org_id", UserRights::GetContactObject()->Get('org_id'));
+						}
+						return parent::ComputeValues();
+					}
+					]]>
+					</code>
+				</method>			
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
 					<access>protected</access>
@@ -107,7 +137,7 @@
 						}
 					}
 				}]]></code>
-				</method>			
+				</method>	
 			</methods>
 			<presentation>
 				<details>
@@ -201,16 +231,6 @@
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
-				<field id="status" xsi:type="AttributeEnum">
-					<values>
-						<value id="production">production</value>
-						<value id="stock">stock</value>
-					</values>
-					<sql>status</sql>
-					<default_value>production</default_value>
-					<is_null_allowed>true</is_null_allowed>
-					<display_style>list</display_style>
-				</field>
 				<field id="containerport" xsi:type="AttributeInteger">
 					<sql>containerport</sql>
 					<default_value>80</default_value>
@@ -221,6 +241,18 @@
 					<default_value>3</default_value>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
+				<field id="secret_id" xsi:type="AttributeExternalKey">
+					<sql>secret_id</sql>
+					<target_class>Secret</target_class>
+					<is_null_allowed>true</is_null_allowed>
+					<filter>SELECT Secret AS s JOIN lnkPersonToSecret AS l ON l.secret_id = s.id WHERE l.person_id = :current_contact_id</filter>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>					
+				</field>
+				<field id="secret_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>secret_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>				
 				<field id="ingress_list" xsi:type="AttributeLinkedSet">
 					<linked_class>Ingress</linked_class>
 					<ext_key_to_me>deployment_id</ext_key_to_me>
@@ -230,7 +262,81 @@
 					<duplicates/>					
 				</field>								
 			</fields>
+			<lifecycle>
+				<attribute>status</attribute>
+				<stimuli>
+					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
+					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
+				</stimuli>
+				<states>
+					<state id="production">
+						<flags>
+							<attribute id="org_id">
+								<read_only/>
+							</attribute>
+							<attribute id="url">
+								<read_only/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="stock">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags/>
+						<transitions>
+							<transition id="ev_online">
+								<target>production</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+				</states>
+			</lifecycle>						
 			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	  
+					public function DoCheckToWrite()
+					{
+						// 自动填充url字段
+						$k8snamespace = MetaModel::GetObject('K8sNamespace',$this->get('k8snamespace_id'));
+						$domain = $k8snamespace->Get('domain');
+						$url = 'http://' . $this->Get('applicationsolution_name') . "." . $domain;
+						$this->Set('url', $url);
+						parent::DoCheckToWrite();
+					}
+					]]>
+					</code>
+				</method>
+				<method id="GetAttributeFlags" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+					// 不允许修改组成friendlyname的属性
+					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+					{
+						$sArg = array('k8snamespace_id','applicationsolution_id');
+						if (!$this->IsNew() && in_array($sAttCode, $sArg))
+						{
+							return OPT_ATT_READONLY;
+						}
+						else
+						{
+							return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+						}
+					}
+					]]>
+					</code>
+				</method>			
 			</methods>
 			<presentation>
 				<details>
@@ -255,6 +361,9 @@
 						</item>
 						<item id="containerport">
 							<rank>60</rank>
+						</item>
+						<item id="secret_id">
+							<rank>65</rank>
 						</item>
 						<item id="org_id">
 							<rank>70</rank>
@@ -296,6 +405,9 @@
 						<item id="containerport">
 							<rank>60</rank>
 						</item>
+						<item id="secret_id">
+							<rank>65</rank>
+						</item>						
 						<item id="org_id">
 							<rank>70</rank>
 						</item>
@@ -330,6 +442,9 @@
 						<item id="containerport">
 							<rank>60</rank>
 						</item>
+						<item id="secret_id">
+							<rank>65</rank>
+						</item>						
 						<item id="org_id">
 							<rank>70</rank>
 						</item>
@@ -352,7 +467,6 @@
 				<db_final_class_field>finalclass</db_final_class_field>
 				<naming>
 					<attributes>
-						<attribute id="deployment_name"/>
 						<attribute id="domain_name"/>
 						<attribute id="location"/>
 					</attributes>
@@ -427,18 +541,65 @@
 					<default_value>80</default_value>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
-				<field id="status" xsi:type="AttributeEnum">
-					<values>
-						<value id="production">production</value>
-						<value id="stock">stock</value>
-					</values>
-					<sql>status</sql>
-					<default_value>production</default_value>
-					<is_null_allowed>true</is_null_allowed>
-					<display_style>list</display_style>
-				</field>			
 			</fields>
+			<lifecycle>
+				<attribute>status</attribute>
+				<stimuli>
+					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
+					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
+				</stimuli>
+				<states>
+					<state id="production">
+						<flags>
+							<attribute id="org_id">
+								<read_only/>
+							</attribute>
+							<attribute id="deployment_id">
+								<read_only/>
+							</attribute>							
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="stock">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags/>
+						<transitions>
+							<transition id="ev_online">
+								<target>production</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+				</states>
+			</lifecycle>			
 			<methods>
+			<method id="GetAttributeFlags" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+					// 不允许修改组成friendlyname的属性
+					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+					{
+						$sArg = array('domain_id','location');
+						if (!$this->IsNew() && in_array($sAttCode, $sArg))
+						{
+							return OPT_ATT_READONLY;
+						}
+						else
+						{
+							return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+						}
+					}
+					]]>
+					</code>
+				</method>						
 			</methods>
 			<presentation>
 				<details>
@@ -453,13 +614,13 @@
 							<rank>15</rank>
 						</item>
 						<item id="domain_id">
-							<rank>40</rank>
+							<rank>5</rank>
 						</item>
 						<item id="location">
-							<rank>50</rank>
+							<rank>6</rank>
 						</item>
 						<item id="serviceport">
-							<rank>60</rank>
+							<rank>7</rank>
 						</item>
 						<item id="status">
 							<rank>70</rank>
@@ -487,13 +648,13 @@
 							<rank>15</rank>
 						</item>
 						<item id="domain_id">
-							<rank>40</rank>
+							<rank>5</rank>
 						</item>
 						<item id="location">
-							<rank>50</rank>
+							<rank>6</rank>
 						</item>
 						<item id="serviceport">
-							<rank>60</rank>
+							<rank>7</rank>
 						</item>
 						<item id="status">
 							<rank>70</rank>
@@ -518,13 +679,13 @@
 							<rank>15</rank>
 						</item>
 						<item id="domain_id">
-							<rank>40</rank>
+							<rank>5</rank>
 						</item>
 						<item id="location">
-							<rank>50</rank>
+							<rank>6</rank>
 						</item>
 						<item id="serviceport">
-							<rank>60</rank>
+							<rank>7</rank>
 						</item>
 						<item id="status">
 							<rank>70</rank>
@@ -580,9 +741,92 @@
 					<count_max>0</count_max>
 					<ext_key_to_remote>person_id</ext_key_to_remote>
 					<duplicates/>					
-				</field>			
+				</field>
+				<field id="deployment_list" xsi:type="AttributeLinkedSet">
+					<linked_class>Deployment</linked_class>
+					<ext_key_to_me>secret_id</ext_key_to_me>
+					<edit_mode>add_only</edit_mode>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<duplicates/>					
+				</field>												
 			</fields>
+			<lifecycle>
+				<attribute>status</attribute>
+				<stimuli>
+					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
+					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
+				</stimuli>
+				<states>
+					<state id="production">
+						<flags>
+							<attribute id="org_id">
+								<read_only/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="stock">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags/>
+						<transitions>
+							<transition id="ev_online">
+								<target>production</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+				</states>
+			</lifecycle>			
 			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	  
+					public function DoCheckToWrite()
+					{
+						// 自动填充联系人字段
+						if($this->IsNew())
+						{
+							$p = new Person();
+							$p->SetKey(UserRights::GetContactId());
+							$c = $this->Get('person_list');
+							$c->AddObject($p);
+						}
+						
+						parent::DoCheckToWrite();
+					}
+					]]>
+					</code>
+				</method>			
+				<method id="GetAttributeFlags" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+					// 不允许修改组成friendlyname的属性
+					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+					{
+						$sArg = array('name');
+						if (!$this->IsNew() && in_array($sAttCode, $sArg))
+						{
+							return OPT_ATT_READONLY;
+						}
+						else
+						{
+							return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+						}
+					}
+					]]>
+					</code>
+				</method>						
 			</methods>
 			<presentation>
 				<details>
@@ -592,6 +836,9 @@
 						</item>
 						<item id="data">
 							<rank>11</rank>
+						</item>
+						<item id="status">
+							<rank>12</rank>
 						</item>
 						<item id="description">
 							<rank>15</rank>
@@ -605,6 +852,9 @@
 						<item id="person_list">
 							<rank>60</rank>
 						</item>
+						<item id="deployment_list">
+							<rank>70</rank>
+						</item>
 					</items>
 				</details>
 				<search>
@@ -612,6 +862,9 @@
 						<item id="name">
 							<rank>10</rank>
 						</item>
+						<item id="status">
+							<rank>12</rank>
+						</item>						
 						<item id="description">
 							<rank>15</rank>
 						</item>
@@ -625,6 +878,9 @@
 				</search>
 				<list>
 					<items>
+						<item id="status">
+							<rank>12</rank>
+						</item>					
 						<item id="description">
 							<rank>15</rank>
 						</item>
@@ -739,7 +995,7 @@
 			</presentation>
 		</class>
 
-		<class id="lnkPersonToSecret" _delta="define">
+		<class id="lnkPersonToKubernetes" _delta="define">
 			<parent>cmdbAbstractObject</parent>
 			<properties>
 				<is_link>1</is_link>
@@ -932,16 +1188,19 @@
 			<rank>10</rank>
 			<parent>Kubernetes</parent>
 			<oql>SELECT Deployment</oql>
+			<do_search>1</do_search>
 		</menu>
 		<menu id="Ingress" xsi:type="OQLMenuNode" _delta="define">
 			<rank>10</rank>
 			<parent>Kubernetes</parent>
 			<oql>SELECT Ingress</oql>
+			<do_search>1</do_search>
 		</menu>
 		<menu id="Secret" xsi:type="OQLMenuNode" _delta="define">
 			<rank>10</rank>
 			<parent>Kubernetes</parent>
 			<oql>SELECT Secret</oql>
+			<do_search>1</do_search>
 		</menu>	
 		<menu id="Typology" xsi:type="DashboardMenuNode">
 			<definition>

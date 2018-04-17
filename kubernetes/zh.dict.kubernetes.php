@@ -10,6 +10,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Kubernetes/Attribute:description' => '描述',
 	'Class:Kubernetes/Attribute:org_id' => '组织',
 	'Class:Kubernetes/Attribute:move2production' => '上线日期',
+	'Class:Kubernetes/Attribute:status' => '状态',
+	'Class:Kubernetes/Attribute:status/Value:stock' => '已下线',
+	'Class:Kubernetes/Attribute:status/Value:production' => '在线',	
 ));
 
 // Deployment
@@ -23,7 +26,6 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Attribute:type' => '类型',
 	'Class:Deployment/Attribute:image' => '镜像',
 	'Class:Deployment/Attribute:url' => 'URL',
-	'Class:Deployment/Attribute:status' => '状态',
 	'Class:Deployment/Attribute:containerport' => '容器端口',
 	'Class:Deployment/Attribute:replicas' => '副本数',
 	
@@ -34,7 +36,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 // Ingress
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress' => 'Ingress',
-	'Class:Ingress/Name' => '%1$s.%2$s%3$s',
+	'Class:Ingress/Name' => '%1$s%2$s',
 	'Class:Ingress+' => '所有Ingress',
 	
 	'Class:Ingress/Attribute:k8snamespace_id' => 'K8S集群',
@@ -42,7 +44,6 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress/Attribute:domain_id' => '域名',
 	'Class:Ingress/Attribute:location' => 'Location',
 	'Class:Ingress/Attribute:serviceport' => '服务端口',
-	'Class:Ingress/Attribute:status' => '状态',
 	
 	'Menu:Ingress' => 'Ingress',
 	'Menu:Ingress+' => '所有Ingress',	
