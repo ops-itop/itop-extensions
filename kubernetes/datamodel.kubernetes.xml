@@ -736,7 +736,8 @@
 					<sql>name</sql>
 					<default_value/>
 					<is_null_allowed>false</is_null_allowed>
-				</field>
+					<validation_pattern>^[a-z][a-z1-9_]+$</validation_pattern>
+				</field>			
 				<field id="data" xsi:type="AttributeText">
 					<sql>data</sql>
 					<is_null_allowed>false</is_null_allowed>
@@ -795,8 +796,9 @@
 						// 自动填充联系人字段
 						if($this->IsNew())
 						{
-							$p = new Person();
-							$p->SetKey(UserRights::GetContactId());
+							$p = new lnkPersonToKubernetes();
+							$p->Set('person_id', UserRights::GetContactId());
+							$p->Set('kubernetes_id', $this->GetKey());
 							$c = $this->Get('person_list');
 							$c->AddObject($p);
 						}
@@ -1039,7 +1041,7 @@
 				</field>
 				<field id="kubernetes_name" xsi:type="AttributeExternalField">
 					<extkey_attcode>kubernetes_id</extkey_attcode>
-					<target_attcode>name</target_attcode>
+					<target_attcode>friendlyname</target_attcode>
 				</field>
 			</fields>
 			<methods>
