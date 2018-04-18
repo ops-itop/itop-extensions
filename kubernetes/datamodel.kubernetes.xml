@@ -104,7 +104,80 @@
 					}
 					]]>
 					</code>
-				</method>			
+				</method>
+
+				<method id="isAllowedModifyCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+						public function isAllowedModifyCustom()
+						{
+							if($this->IsNew()) {
+								return true;
+							}
+							
+							$myContactId = UserRights::GetContactId();
+							
+							$person_list = $this->Get('person_list')->ToArrayOfValues();
+							$contacts = array();
+							foreach($person_list as $k => $v) {
+								$contacts[] = $v['lnkPersonToKubernetes.person_id'];
+							}
+							if(!in_array($myContactId, $contacts) && !UserRights::IsAdministrator())
+							{
+								return false;
+							}
+							else
+							{
+								return(true);
+							}
+						}
+					]]>
+					</code>
+				</method>
+
+				<method id="ReloadAndDisplayCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+					function ReloadAndDisplayCustom($oPage, $oObj, $sMessageId = '', $sMessage = '', $sSeverity = null)
+					{
+						$oAppContext = new ApplicationContext();
+						if ($sMessageId != '')
+						{
+							cmdbAbstractObject::SetSessionMessage(get_class($oObj), $oObj->GetKey(), $sMessageId, $sMessage, $sSeverity, 0, true /* must not exist */);
+						}
+						
+						$oId = $oObj->getKey();
+						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
+					}
+					]]>
+					</code>
+				</method>
+				
+				<method id="DisplayModifyForm" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[
+						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
+						{
+							if(!self::isAllowedModifyCustom())
+							{
+								$sMesg = Dict::Format("Class:Kubernetes/Error:CanOnlyUpdateK8SObjYourself", $this->Get('friendlyname'));
+								self::ReloadAndDisplayCustom($oPage, $this, 'k8s-modify-not-allowd', $sMesg, 'info');
+							}
+							else
+							{
+								parent::DisplayModifyForm($oPage, $aExtraParams);
+							}
+						}
+					]]>
+					</code>
+				</method>
+				
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
 					<access>protected</access>
@@ -112,6 +185,13 @@
 					<code><![CDATA[	   public function DoCheckToWrite()
 				{
 					parent::DoCheckToWrite();
+					
+					// 不允许修改非自己名下的对象
+					if(!self::isAllowedModifyCustom())
+					{
+						$this->m_aCheckIssues[] = Dict::Format("Class:Kubernetes/Error:CanOnlyUpdateK8SObjYourself", $this->Get('friendlyname'));
+					}
+						
 					// friendlyname has to be unique! Currently it' not possible to define this in datamodel (xml)
 					
 					$finalclass = $this->Get('finalclass');
