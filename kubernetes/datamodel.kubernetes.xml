@@ -54,6 +54,14 @@
 				  <default_value/>
 				  <is_null_allowed>true</is_null_allowed>
 				</field>
+				<field id="person_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkPersonToKubernetes</linked_class>
+					<ext_key_to_me>kubernetes_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>person_id</ext_key_to_remote>
+					<duplicates/>					
+				</field>				
 			</fields>
 			<methods>
 				<method id="ComputeValues" _delta="define">
@@ -245,7 +253,7 @@
 					<sql>secret_id</sql>
 					<target_class>Secret</target_class>
 					<is_null_allowed>true</is_null_allowed>
-					<filter>SELECT Secret AS s JOIN lnkPersonToSecret AS l ON l.secret_id = s.id WHERE l.person_id = :current_contact_id</filter>
+					<filter>SELECT Secret AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id = s.id WHERE l.person_id = :current_contact_id</filter>
 					<on_target_delete>DEL_AUTO</on_target_delete>
 					<allow_target_creation>false</allow_target_creation>					
 				</field>
@@ -734,14 +742,6 @@
 					<is_null_allowed>false</is_null_allowed>
 					<default_value>KEY:VALUE</default_value>
 				</field>
-				<field id="person_list" xsi:type="AttributeLinkedSetIndirect">
-					<linked_class>lnkPersonToSecret</linked_class>
-					<ext_key_to_me>secret_id</ext_key_to_me>
-					<count_min>0</count_min>
-					<count_max>0</count_max>
-					<ext_key_to_remote>person_id</ext_key_to_remote>
-					<duplicates/>					
-				</field>
 				<field id="deployment_list" xsi:type="AttributeLinkedSet">
 					<linked_class>Deployment</linked_class>
 					<ext_key_to_me>secret_id</ext_key_to_me>
@@ -1002,13 +1002,13 @@
 				<category>bizmodel</category>
 				<abstract>false</abstract>
 				<key_type>autoincrement</key_type>
-				<db_table>lnkpersontosecret</db_table>
+				<db_table>lnkpersontokubernetes</db_table>
 				<db_key_field>id</db_key_field>
 				<db_final_class_field/>
 				<naming>
 					<attributes>
 						<attribute id="person_id"/>
-						<attribute id="secret_id"/>
+						<attribute id="kubernetes_id"/>
 					</attributes>
 				</naming>
 				<display_template/>
@@ -1016,7 +1016,7 @@
 				<reconciliation>
 					<attributes>
 						<attribute id="person_id"/>
-						<attribute id="secret_id"/>
+						<attribute id="kubernetes_id"/>
 					</attributes>
 				</reconciliation>
 			</properties>
@@ -1031,14 +1031,14 @@
 					<extkey_attcode>person_id</extkey_attcode>
 					<target_attcode>friendlyname</target_attcode>
 				</field>
-				<field id="secret_id" xsi:type="AttributeExternalKey">
-					<sql>secret_id</sql>
-					<target_class>Secret</target_class>
+				<field id="kubernetes_id" xsi:type="AttributeExternalKey">
+					<sql>kubernetes_id</sql>
+					<target_class>Kubernetes</target_class>
 					<is_null_allowed>false</is_null_allowed>
 					<on_target_delete>DEL_AUTO</on_target_delete>
 				</field>
-				<field id="secret_name" xsi:type="AttributeExternalField">
-					<extkey_attcode>secret_id</extkey_attcode>
+				<field id="kubernetes_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>kubernetes_id</extkey_attcode>
 					<target_attcode>name</target_attcode>
 				</field>
 			</fields>
@@ -1071,14 +1071,14 @@
 						{
 							if(!UserRights::IsAdministrator())
 							{
-								$sMesg = Dict::Format("Class:lnkPersonToSecret/Error:NotAllowDirectCreation", get_class($this));
+								$sMesg = Dict::Format("Class:lnkPersonToKubernetes/Error:NotAllowDirectCreation", get_class($this));
 								if($this->IsNew())
 								{
-									$sMesg = $sMesg . '...<a href="'.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=modify&class=Person&id='.UserRights::GetContactId().'">'.Dict::Format("Class:lnkPersonToSecret/Msg:EditMySelf").'</a>';
+									$sMesg = $sMesg . '...<a href="'.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=modify&class=Person&id='.UserRights::GetContactId().'">'.Dict::Format("Class:lnkPersonToKubernetes/Msg:EditMySelf").'</a>';
 									$oPage->add("<div class=\"header_message message_info\">$sMesg</div>\n");
 								}else
 								{
-									self::ReloadAndDisplayCustom($oPage, $this, 'lnkpersontosecret-no-direct', $sMesg, 'info');
+									self::ReloadAndDisplayCustom($oPage, $this, 'lnkpersontokubernetes-no-direct', $sMesg, 'info');
 								}
 							}else
 							{
@@ -1098,25 +1098,25 @@
 			$thisContactId = $this->Get('person_id');
 			$thisContactName = $this->Get('contact_name');
 			if ($myContactId != $thisContactId && !UserRights::IsAdministrator()){
-				$this->m_aCheckIssues[] = Dict::Format("Class:lnkPersonToSecret/Error:CanOnlyAddLinkForYourself", $thisContactName);
+				$this->m_aCheckIssues[] = Dict::Format("Class:lnkPersonToKubernetes/Error:CanOnlyAddLinkForYourself", $thisContactName);
 			}
 			*/
 			
 			$aChanges = $this->ListChanges();
 			if($aChanges)
 			{
-				$friendlyname = $this->Get('person_id') . " " . $this->Get('secret_id');
+				$friendlyname = $this->Get('person_id') . " " . $this->Get('kubernetes_id');
 				if(!$this->IsNew())
 				{
-					$this->m_aCheckIssues[] = Dict::Format("Class:lnkPersonToSecret/Error:OnlyAddAndDeleteIsAllow", $friendlyname);				
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkPersonToKubernetes/Error:OnlyAddAndDeleteIsAllow", $friendlyname);				
 				}else
 				{
-					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkPersonToSecret WHERE friendlyname=:friendlyname");
+					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkPersonToKubernetes WHERE friendlyname=:friendlyname");
 					$oSet = new DBObjectSet($oSearch, array(), array("friendlyname" => $friendlyname));
 					
 					if ($oSet->Count() > 0)
 					{
-						$this->m_aCheckIssues[] = Dict::Format("Class:lnkPersonToSecret/Error:ThisLnkAlreadyExists", $friendlyname);
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkPersonToKubernetes/Error:ThisLnkAlreadyExists", $friendlyname);
 					}				
 				}
 			}
@@ -1134,7 +1134,7 @@
 		$thisContactId = $this->Get('person_id');
   		if ($myContactId != $thisContactId && !UserRights::IsAdministrator())
 		{
-			// 普通用户不允许删除非自己名下的lnkPersonToSecret
+			// 普通用户不允许删除非自己名下的lnkPersonToKubernetes
 			$oDeletionPlan->AddToDelete($this, null);
 			$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下的关联'), true);
 			$oDeletionPlan->ComputeResults();
@@ -1149,7 +1149,7 @@
 			<presentation>
 				<details>
 					<items>
-						<item id="secret_id">
+						<item id="kubernetes_id">
 							<rank>10</rank>
 						</item>
 						<item id="person_id">
@@ -1159,7 +1159,7 @@
 				</details>
 				<search>
 					<items>
-						<item id="secret_id">
+						<item id="kubernetes_id">
 							<rank>10</rank>
 						</item>
 						<item id="person_id">
@@ -1169,7 +1169,7 @@
 				</search>
 				<list>
 					<items>
-						<item id="secret_id">
+						<item id="kubernetes_id">
 							<rank>10</rank>
 						</item>
 						<item id="person_id">
