@@ -24,7 +24,8 @@ SetupWebPage::AddModule(
 		// Components
 		//
 		'datamodel' => array(
-			'model.kubernetes.php'
+			'model.kubernetes.php',
+			'main.kubernetes.php'
 		),
 		'webservice' => array(
 			
@@ -47,6 +48,7 @@ SetupWebPage::AddModule(
 			// Module specific settings go here, if any
 			'ca_crt_path' => '/etc/k8s/ca.pem',
 			'ca_key_path' => '/etc/k8s/ca-key.pem',
+			'cron_updatecontacts_interval' => 180,
 		),
 	)
 );

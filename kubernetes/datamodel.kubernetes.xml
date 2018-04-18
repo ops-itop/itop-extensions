@@ -61,7 +61,12 @@
 					<count_max>0</count_max>
 					<ext_key_to_remote>person_id</ext_key_to_remote>
 					<duplicates/>					
-				</field>				
+				</field>	
+				<field id="update" xsi:type="AttributeString">
+					<sql>update</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
 			</fields>
 			<methods>
 				<method id="ComputeValues" _delta="define">
@@ -78,6 +83,22 @@
 						} 
 						else {
 							$this->Set("org_id", UserRights::GetContactObject()->Get('org_id'));
+						}
+						
+						if($this->Get('finalclass') != "Secret")
+						{
+							// 根据关联的APP自动填充联系人字段
+							$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
+							$list = $app->Get('contact_list_custom')->ToArrayOfValues();
+							$c = DBObjectSet::FromScratch('lnkPersonToKubernetes');;
+							foreach($list as $k => $v)
+							{
+								$p = new lnkPersonToKubernetes();
+								$p->Set('person_id', $v['lnkContactToApplicationSolution.contact_id']);
+								$p->Set('kubernetes_id', $this->GetKey());
+								$c->AddObject($p);
+							}
+							$this->Set('person_list', $c);
 						}
 						return parent::ComputeValues();
 					}
@@ -286,6 +307,9 @@
 							<attribute id="url">
 								<read_only/>
 							</attribute>
+							<attribute id="person_list">
+								<read_only/>
+							</attribute>
 						</flags>
 						<transitions>
 							<transition id="ev_offline">
@@ -388,6 +412,9 @@
 						<item id="ingress_list">
 							<rank>110</rank>
 						</item>
+						<item id="person_list">
+							<rank>60</rank>
+						</item>						
 					</items>
 				</details>
 				<search>
@@ -565,6 +592,9 @@
 							</attribute>
 							<attribute id="deployment_id">
 								<read_only/>
+							</attribute>	
+							<attribute id="person_list">
+								<read_only/>
 							</attribute>							
 						</flags>
 						<transitions>
@@ -587,7 +617,7 @@
 				</states>
 			</lifecycle>			
 			<methods>
-			<method id="GetAttributeFlags" _delta="define">
+				<method id="GetAttributeFlags" _delta="define">
 					<static>false</static>
 					<access>public</access>
 					<type>Overload-iDisplay</type>
@@ -642,6 +672,9 @@
 						<item id="description">
 							<rank>90</rank>
 						</item>
+						<item id="person_list">
+							<rank>60</rank>
+						</item>						
 					</items>
 				</details>
 				<search>
@@ -1189,19 +1222,19 @@
 		<menu id="Deployment" xsi:type="OQLMenuNode" _delta="define">
 			<rank>10</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT Deployment</oql>
+			<oql>SELECT Deployment AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Ingress" xsi:type="OQLMenuNode" _delta="define">
 			<rank>10</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT Ingress</oql>
+			<oql>SELECT Ingress AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Secret" xsi:type="OQLMenuNode" _delta="define">
 			<rank>10</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT Secret</oql>
+			<oql>SELECT Secret AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>	
 		<menu id="Typology" xsi:type="DashboardMenuNode">
