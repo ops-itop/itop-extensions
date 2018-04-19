@@ -38,6 +38,10 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	
 	'Menu:Deployment' => 'K8S部署',
 	'Menu:Deployment+' => '所有K8S部署',
+	
+	'Class:Deployment/Stimulus:ev_new' => '新建',
+	'Class:Deployment/Stimulus:ev_online' => '上线',
+	'Class:Deployment/Stimulus:ev_offline' => '下线',		
 ));
 
 // Ingress
@@ -56,7 +60,11 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress/Attribute:person_list+' => '链接到此Ingress的所有联系人',
 	
 	'Menu:Ingress' => 'Ingress',
-	'Menu:Ingress+' => '所有Ingress',	
+	'Menu:Ingress+' => '所有Ingress',
+	
+	'Class:Ingress/Stimulus:ev_new' => '新建',
+	'Class:Ingress/Stimulus:ev_online' => '上线',
+	'Class:Ingress/Stimulus:ev_offline' => '下线',		
 ));
 
 // Secret
@@ -71,6 +79,10 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Secret/Attribute:deployment_list+' => '链接到此APP配置项的所有K8S部署',
 	'Menu:Secret' => 'APP配置项',		
 	'Menu:Secret+' => '所有APP配置项',	
+	
+	'Class:Secret/Stimulus:ev_new' => '新建',
+	'Class:Secret/Stimulus:ev_online' => '上线',
+	'Class:Secret/Stimulus:ev_offline' => '下线',		
 ));
 
 //K8sNamespace
