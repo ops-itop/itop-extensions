@@ -124,14 +124,16 @@
 							{
 								$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
 								$person_list = $app->Get('contact_list_custom')->ToArrayOfValues();
+								$key = 'lnkContactToApplicationSolution.contact_id';
 							}
 							else 
 							{
 								$person_list = $this->Get('person_list')->ToArrayOfValues();
+								$key = 'lnkPersonToKubernetes.person_id';
 							}
 							$contacts = array();
 							foreach($person_list as $k => $v) {
-								$contacts[] = $v['lnkPersonToKubernetes.person_id'];
+								$contacts[] = $v[$key];
 							}
 							if(!in_array($myContactId, $contacts) && !UserRights::IsAdministrator())
 							{
