@@ -5191,7 +5191,7 @@
 		<menu id="Domain" xsi:type="OQLMenuNode" _delta="define">
 			<rank>10</rank>
 			<parent>SearchCIs</parent>
-			<oql>SELECT Domain</oql>
+			<oql>SELECT Domain AS d JOIN lnkApplicationSolutionToFunctionalCI AS l ON l.functionalci_id=d.id JOIN ApplicationSolution AS app ON l.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS ll ON ll.applicationsolution_id=app.id WHERE ll.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="ApplicationSolution" xsi:type="OQLMenuNode" _delta="define">
@@ -5210,7 +5210,7 @@
 		<menu id="Url" xsi:type="OQLMenuNode" _delta="define">
 			<rank>21</rank>
 			<parent>SearchCIs</parent>
-			<oql>SELECT Url</oql>
+			<oql>SELECT Url AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 
