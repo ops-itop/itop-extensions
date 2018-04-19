@@ -119,7 +119,16 @@
 							
 							$myContactId = UserRights::GetContactId();
 							
-							$person_list = $this->Get('person_list')->ToArrayOfValues();
+							// Deployment和Ingress使用lnkPersonToKubernetes的person_list会有延迟（依赖UpdateKubernetesContacts的执行间隔），因此使用ApplicationSolution的contact_list）
+							if($this->Get('finalclass') != "Secret")
+							{
+								$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
+								$person_list = $app->Get('contact_list_custom')->ToArrayOfValues();
+							}
+							else 
+							{
+								$person_list = $this->Get('person_list')->ToArrayOfValues();
+							}
 							$contacts = array();
 							foreach($person_list as $k => $v) {
 								$contacts[] = $v['lnkPersonToKubernetes.person_id'];
