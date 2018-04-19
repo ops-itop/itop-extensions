@@ -12,7 +12,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Kubernetes/Attribute:move2production' => '上线日期',
 	'Class:Kubernetes/Attribute:status' => '状态',
 	'Class:Kubernetes/Attribute:status/Value:stock' => '已下线',
-	'Class:Kubernetes/Attribute:status/Value:production' => '在线',	
+	'Class:Kubernetes/Attribute:status/Value:production' => '在线',
+	'Class:Kubernetes/Error:CanOnlyUpdateK8SObjYourself' => '%1$s 不在您的名下，您没有编辑权限',
 ));
 
 // Deployment
@@ -28,6 +29,12 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Attribute:url' => 'URL',
 	'Class:Deployment/Attribute:containerport' => '容器端口',
 	'Class:Deployment/Attribute:replicas' => '副本数',
+	'Class:Deployment/Attribute:secret_id' => 'APP配置项',
+	'Class:Deployment/Attribute:person_list' => '联系人',
+	'Class:Deployment/Attribute:person_list+' => '链接到此K8S部署的所有联系人',
+	'Class:Deployment/Attribute:ingress_list' => 'Ingress',
+	'Class:Deployment/Attribute:ingress_list+' => '链接到此K8S部署的所有Ingress',
+	
 	
 	'Menu:Deployment' => 'K8S部署',
 	'Menu:Deployment+' => '所有K8S部署',
@@ -44,6 +51,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress/Attribute:domain_id' => '域名',
 	'Class:Ingress/Attribute:location' => 'Location',
 	'Class:Ingress/Attribute:serviceport' => '服务端口',
+	'Class:Ingress/Attribute:deployment_id' => 'K8S部署',
+	'Class:Ingress/Attribute:person_list' => '联系人',
+	'Class:Ingress/Attribute:person_list+' => '链接到此Ingress的所有联系人',
 	
 	'Menu:Ingress' => 'Ingress',
 	'Menu:Ingress+' => '所有Ingress',	
@@ -57,6 +67,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Secret/Attribute:data' => '配置数据',
 	'Class:Secret/Attribute:person_list' => '联系人',
 	'Class:Secret/Attribute:person_list+' => '链接到此APP配置项的所有联系人',
+	'Class:Secret/Attribute:deployment_list' => 'K8S部署',
+	'Class:Secret/Attribute:deployment_list+' => '链接到此APP配置项的所有K8S部署',
 	'Menu:Secret' => 'APP配置项',		
 	'Menu:Secret+' => '所有APP配置项',	
 ));
