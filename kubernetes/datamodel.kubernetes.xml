@@ -1335,13 +1335,13 @@
 		<menu id="Deployment" xsi:type="OQLMenuNode" _delta="define">
 			<rank>10</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT Deployment AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
+			<oql>SELECT Deployment AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Ingress" xsi:type="OQLMenuNode" _delta="define">
 			<rank>10</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT Ingress AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
+			<oql>SELECT Ingress AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Secret" xsi:type="OQLMenuNode" _delta="define">
