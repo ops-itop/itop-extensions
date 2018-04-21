@@ -448,10 +448,18 @@
 					public function DoCheckToWrite()
 					{
 						// 自动填充url字段
-						$k8snamespace = MetaModel::GetObject('K8sNamespace',$this->get('k8snamespace_id'));
+						$k8snamespace = MetaModel::GetObject('K8sNamespace',$this->Get('k8snamespace_id'));
 						$domain = $k8snamespace->Get('domain');
 						$url = 'http://' . $this->Get('applicationsolution_name') . "." . $domain;
 						$this->Set('url', $url);
+						
+						// 保留名称
+						$default_reserve = array($this->Get('k8snamespace_name') . "-router", 'default-http-backend');
+						$reserve = MetaModel::GetModuleSetting('kubernetes', 'reserve', $default_reserve);
+						$reserve = array_merge($default_reserve, $reserve);
+						if(in_array($this->Get('applicationsolution_name'), $reserve)) {
+							$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:ReservedAppNameNotAllowed", $this->Get('applicationsolution_name'));
+						}
 						parent::DoCheckToWrite();
 					}
 					]]>
@@ -1402,13 +1410,13 @@
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Ingress" xsi:type="OQLMenuNode" _delta="define">
-			<rank>10</rank>
+			<rank>15</rank>
 			<parent>Kubernetes</parent>
 			<oql>SELECT Ingress AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Secret" xsi:type="OQLMenuNode" _delta="define">
-			<rank>10</rank>
+			<rank>20</rank>
 			<parent>Kubernetes</parent>
 			<oql>SELECT Secret AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
 			<do_search>1</do_search>
