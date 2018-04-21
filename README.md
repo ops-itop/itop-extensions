@@ -33,3 +33,4 @@ iTop扩展
 |rest-ext |rest/json扩展，新增ext/get_related接口 |
 |trigger-on-delete |触发器（对象删除时） | |
 |zh-language |中文翻译 | |
+|kubernetes |Kubernetes工作流 | |

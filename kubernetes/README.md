@@ -29,3 +29,5 @@ TriggerOnObjectUpdate
 "名称","类别","名称","描述","状态","Path","Parameters"
 "Kubernetes","Script execution","Kubernetes","Kubernetes对象操作","生产中","/home/wwwroot/default/cmdb/cmdbApi/actions/demo.sh","SCRIPT_NAME=kubernetes.php\nID=$this->id$"
 ```
+
+动作脚本参见 https://github.com/annProg/cmdbApi/tree/master/actions
