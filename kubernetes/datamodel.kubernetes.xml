@@ -383,7 +383,7 @@
 					<sql>secret_id</sql>
 					<target_class>Secret</target_class>
 					<is_null_allowed>true</is_null_allowed>
-					<filter>SELECT Secret AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id = s.id WHERE l.person_id = :current_contact_id</filter>
+					<filter>SELECT Secret AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id = s.id WHERE l.person_id = :current_contact_id AND s.status='production'</filter>
 					<on_target_delete>DEL_MANUAL</on_target_delete>
 					<allow_target_creation>false</allow_target_creation>					
 				</field>
