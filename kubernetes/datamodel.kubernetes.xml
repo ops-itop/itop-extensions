@@ -1,0 +1,1469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2">
+	<constants>
+	</constants>
+	<classes>
+		<class id="Kubernetes" _delta="define">
+			<parent>cmdbAbstractObject</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>true</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>kubernetes</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<display_template/>
+				<icon>images/kubernetes.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="org_id"/>
+						<attribute id="organization_name"/>
+						<attribute id="finalclass"/>						
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="status" xsi:type="AttributeEnum">
+					<values>
+						<value id="production">production</value>
+						<value id="stock">stock</value>
+					</values>
+					<sql>status</sql>
+					<default_value>production</default_value>
+					<is_null_allowed>true</is_null_allowed>
+					<display_style>list</display_style>
+				</field>			
+				<field id="description" xsi:type="AttributeText">
+				  <sql>description</sql>
+				  <default_value/>
+				  <is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="org_id" xsi:type="AttributeExternalKey">
+				  <sql>org_id</sql>
+				  <target_class>Organization</target_class>
+				  <is_null_allowed>false</is_null_allowed>
+				  <on_target_delete>DEL_MANUAL</on_target_delete>
+				  <filter>SELECT Organization WHERE id = :current_contact->org_id</filter>
+				</field>
+				<field id="organization_name" xsi:type="AttributeExternalField">
+				  <extkey_attcode>org_id</extkey_attcode>
+				  <target_attcode>name</target_attcode>
+				</field>
+				<field id="move2production" xsi:type="AttributeDate">
+				  <sql>move2production</sql>
+				  <default_value/>
+				  <is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="person_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkPersonToKubernetes</linked_class>
+					<ext_key_to_me>kubernetes_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>person_id</ext_key_to_remote>
+					<duplicates/>					
+				</field>	
+				<field id="update" xsi:type="AttributeString">
+					<sql>update</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+			</fields>
+			<methods>
+				<method id="ComputeValues" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+					public function ComputeValues()
+					{
+						if(MetaModel::IsValidKeyAttCode($this->Get('finalclass'), 'applicationsolution_id') && $this->Get('applicationsolution_id') > 0)
+						{
+							$app = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $this->Get('applicationsolution_name'), false);
+							$this->Set("org_id", $app->Get("org_id"));
+						} 
+						else {
+							$this->Set("org_id", UserRights::GetContactObject()->Get('org_id'));
+						}
+						
+						if($this->Get('finalclass') != "Secret")
+						{
+							// 根据关联的APP自动填充联系人字段
+							$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
+							$list = $app->Get('contact_list_custom')->ToArrayOfValues();
+							$c = DBObjectSet::FromScratch('lnkPersonToKubernetes');;
+							foreach($list as $k => $v)
+							{
+								$p = new lnkPersonToKubernetes();
+								$p->Set('person_id', $v['lnkContactToApplicationSolution.contact_id']);
+								$p->Set('kubernetes_id', $this->GetKey());
+								$c->AddObject($p);
+							}
+							$this->Set('person_list', $c);
+						}
+						return parent::ComputeValues();
+					}
+					]]>
+					</code>
+				</method>
+
+				<method id="isAllowedModifyCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+						public function isAllowedModifyCustom()
+						{
+							if($this->IsNew()) {
+								return true;
+							}
+							
+							$myContactId = UserRights::GetContactId();
+							
+							// Deployment和Ingress使用lnkPersonToKubernetes的person_list会有延迟（依赖UpdateKubernetesContacts的执行间隔），因此使用ApplicationSolution的contact_list）
+							if($this->Get('finalclass') != "Secret")
+							{
+								$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
+								$person_list = $app->Get('contact_list_custom')->ToArrayOfValues();
+								$key = 'lnkContactToApplicationSolution.contact_id';
+							}
+							else 
+							{
+								$person_list = $this->Get('person_list')->ToArrayOfValues();
+								$key = 'lnkPersonToKubernetes.person_id';
+							}
+							$contacts = array();
+							foreach($person_list as $k => $v) {
+								$contacts[] = $v[$key];
+							}
+							if(!in_array($myContactId, $contacts) && !UserRights::IsAdministrator())
+							{
+								return false;
+							}
+							else
+							{
+								return(true);
+							}
+						}
+					]]>
+					</code>
+				</method>
+
+				<method id="ReloadAndDisplayCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+					function ReloadAndDisplayCustom($oPage, $oObj, $sMessageId = '', $sMessage = '', $sSeverity = null)
+					{
+						$oAppContext = new ApplicationContext();
+						if ($sMessageId != '')
+						{
+							cmdbAbstractObject::SetSessionMessage(get_class($oObj), $oObj->GetKey(), $sMessageId, $sMessage, $sSeverity, 0, true /* must not exist */);
+						}
+						
+						$oId = $oObj->getKey();
+						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
+					}
+					]]>
+					</code>
+				</method>
+				
+				<method id="DisplayModifyForm" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[
+						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
+						{
+							if(!self::isAllowedModifyCustom())
+							{
+								$sMesg = Dict::Format("Class:Kubernetes/Error:CanOnlyUpdateK8SObjYourself", $this->Get('friendlyname'));
+								self::ReloadAndDisplayCustom($oPage, $this, 'k8s-modify-not-allowd', $sMesg, 'info');
+							}
+							else
+							{
+								parent::DisplayModifyForm($oPage, $aExtraParams);
+							}
+						}
+					]]>
+					</code>
+				</method>
+				
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   public function DoCheckToWrite()
+				{
+					parent::DoCheckToWrite();
+					
+					// 不允许修改非自己名下的对象
+					if(!self::isAllowedModifyCustom())
+					{
+						$this->m_aCheckIssues[] = Dict::Format("Class:Kubernetes/Error:CanOnlyUpdateK8SObjYourself", $this->Get('friendlyname'));
+					}
+						
+					// friendlyname has to be unique! Currently it' not possible to define this in datamodel (xml)
+					
+					$finalclass = $this->Get('finalclass');
+					$nameSpec = MetaModel::GetNameSpec(get_class($this));
+					$sFormat = preg_replace('/%[1-9]\$s/', '%s', $nameSpec['0']);
+					$sArg = $nameSpec['1'];
+					$oArg = array();
+					
+					/*
+					 * 如果组成friendlyname的所有attribute都没有发生变化，那么不进行检查
+					 * 如果不监听变化就进行检查，将导致对象无法更新
+					 */
+					$aChanges = $this->ListChanges();
+					
+					$isChanges = false;
+					foreach($aChanges as $key=>$value)
+					{   
+						if(MetaModel::IsValidKeyAttCode($finalclass, $key))
+						{   
+							$extKeyFriends = MetaModel::GetExtKeyFriends($finalclass, $key);
+							foreach($extKeyFriends as $k=>$v)
+							{   
+								if(in_array($k, $sArg))
+								{   
+									$isChanges = true;
+								}
+							}
+						 
+						}
+						if(in_array($key, $sArg))
+						{   
+							$isChanges = true;
+						}
+					}
+					
+					foreach($sArg as $value) {
+						array_push($oArg, $this->Get($value));
+					}
+					$sTypology = vsprintf("$sFormat", $oArg);
+					//print_r($this->Get('name') . "<br>");
+					//print_r($this->Get('brand_name') . "<br>");
+					//print_r($this->Get('friendlyname') . "<br>");
+					//print_r($oArg);
+					//print_r("<br>");
+					
+					if($isChanges) {
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT $finalclass WHERE friendlyname=:friendlyname");
+						$oSet = new DBObjectSet($oSearch, array(), array('friendlyname' => $sTypology));
+						if ($oSet->Count() > 0)
+						{
+							$this->m_aCheckIssues[] = Dict::Format("Class:".$finalclass."/Error:".$finalclass."MustBeUnique", $sTypology);
+						}
+					}
+				}]]></code>
+				</method>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   
+					public function CheckToDelete(&$oDeletionPlan)
+					{
+						if($this->Get('status') == "production") {
+							// 不允许删除production状态的对象
+							$oDeletionPlan->AddToDelete($this, null);
+							$oDeletionPlan->SetDeletionIssues($this, array('在线状态的对象不允许直接删除'), true);
+							$oDeletionPlan->ComputeResults();						
+							return false;
+						}
+						return parent::CheckToDelete($oDeletionPlan);
+					} 
+					]]></code>
+				</method>				
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="org_id">
+							<rank>10</rank>
+						</item>
+					</items>
+				</details>	
+				<search>
+					<items>
+						<item id="org_id">
+							<rank>10</rank>
+						</item>
+					</items>					
+				</search>
+				<list>
+					<items>
+						<item id="org_id">
+							<rank>10</rank>
+						</item>
+					</items>				
+				</list>
+			</presentation>
+		</class>
+		
+		<class id="Deployment" _delta="define">
+			<parent>Kubernetes</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>deployment</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="k8snamespace_name"/>					
+						<attribute id="applicationsolution_name"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon>images/deployment.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="k8snamespace_id"/>					
+						<attribute id="applicationsolution_id"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="k8snamespace_id" xsi:type="AttributeExternalKey">
+					<sql>k8snamespace_id</sql>
+					<target_class>K8sNamespace</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>
+				</field>
+				<field id="k8snamespace_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8snamespace_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="applicationsolution_id" xsi:type="AttributeExternalKey">
+					<sql>applicationsolution_id</sql>
+					<target_class>ApplicationSolution</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<filter>SELECT ApplicationSolution AS app JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id = app.id WHERE l.contact_id = :current_contact_id</filter>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>
+				</field>
+				<field id="applicationsolution_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>applicationsolution_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="type" xsi:type="AttributeEnum">
+					<values>
+						<value id="web">Web</value>
+					</values>
+					<sql>type</sql>
+					<default_value>Web</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
+				<field id="image" xsi:type="AttributeString">
+					<sql>image</sql>
+					<default_value/>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+				<field id="url" xsi:type="AttributeURL">
+					<sql>url</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="containerport" xsi:type="AttributeInteger">
+					<sql>containerport</sql>
+					<default_value>80</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+				<field id="replicas" xsi:type="AttributeInteger">
+					<sql>replicas</sql>
+					<default_value>3</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+				<field id="secret_id" xsi:type="AttributeExternalKey">
+					<sql>secret_id</sql>
+					<target_class>Secret</target_class>
+					<is_null_allowed>true</is_null_allowed>
+					<filter>SELECT Secret AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id = s.id WHERE l.person_id = :current_contact_id AND s.status='production'</filter>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>					
+				</field>
+				<field id="secret_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>secret_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>				
+				<field id="ingress_list" xsi:type="AttributeLinkedSet">
+					<linked_class>Ingress</linked_class>
+					<ext_key_to_me>deployment_id</ext_key_to_me>
+					<edit_mode>add_only</edit_mode>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<duplicates/>					
+				</field>								
+			</fields>
+			<lifecycle>
+				<attribute>status</attribute>
+				<stimuli>
+					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
+					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
+				</stimuli>
+				<states>
+					<state id="production">
+						<flags>
+							<attribute id="org_id">
+								<read_only/>
+							</attribute>
+							<attribute id="url">
+								<read_only/>
+							</attribute>
+							<attribute id="person_list">
+								<read_only/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="stock">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags/>
+						<transitions>
+							<transition id="ev_online">
+								<target>production</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+				</states>
+			</lifecycle>						
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	  
+					public function DoCheckToWrite()
+					{
+						// 自动填充url字段
+						$k8snamespace = MetaModel::GetObject('K8sNamespace',$this->get('k8snamespace_id'));
+						$domain = $k8snamespace->Get('domain');
+						$url = 'http://' . $this->Get('applicationsolution_name') . "." . $domain;
+						$this->Set('url', $url);
+						parent::DoCheckToWrite();
+					}
+					]]>
+					</code>
+				</method>
+				<method id="GetAttributeFlags" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+					// 不允许修改组成friendlyname的属性
+					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+					{
+						$sArg = array('k8snamespace_id','applicationsolution_id');
+						if (!$this->IsNew() && in_array($sAttCode, $sArg))
+						{
+							return OPT_ATT_READONLY;
+						}
+						else
+						{
+							return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+						}
+					}
+					]]>
+					</code>
+				</method>			
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="k8snamespace_id">
+							<rank>10</rank>
+						</item>
+						<item id="applicationsolution_id">
+							<rank>15</rank>
+						</item>
+						<item id="type">
+							<rank>20</rank>
+						</item>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="image">
+							<rank>40</rank>
+						</item>
+						<item id="replicas">
+							<rank>50</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="secret_id">
+							<rank>65</rank>
+						</item>
+						<item id="org_id">
+							<rank>70</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+						<item id="description">
+							<rank>90</rank>
+						</item>
+						<item id="url">
+							<rank>100</rank>
+						</item>
+						<item id="ingress_list">
+							<rank>110</rank>
+						</item>
+						<item id="person_list">
+							<rank>60</rank>
+						</item>						
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="k8snamespace_id">
+							<rank>10</rank>
+						</item>
+						<item id="applicationsolution_id">
+							<rank>15</rank>
+						</item>
+						<item id="type">
+							<rank>20</rank>
+						</item>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="image">
+							<rank>40</rank>
+						</item>
+						<item id="replicas">
+							<rank>50</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="secret_id">
+							<rank>65</rank>
+						</item>						
+						<item id="org_id">
+							<rank>70</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+						<item id="description">
+							<rank>90</rank>
+						</item>
+						<item id="url">
+							<rank>100</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="k8snamespace_id">
+							<rank>10</rank>
+						</item>
+						<item id="applicationsolution_id">
+							<rank>15</rank>
+						</item>
+						<item id="type">
+							<rank>20</rank>
+						</item>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="replicas">
+							<rank>50</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="secret_id">
+							<rank>65</rank>
+						</item>						
+						<item id="org_id">
+							<rank>70</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+		
+		<class id="Ingress" _delta="define">
+			<parent>Kubernetes</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>ingress</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="domain_name"/>
+						<attribute id="location"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon>images/ingress.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="deployment_id"/>
+						<attribute id="domain_id"/>
+						<attribute id="location"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="deployment_id" xsi:type="AttributeExternalKey">
+					<sql>deployment_id</sql>
+					<target_class>Deployment</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>					
+				</field>
+				<field id="deployment_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>deployment_id</extkey_attcode>
+					<target_attcode>friendlyname</target_attcode>
+				</field>
+				<field id="k8snamespace_id" xsi:type="AttributeExternalKey">
+					<sql>k8snamespace_id</sql>
+					<target_class>K8sNamespace</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>
+				</field>
+				<field id="k8snamespace_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8snamespace_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="applicationsolution_id" xsi:type="AttributeExternalKey">
+					<sql>applicationsolution_id</sql>
+					<target_class>ApplicationSolution</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<filter>SELECT ApplicationSolution AS app JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id = app.id JOIN Deployment AS d ON d.applicationsolution_id=app.id WHERE l.contact_id = :current_contact_id</filter>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>
+				</field>
+				<field id="applicationsolution_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>applicationsolution_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="domain_id" xsi:type="AttributeExternalKey">
+					<sql>domain_id</sql>
+					<target_class>Domain</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<filter>SELECT Domain AS d JOIN lnkApplicationSolutionToFunctionalCI AS l ON l.functionalci_id=d.id WHERE l.applicationsolution_id = :this->applicationsolution_id</filter>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+					<dependencies>
+						<attribute id="applicationsolution_id"/>
+					</dependencies>
+				</field>
+				<field id="domain_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>domain_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="location" xsi:type="AttributeString">
+					<sql>location</sql>
+					<default_value>/</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+				<field id="serviceport" xsi:type="AttributeInteger">
+					<sql>serviceport</sql>
+					<default_value>80</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+			</fields>
+			<lifecycle>
+				<attribute>status</attribute>
+				<stimuli>
+					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
+					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
+				</stimuli>
+				<states>
+					<state id="production">
+						<flags>
+							<attribute id="org_id">
+								<read_only/>
+							</attribute>
+							<attribute id="deployment_id">
+								<read_only/>
+							</attribute>
+							<attribute id="person_list">
+								<read_only/>
+							</attribute>							
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="stock">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags/>
+						<transitions>
+							<transition id="ev_online">
+								<target>production</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+				</states>
+			</lifecycle>			
+			<methods>
+				<method id="ComputeValues" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+					public function ComputeValues()
+					{
+						$app = $this->Get('applicationsolution_name');
+						$namespace = $this->Get('k8snamespace_name');
+						$fname = $namespace . "." . $app;
+						$deploy = MetaModel::GetObjectByColumn('Deployment', 'friendlyname', $fname, false);
+						$this->Set("deployment_id", $deploy->GetKey());
+						
+						return parent::ComputeValues();
+					}
+					]]>
+					</code>
+				</method>
+			
+				<method id="GetAttributeFlags" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+					// 不允许修改组成friendlyname的属性
+					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+					{
+						$sArg = array('domain_id','location');
+						if (!$this->IsNew() && in_array($sAttCode, $sArg))
+						{
+							return OPT_ATT_READONLY;
+						}
+						else
+						{
+							return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+						}
+					}
+					]]>
+					</code>
+				</method>						
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="k8snamespace_id">
+							<rank>1</rank>
+						</item>
+						<item id="deployment_id">
+							<rank>10</rank>
+						</item>
+						<item id="applicationsolution_id">
+							<rank>2</rank>
+						</item>
+						<item id="domain_id">
+							<rank>5</rank>
+						</item>
+						<item id="location">
+							<rank>6</rank>
+						</item>
+						<item id="serviceport">
+							<rank>7</rank>
+						</item>
+						<item id="status">
+							<rank>70</rank>
+						</item>
+						<item id="org_id">
+							<rank>75</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+						<item id="description">
+							<rank>90</rank>
+						</item>
+						<item id="person_list">
+							<rank>60</rank>
+						</item>						
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="k8snamespace_id">
+							<rank>10</rank>
+						</item>
+						<item id="deployment_id">
+							<rank>16</rank>
+						</item>						
+						<item id="applicationsolution_id">
+							<rank>15</rank>
+						</item>
+						<item id="domain_id">
+							<rank>5</rank>
+						</item>
+						<item id="location">
+							<rank>6</rank>
+						</item>
+						<item id="serviceport">
+							<rank>7</rank>
+						</item>
+						<item id="status">
+							<rank>70</rank>
+						</item>
+						<item id="org_id">
+							<rank>75</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="k8snamespace_id">
+							<rank>10</rank>
+						</item>
+						<item id="deployment_id">
+							<rank>16</rank>
+						</item>						
+						<item id="applicationsolution_id">
+							<rank>15</rank>
+						</item>
+						<item id="domain_id">
+							<rank>5</rank>
+						</item>
+						<item id="location">
+							<rank>6</rank>
+						</item>
+						<item id="serviceport">
+							<rank>7</rank>
+						</item>
+						<item id="status">
+							<rank>70</rank>
+						</item>
+						<item id="org_id">
+							<rank>75</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+
+		<class id="Secret" _delta="define">
+			<parent>Kubernetes</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>secret</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon>images/secret.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="name" xsi:type="AttributeString">
+					<sql>name</sql>
+					<default_value/>
+					<is_null_allowed>false</is_null_allowed>
+					<validation_pattern>^[a-z][a-z1-9_]+$</validation_pattern>
+				</field>			
+				<field id="data" xsi:type="AttributeText">
+					<sql>data</sql>
+					<is_null_allowed>false</is_null_allowed>
+					<default_value>KEY:VALUE</default_value>
+					<tracking_level>none</tracking_level>
+				</field>
+				<field id="deployment_list" xsi:type="AttributeLinkedSet">
+					<linked_class>Deployment</linked_class>
+					<ext_key_to_me>secret_id</ext_key_to_me>
+					<edit_mode>add_only</edit_mode>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<duplicates/>					
+				</field>												
+			</fields>
+			<lifecycle>
+				<attribute>status</attribute>
+				<stimuli>
+					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
+					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
+				</stimuli>
+				<states>
+					<state id="production">
+						<flags>
+							<attribute id="org_id">
+								<read_only/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="stock">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags/>
+						<transitions>
+							<transition id="ev_online">
+								<target>production</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+				</states>
+			</lifecycle>			
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	  
+					public function DoCheckToWrite()
+					{
+						// 自动填充联系人字段
+						if($this->IsNew())
+						{
+							$p = new lnkPersonToKubernetes();
+							$p->Set('person_id', UserRights::GetContactId());
+							$p->Set('kubernetes_id', $this->GetKey());
+							$c = $this->Get('person_list');
+							$c->AddObject($p);
+						}
+						
+						$aChanges = $this->ListChanges();
+						if(array_key_exists('status', $aChanges) && $aChanges['status'] == 'stock')
+						{
+							$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Deployment WHERE status='production' AND secret_id=:secret_id");
+							$oSet = new DBObjectSet($oSearch, array(), array("secret_id" => $this->GetKey()));
+							
+							if ($oSet->Count() > 0)
+							{
+								$this->m_aCheckIssues[] = Dict::Format("Class:Secret/Error:NotAllowedForSomeDeploymentUseThisSecret", $this->GetKey());
+							}				
+						}
+						
+						parent::DoCheckToWrite();
+					}
+					]]>
+					</code>
+				</method>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   
+					public function CheckToDelete(&$oDeletionPlan)
+					{
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Deployment WHERE status='production' AND secret_id=:secret_id");
+						$oSet = new DBObjectSet($oSearch, array(), array("secret_id" => $this->GetKey()));
+						
+						if ($oSet->Count() > 0)
+						{
+							// 被在线状态Deployment使用的Seret不允许直接删除
+							$oDeletionPlan->AddToDelete($this, null);
+							$oDeletionPlan->SetDeletionIssues($this, array('有在线状态Deployment使用此Secret对象，不允许直接删除'), true);
+							$oDeletionPlan->ComputeResults();						
+							return false;
+						}				
+						return parent::CheckToDelete($oDeletionPlan);
+					} 
+					]]></code>
+				</method>				
+				<method id="GetAttributeFlags" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+					// 不允许修改组成friendlyname的属性
+					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+					{
+						// 权限控制，不允许查看非自己名下的Secret
+						if(!$this->IsNew() && $sAttCode != 'name') 
+						{
+							$myContactId = UserRights::GetContactId();
+							$person_list = $this->Get('person_list')->ToArrayOfValues();
+							$contacts = array();
+							foreach($person_list as $k => $v) {
+								$contacts[] = $v['lnkPersonToKubernetes.person_id'];
+							}
+							if(!in_array($myContactId, $contacts) && !UserRights::IsAdministrator())
+							{
+								return OPT_ATT_HIDDEN;
+							}
+						}
+						$sArg = array('name');
+						if (!$this->IsNew() && in_array($sAttCode, $sArg))
+						{
+							return OPT_ATT_READONLY;
+						}
+						else
+						{
+							return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+						}
+					}
+					]]>
+					</code>
+				</method>						
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="data">
+							<rank>11</rank>
+						</item>
+						<item id="status">
+							<rank>12</rank>
+						</item>
+						<item id="description">
+							<rank>15</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+						<item id="person_list">
+							<rank>60</rank>
+						</item>
+						<item id="deployment_list">
+							<rank>70</rank>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="status">
+							<rank>12</rank>
+						</item>						
+						<item id="description">
+							<rank>15</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="status">
+							<rank>12</rank>
+						</item>					
+						<item id="description">
+							<rank>15</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>					
+					</items>
+				</list>
+			</presentation>
+		</class>	
+
+		<class id="K8sNamespace" _delta="define">
+			<parent>Typology</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>k8snamespace</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<reconciliation>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="domain" xsi:type="AttributeString">
+					<sql>domain</sql>
+					<default_value/>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+				<field id="note" xsi:type="AttributeString">
+					<sql>note</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="deployment_list" xsi:type="AttributeLinkedSet">
+					<linked_class>Deployment</linked_class>
+					<ext_key_to_me>k8snamespace_id</ext_key_to_me>
+					<edit_mode>add_only</edit_mode>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<duplicates/>					
+				</field>
+				<field id="ingress_list" xsi:type="AttributeLinkedSet">
+					<linked_class>Ingress</linked_class>
+					<ext_key_to_me>k8snamespace_id</ext_key_to_me>
+					<edit_mode>add_only</edit_mode>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<duplicates/>					
+				</field>				
+			</fields>
+			<methods>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="domain">
+							<rank>12</rank>
+						</item>
+						<item id="note">
+							<rank>15</rank>
+						</item>
+						<item id="deployment_list">
+							<rank>40</rank>
+						</item>
+						<item id="ingress_list">
+							<rank>40</rank>
+						</item>						
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="domain">
+							<rank>12</rank>
+						</item>						
+						<item id="note">
+							<rank>15</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="domain">
+							<rank>12</rank>
+						</item>						
+						<item id="note">
+							<rank>15</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+
+		<class id="lnkPersonToKubernetes" _delta="define">
+			<parent>cmdbAbstractObject</parent>
+			<properties>
+				<is_link>1</is_link>
+				<category>bizmodel</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>lnkpersontokubernetes</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field/>
+				<naming>
+					<attributes>
+						<attribute id="person_id"/>
+						<attribute id="kubernetes_id"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon/>
+				<reconciliation>
+					<attributes>
+						<attribute id="person_id"/>
+						<attribute id="kubernetes_id"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="person_id" xsi:type="AttributeExternalKey">
+					<sql>person_id</sql>
+					<target_class>Person</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="person_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>person_id</extkey_attcode>
+					<target_attcode>friendlyname</target_attcode>
+				</field>
+				<field id="kubernetes_id" xsi:type="AttributeExternalKey">
+					<sql>kubernetes_id</sql>
+					<target_class>Kubernetes</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="kubernetes_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>kubernetes_id</extkey_attcode>
+					<target_attcode>friendlyname</target_attcode>
+				</field>
+			</fields>
+			<methods>
+				<method id="ReloadAndDisplayCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+					function ReloadAndDisplayCustom($oPage, $oObj, $sMessageId = '', $sMessage = '', $sSeverity = null)
+					{
+						$oAppContext = new ApplicationContext();
+						if ($sMessageId != '')
+						{
+							cmdbAbstractObject::SetSessionMessage(get_class($oObj), $oObj->GetKey(), $sMessageId, $sMessage, $sSeverity, 0, true /* must not exist */);
+						}
+						
+						$oId = $oObj->getKey();
+						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
+					}
+					]]>
+					</code>
+				</method>			
+				<method id="DisplayModifyForm" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[
+						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
+						{
+							if(!UserRights::IsAdministrator())
+							{
+								$sMesg = Dict::Format("Class:lnkPersonToKubernetes/Error:NotAllowDirectCreation", get_class($this));
+								if($this->IsNew())
+								{
+									$sMesg = $sMesg . '...<a href="'.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=modify&class=Person&id='.UserRights::GetContactId().'">'.Dict::Format("Class:lnkPersonToKubernetes/Msg:EditMySelf").'</a>';
+									$oPage->add("<div class=\"header_message message_info\">$sMesg</div>\n");
+								}else
+								{
+									self::ReloadAndDisplayCustom($oPage, $this, 'lnkpersontokubernetes-no-direct', $sMesg, 'info');
+								}
+							}else
+							{
+								parent::DisplayModifyForm($oPage, $aExtraParams);
+							}
+						}
+					]]>
+					</code>
+				</method>			
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[  public function DoCheckToWrite(){
+			/* 允许研发编辑secret时添加删除联系人, 取消这里的检查
+			$myContactId = UserRights::GetContactId();
+			$thisContactId = $this->Get('person_id');
+			$thisContactName = $this->Get('contact_name');
+			if ($myContactId != $thisContactId && !UserRights::IsAdministrator()){
+				$this->m_aCheckIssues[] = Dict::Format("Class:lnkPersonToKubernetes/Error:CanOnlyAddLinkForYourself", $thisContactName);
+			}
+			*/
+			
+			$aChanges = $this->ListChanges();
+			if($aChanges)
+			{
+				$friendlyname = $this->Get('person_id') . " " . $this->Get('kubernetes_id');
+				if(!$this->IsNew())
+				{
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkPersonToKubernetes/Error:OnlyAddAndDeleteIsAllow", $friendlyname);				
+				}else
+				{
+					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkPersonToKubernetes WHERE friendlyname=:friendlyname");
+					$oSet = new DBObjectSet($oSearch, array(), array("friendlyname" => $friendlyname));
+					
+					if ($oSet->Count() > 0)
+					{
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkPersonToKubernetes/Error:ThisLnkAlreadyExists", $friendlyname);
+					}				
+				}
+			}
+		}]]>
+					</code>
+				</method>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   
+  	public function CheckToDelete(&$oDeletionPlan)
+  	{
+		$myContactId = UserRights::GetContactId();
+		$thisContactId = $this->Get('person_id');
+  		if ($myContactId != $thisContactId && !UserRights::IsAdministrator())
+		{
+			// 普通用户不允许删除非自己名下的lnkPersonToKubernetes
+			$oDeletionPlan->AddToDelete($this, null);
+			$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下的关联'), true);
+			$oDeletionPlan->ComputeResults();
+			return false;
+		}
+		return parent::CheckToDelete($oDeletionPlan);
+  	} 
+			]]></code>
+				</method>
+
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="kubernetes_id">
+							<rank>10</rank>
+						</item>
+						<item id="person_id">
+							<rank>20</rank>
+						</item>						
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="kubernetes_id">
+							<rank>10</rank>
+						</item>
+						<item id="person_id">
+							<rank>20</rank>
+						</item>						
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="kubernetes_id">
+							<rank>10</rank>
+						</item>
+						<item id="person_id">
+							<rank>20</rank>
+						</item>						
+					</items>
+				</list>
+			</presentation>
+		</class>		
+	</classes>
+	<menus>
+		<menu id="Kubernetes" xsi:type="MenuGroup" _delta="define">
+		  <rank>21</rank>
+		</menu>
+		<menu id="Deployment" xsi:type="OQLMenuNode" _delta="define">
+			<rank>10</rank>
+			<parent>Kubernetes</parent>
+			<oql>SELECT Deployment AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
+			<do_search>1</do_search>
+		</menu>
+		<menu id="Ingress" xsi:type="OQLMenuNode" _delta="define">
+			<rank>10</rank>
+			<parent>Kubernetes</parent>
+			<oql>SELECT Ingress AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
+			<do_search>1</do_search>
+		</menu>
+		<menu id="Secret" xsi:type="OQLMenuNode" _delta="define">
+			<rank>10</rank>
+			<parent>Kubernetes</parent>
+			<oql>SELECT Secret AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
+			<do_search>1</do_search>
+		</menu>	
+		<menu id="Typology" xsi:type="DashboardMenuNode">
+			<definition>
+				<cells>
+					<cell id="0">
+						<dashlets>
+							<dashlet id="k8snamespace" xsi:type="DashletBadge" _delta="define">
+								<rank>9</rank>
+								<class>K8sNamespace</class>
+							</dashlet>
+						</dashlets>
+					</cell>
+				</cells>
+			</definition>
+		</menu>		
+	</menus>
+	<user_rights>
+		<groups>
+			<group id="K8S" _delta="define">
+				<classes>
+					<class id="Deployment"/>
+					<class id="Ingress"/>
+					<class id="Secret"/>
+				</classes>
+			</group>
+			<group id="lnkPersonToKubernetes" _delta="define">
+				<classes>
+					<class id="lnkPersonToKubernetes"/>
+				</classes>
+			</group>
+		</groups>
+		<profiles>
+			<profile id="102">
+				<groups>
+					<group id="K8S" _delta="define">
+						<actions>
+							<action id="action:write">allow</action>
+							<action id="action:bulk write">allow</action>
+							<action id="stimulus:ev_new">allow</action>
+							<action id="stimulus:ev_online">allow</action>
+							<action id="stimulus:ev_offline">allow</action>								
+						</actions>
+					</group>
+					<group id="lnkPersonToKubernetes" _delta="define">
+						<actions>
+							<action id="action:write">allow</action>
+							<action id="action:bulk write">allow</action>
+							<action id="action:delete">allow</action>
+						</actions>
+					</group>
+				</groups>
+			</profile>
+		</profiles>
+	</user_rights>
+</itop_design>
