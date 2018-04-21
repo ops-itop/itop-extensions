@@ -257,7 +257,25 @@
 						}
 					}
 				}]]></code>
-				</method>	
+				</method>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   
+					public function CheckToDelete(&$oDeletionPlan)
+					{
+						if($this->Get('status') == "production") {
+							// 不允许删除production状态的对象
+							$oDeletionPlan->AddToDelete($this, null);
+							$oDeletionPlan->SetDeletionIssues($this, array('在线状态的对象不允许直接删除'), true);
+							$oDeletionPlan->ComputeResults();						
+							return false;
+						}
+						return parent::CheckToDelete($oDeletionPlan);
+					} 
+					]]></code>
+				</method>				
 			</methods>
 			<presentation>
 				<details>
@@ -366,7 +384,7 @@
 					<target_class>Secret</target_class>
 					<is_null_allowed>true</is_null_allowed>
 					<filter>SELECT Secret AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id = s.id WHERE l.person_id = :current_contact_id</filter>
-					<on_target_delete>DEL_AUTO</on_target_delete>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
 					<allow_target_creation>false</allow_target_creation>					
 				</field>
 				<field id="secret_name" xsi:type="AttributeExternalField">
@@ -612,7 +630,7 @@
 					<sql>deployment_id</sql>
 					<target_class>Deployment</target_class>
 					<is_null_allowed>false</is_null_allowed>
-					<on_target_delete>DEL_MANUAL</on_target_delete>
+					<on_target_delete>DEL_AUTO</on_target_delete>
 					<allow_target_creation>false</allow_target_creation>					
 				</field>
 				<field id="deployment_name" xsi:type="AttributeExternalField">
@@ -946,11 +964,45 @@
 							$c->AddObject($p);
 						}
 						
+						$aChanges = $this->ListChanges();
+						if(array_key_exists('status', $aChanges) && $aChanges['status'] == 'stock')
+						{
+							$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Deployment WHERE status='production' AND secret_id=:secret_id");
+							$oSet = new DBObjectSet($oSearch, array(), array("secret_id" => $this->GetKey()));
+							
+							if ($oSet->Count() > 0)
+							{
+								$this->m_aCheckIssues[] = Dict::Format("Class:Secret/Error:NotAllowedForSomeDeploymentUseThisSecret", $this->GetKey());
+							}				
+						}
+						
 						parent::DoCheckToWrite();
 					}
 					]]>
 					</code>
-				</method>			
+				</method>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   
+					public function CheckToDelete(&$oDeletionPlan)
+					{
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Deployment WHERE status='production' AND secret_id=:secret_id");
+						$oSet = new DBObjectSet($oSearch, array(), array("secret_id" => $this->GetKey()));
+						
+						if ($oSet->Count() > 0)
+						{
+							// 被在线状态Deployment使用的Seret不允许直接删除
+							$oDeletionPlan->AddToDelete($this, null);
+							$oDeletionPlan->SetDeletionIssues($this, array('有在线状态Deployment使用此Secret对象，不允许直接删除'), true);
+							$oDeletionPlan->ComputeResults();						
+							return false;
+						}				
+						return parent::CheckToDelete($oDeletionPlan);
+					} 
+					]]></code>
+				</method>				
 				<method id="GetAttributeFlags" _delta="define">
 					<static>false</static>
 					<access>public</access>
