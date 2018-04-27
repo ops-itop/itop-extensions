@@ -1442,6 +1442,10 @@
 				<classes>
 					<class id="Deployment"/>
 					<class id="Ingress"/>
+				</classes>
+			</group>
+			<group id="K8SSecret" _delta="define">
+				<classes>
 					<class id="Secret"/>
 				</classes>
 			</group>
@@ -1456,6 +1460,16 @@
 				<groups>
 					<group id="K8S" _delta="define">
 						<actions>
+							<action id="action:write">allow</action>
+							<action id="action:bulk write">allow</action>
+							<action id="stimulus:ev_new">allow</action>
+							<action id="stimulus:ev_online">allow</action>
+							<action id="stimulus:ev_offline">allow</action>								
+						</actions>
+					</group>
+					<group id="K8SSecret" _delta="define">
+						<actions>
+							<action id="action:bulk read">deny</action>
 							<action id="action:write">allow</action>
 							<action id="action:bulk write">allow</action>
 							<action id="stimulus:ev_new">allow</action>
