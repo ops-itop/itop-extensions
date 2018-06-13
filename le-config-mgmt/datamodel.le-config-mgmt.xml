@@ -619,6 +619,26 @@
 					<default_value></default_value>
 					<is_null_allowed>true</is_null_allowed>
 					<display_style>list</display_style>					
+				</field>
+				<field id="scm" xsi:type="AttributeString" _delta="define">
+					<sql>scm</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>					
+				</field>
+				<field id="ops_info" xsi:type="AttributeHTML" _delta="define">
+					<sql>ops_info</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>					
+				</field>
+				<field id="mon_port" xsi:type="AttributeString" _delta="define">
+					<sql>mon_port</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>					
+				</field>
+				<field id="mon_proc" xsi:type="AttributeString" _delta="define">
+					<sql>mon_proc</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>					
 				</field>				
 			</fields>
 			<presentation>
@@ -643,7 +663,33 @@
 						<item id="businessprocess_id" _delta="define">
 							<rank>16</rank>
 						</item>
-
+						<item id="col:col2" _delta="define">
+							<rank>130</rank>
+							<items>
+								<item id="fieldset:ApplicationSolution:opsinfo">
+									<rank>20</rank>
+									<items>
+										<item id="scm">
+											<rank>25</rank>
+										</item>
+										<item id="ops_info">
+											<rank>30</rank>
+										</item>
+									</items>
+								</item>
+								<item id="fieldset:ApplicationSolution:moninfo">
+									<rank>30</rank>
+									<items>
+										<item id="mon_port">
+											<rank>40</rank>
+										</item>
+										<item id="mon_proc">
+											<rank>50</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
 					</items>
 				</details>
 				<search>

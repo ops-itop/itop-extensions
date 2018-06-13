@@ -177,6 +177,12 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:ApplicationSolution/Attribute:business_type/Value:tv' => '电视',
 	'Class:ApplicationSolution/Attribute:business_type/Value:mobile' => '手机',
 	'Class:ApplicationSolution/Attribute:business_type/Value:common' => '公共',
+	'Class:ApplicationSolution/Attribute:scm' => '代码仓库',
+	'Class:ApplicationSolution/Attribute:ops_info' => '运维概要',
+	'Class:ApplicationSolution/Attribute:mon_port' => '端口监控',
+	'Class:ApplicationSolution/Attribute:mon_proc' => '进程监控',
+	'ApplicationSolution:moninfo' => '监控配置',
+	'ApplicationSolution:opsinfo' => '运维信息',
 	'Class:ApplicationSolution/Tab:Monitor' => '监控',
 ));
 
