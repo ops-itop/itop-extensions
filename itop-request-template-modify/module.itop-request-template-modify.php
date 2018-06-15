@@ -51,7 +51,7 @@ SetupWebPage::AddModule(
 		'settings' => array(
 			// Module specific settings go here, if any
 			// 编辑工单时的只读字段，防止用户误修改某些用于action-shell-exec的属性
-			'fields_ro' => array("service_details", "description", "servicesubcategory_id", "service_id", "title", "origin", "caller_id"),
+			'fields_ro' => array("service_details", "description", "servicesubcategory_id", "service_id", "title", "origin", "caller_id", "server_list"),
 			// 用friendlyname做唯一性校验的类
 			'checkuniq_with_friendlyname' => array("RDS", "MySQL")			
 		),
