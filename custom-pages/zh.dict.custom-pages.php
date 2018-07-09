@@ -30,6 +30,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'UI:PersonVerification:Title' => '用户资料验证',
 	'Menu:PersonVerificationMenu' => '用户资料验证',
 	'Menu:PersonVerificationMenu+' => '用户资料验证',
+	
+	'UI:ServerAccount:AreyousureResetpwd' => '确定重置服务器登录密码？',
+	'UI:ServerAccount:ResetPWD' => '重置服务器登录密码',
 
 ));
 

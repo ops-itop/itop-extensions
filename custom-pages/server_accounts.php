@@ -40,16 +40,18 @@ $oP->add_dict_entry('UI:ValueInvalidFormat');
 
 $current_user = UserRights::GetUserId();
 $current_person = UserRights::GetContactId();
-
+$rootUrl = $appRoot.'env-production/custom-pages/server_accounts.php';
+$resetUrl = $appRoot . 'env-production/custom-pages/resetpwd.php';
 $helpLink = MetaModel::GetModuleSetting('custom-pages', 'helplink', "itop-help");
 $ticketLink = $appRoot . 'pages/exec.php/browse/services?exec_module=itop-portal&exec_page=index.php';
+$ak = MetaModel::GetModuleSetting('custom-pages', 'ak', "reset#user#pwd#default*ak");
 
-$oP->add("<h1>" . Dict::Format('UI:ServerAccount:Title') . "</h1><hr/>");
-$oP->add("<p><a href=\"$helpLink\" _target=\"_blank\">" . Dict::Format('UI:ServerAccount:Help') . "</a></p>");
-$oP->add("<p><a href=\"$ticketLink\" _target=\"_blank\">" . Dict::Format('UI:ServerAccount:Create') . "</a></p>");
-
-$rootUrl = $appRoot.'env-production/custom-pages/server_accounts.php';
-$succeedUrl = $appRoot . 'env-production/custom-pages/succeed.php';
+function resetPwd($current_person,$resetUrl,&$oP) {
+	global $ak;
+	$sign = md5($current_person . $ak);
+	$param = "p=$current_person&sign=$sign";
+	$oP->add("<p><a href=\"$resetUrl?$param\" onClick=\"return confirm('". Dict::Format('UI:ServerAccount:AreyousureResetpwd') . "');\">" . Dict::Format('UI:ServerAccount:ResetPWD') . "</a></p>");
+}
 
 function runOql($sExpression, $title, &$oP)
 {
@@ -168,6 +170,11 @@ function runOql($sExpression, $title, &$oP)
 		}
 	}
 }
+
+$oP->add("<h1>" . Dict::Format('UI:ServerAccount:Title') . "</h1><hr/>");
+$oP->add("<p><a href=\"$helpLink\" _target=\"_blank\">" . Dict::Format('UI:ServerAccount:Help') . "</a></p>");
+$oP->add("<p><a href=\"$ticketLink\" _target=\"_blank\">" . Dict::Format('UI:ServerAccount:Create') . "</a></p>");
+resetPwd($current_person,$resetUrl,$oP);
 
 try
 {
