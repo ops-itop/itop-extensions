@@ -128,6 +128,21 @@
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
+				<field id="gpg_pub_key" xsi:type="AttributeText" _delta="define">
+					<sql>gpg_pub_key</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="reset_pwd" xsi:type="AttributeEnum" _delta="define">
+					<values>
+						<value id="yes">yes</value>
+						<value id="no">no</value>
+					</values>
+					<sql>reset_pwd</sql>
+					<default_value>no</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>					
+				</field>
 			</fields>
 			<presentation>
 				<details>
@@ -159,7 +174,19 @@
 								</item>
 							</items>
 						</item>
-
+						<item id="col:col3">
+							<rank>60</rank>
+							<items>
+								<item id="fieldset:Person:gpg">
+									<rank>20</rank>
+									<items>
+										<item id="gpg_pub_key" _delta="define">
+											<rank>30</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
 					</items>
 				</details>
 				<search>
