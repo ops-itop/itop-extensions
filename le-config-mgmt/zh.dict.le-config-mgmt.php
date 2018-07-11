@@ -343,6 +343,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Person/Name' => '%1$s%2$s(%3$s)',
 	'Class:Person/Attribute:qq' => 'QQ号',
 	'Class:Person/Attribute:gpg_pub_key' => 'GnuPG公钥',
+	'Class:Person/Attribute:reset_pwd' => '重置密码',
 	'Person:gpg' => 'GnuPG设置',
 ));
 

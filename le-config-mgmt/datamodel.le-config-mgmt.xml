@@ -183,6 +183,9 @@
 										<item id="gpg_pub_key" _delta="define">
 											<rank>30</rank>
 										</item>
+										<item id="reset_pwd" _delta="define">
+											<rank>40</rank>
+										</item>
 									</items>
 								</item>
 							</items>
@@ -270,6 +273,23 @@
 					]]>
 					</code>
 				</method>
+				<method id="GetAttributeFlags" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+					// 只有管理员能修改reset_pwd状态
+					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+					{
+						if($sAttCode == 'reset_pwd' && !UserRights::IsAdministrator())
+						{
+							return OPT_ATT_HIDDEN;
+						}
+						return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+					}
+					]]>
+					</code>
+				</method>					
 			</methods>
 		</class>
 		<class id="Team">
