@@ -1076,8 +1076,61 @@
 					<default_value>no</default_value>
 					<is_null_allowed>true</is_null_allowed>
 					<display_style>list</display_style>
+				</field>
+				<field id="manage_rootpwd" xsi:type="AttributeEnum" _delta="define">
+					<sql>manage_rootpwd</sql>
+					<values>
+						<value id="yes">yes</value>
+						<value id="no">no</value>
+					</values>
+					<default_value>yes</default_value>
+					<is_null_allowed>true</is_null_allowed>
+					<display_style>list</display_style>
 				</field>				
+				<field id="sendrootpwd" xsi:type="AttributeEnum" _delta="define">
+					<sql>sendrootpwd</sql>
+					<values>
+						<value id="sendrootpwd1">sendrootpwd1</value>
+						<value id="sendrootpwd2">sendrootpwd2</value>
+					</values>
+					<default_value>sendrootpwd1</default_value>
+					<is_null_allowed>true</is_null_allowed>
+					<display_style>list</display_style>					
+				</field>
+				<field id="rootpwd" xsi:type="AttributeText" _delta="define">
+					<sql>rootpwd</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>					
+				</field>
 			</fields>
+			<lifecycle _delta="define">
+				<attribute>sendrootpwd</attribute>
+				<stimuli>
+					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
+					<stimulus id="ev_step1" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_step2" xsi:type="StimulusUserAction"/>
+				</stimuli>
+				<states>
+					<state id="sendrootpwd1">
+						<flags/>
+						<transitions>
+							<transition id="ev_step2">
+								<target>sendrootpwd2</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="sendrootpwd2">
+						<flags/>
+						<transitions>
+							<transition id="ev_step1">
+								<target>sendrootpwd1</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+				</states>
+			</lifecycle>			
 			<presentation>
 				<details>
 					<items>
@@ -1156,6 +1209,9 @@
 										<item id="use_pam">
 											<rank>60</rank>
 										</item>
+										<item id="manage_rootpwd">
+											<rank>70</rank>
+										</item>										
 									</items>
 								</item>
 							</items>
@@ -1236,6 +1292,9 @@
 						<item id="use_pam">
 							<rank>130</rank>
 						</item>
+						<item id="manage_rootpwd">
+							<rank>140</rank>
+						</item>																
 						<item id="contacts" _delta="define">
 							<rank>150</rank>
 						</item>						
@@ -1279,9 +1338,9 @@
 						<item id="contacts" _delta="define">
 							<rank>65</rank>
 						</item>
-						<item id="use_pam" _delta="define">
-							<rank>66</rank>
-						</item>
+						<item id="manage_rootpwd">
+							<rank>68</rank>
+						</item>						
 						<item id="org_id">
 							<rank>70</rank>
 						</item>
