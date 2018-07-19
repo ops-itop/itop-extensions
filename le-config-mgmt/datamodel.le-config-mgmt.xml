@@ -1099,7 +1099,7 @@
 				</field>
 				<field id="rootpwd" xsi:type="AttributeText" _delta="define">
 					<sql>rootpwd</sql>
-					<default_value/>
+					<default_value>empty</default_value>
 					<is_null_allowed>true</is_null_allowed>					
 				</field>
 			</fields>
