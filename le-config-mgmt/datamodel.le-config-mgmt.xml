@@ -1100,7 +1100,14 @@
 				<field id="rootpwd" xsi:type="AttributeText" _delta="define">
 					<sql>rootpwd</sql>
 					<default_value>empty</default_value>
-					<is_null_allowed>true</is_null_allowed>					
+					<is_null_allowed>true</is_null_allowed>
+					<tracking_level>none</tracking_level>
+				</field>
+				<field id="rootpwd_date" xsi:type="AttributeDate" _delta="define">
+					<sql>rootpwd_date</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+					<tracking_level>none</tracking_level>
 				</field>
 			</fields>
 			<lifecycle _delta="define">
@@ -1228,6 +1235,9 @@
 										<item id="purchase_date">
 											<rank>20</rank>
 										</item>
+										<item id="rootpwd_date">
+											<rank>25</rank>
+										</item>
 										<item id="end_of_warranty">
 											<rank>30</rank>
 										</item>
@@ -1288,6 +1298,9 @@
 						</item>
 						<item id="end_of_warranty">
 							<rank>125</rank>
+						</item>
+						<item id="rootpwd_date">
+							<rank>126</rank>
 						</item>
 						<item id="use_pam">
 							<rank>130</rank>

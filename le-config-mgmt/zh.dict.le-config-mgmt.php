@@ -55,6 +55,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Server/Attribute:middleware_list' => '中间件列表',
 	'Class:Server/Attribute:middleware_list+' => '部署在该服务器上的所有中间件',
 	'Class:Server/Attribute:use_pam' => 'PAM验证',
+	'Class:Server/Attribute:rootpwd_date' => '密码更新日期',
 	'Class:Server/Attribute:manage_rootpwd' => '管理root密码',
 	'Class:Server/Stimulus:ev_step1' => '发送root密码',
 	'Class:Server/Stimulus:ev_step2' => '发送root密码',	
