@@ -1105,7 +1105,7 @@
 				</field>
 				<field id="rootpwd_date" xsi:type="AttributeDate" _delta="define">
 					<sql>rootpwd_date</sql>
-					<default_value/>
+					<default_value>1970-01-01</default_value>
 					<is_null_allowed>true</is_null_allowed>
 					<tracking_level>none</tracking_level>
 				</field>
