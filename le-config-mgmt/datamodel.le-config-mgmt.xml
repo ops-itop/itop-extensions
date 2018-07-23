@@ -1110,6 +1110,24 @@
 					<tracking_level>none</tracking_level>
 				</field>
 			</fields>
+			<methods>
+				<method id="ComputeValues" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+					public function ComputeValues()
+					{
+						if($this->Get('rootpwd_date') == '')
+						{
+							$this->Set("rootpwd_date", "1970-01-01");
+						}
+						return parent::ComputeValues();
+					}
+					]]>
+					</code>
+				</method>
+			</methods>
 			<lifecycle _delta="define">
 				<attribute>sendrootpwd</attribute>
 				<stimuli>
