@@ -61,6 +61,8 @@ function getExpression($values)
 	if($nameClass == "Server")
 	{
 		$expression = "SELECT Server AS s JOIN PhysicalIP AS ip ON ip.connectableci_id=s.id WHERE ip.ipaddress IN ('$ins') UNION SELECT Server AS s WHERE s.hostname IN ('$ins') OR s.name IN ('$ins')";
+	} elseif($nameClass == "lnkApplicationSolutionToFunctionalCI") {
+		$expression = "SELECT lnkApplicationSolutionToFunctionalCI AS l JOIN FunctionalCI AS f ON l.functionalci_id=f.id WHERE f.name IN ('$ins') OR f.friendlyname IN ('$ins')";
 	} elseif($nameClass == "RDS") {
 		$expression = "SELECT $nameClass WHERE name IN ('$ins') OR mcluster IN ('$ins')";
 	} elseif(strpos($nameClass, "IPBlock") > -1)
@@ -161,6 +163,7 @@ try
 
 	$aPossibleClasses["IPBlock"] = "IP段";
 	$aPossibleClasses["IPBlock-VIP"] = "IP段-VIP";
+	$aPossibleClasses["lnkApplicationSolutionToFunctionalCI"] = "APP/配置项";
 	$oP->add("<br><form method=\"post\">\n");
 	$oP->add(Dict::S('UI:BatchQuery:SelectClass')."<br>");
 	$oP->add("<br>");
