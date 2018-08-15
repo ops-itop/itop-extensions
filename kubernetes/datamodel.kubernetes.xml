@@ -26,6 +26,8 @@
 				<field id="status" xsi:type="AttributeEnum">
 					<values>
 						<value id="production">production</value>
+						<value id="redeploy">redeploy</value>
+						<value id="redeploy2">redeploy2</value>
 						<value id="stock">stock</value>
 					</values>
 					<sql>status</sql>
@@ -398,7 +400,7 @@
 					<count_min>0</count_min>
 					<count_max>0</count_max>
 					<duplicates/>					
-				</field>								
+				</field>
 			</fields>
 			<lifecycle>
 				<attribute>status</attribute>
@@ -406,6 +408,8 @@
 					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
 					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_redeploy" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_redeploy2" xsi:type="StimulusUserAction"/>
 				</stimuli>
 				<states>
 					<state id="production">
@@ -425,8 +429,40 @@
 								<target>stock</target>
 								<actions/>
 							</transition>
+							<transition id="ev_redeploy">
+								<target>redeploy</target>
+								<actions/>
+							</transition>							
 						</transitions>
 					</state>
+					<state id="redeploy">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags/>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+							<transition id="ev_redeploy2">
+								<target>redeploy2</target>
+								<actions/>
+							</transition>							
+						</transitions>
+					</state>
+					<state id="redeploy2">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags/>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+							<transition id="ev_redeploy">
+								<target>redeploy</target>
+								<actions/>
+							</transition>							
+						</transitions>
+					</state>										
 					<state id="stock">
 						<inherit_flags_from>production</inherit_flags_from>
 						<flags/>
@@ -700,6 +736,7 @@
 					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
 					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_redeploy" xsi:type="StimulusUserAction"/>
 				</stimuli>
 				<states>
 					<state id="production">
@@ -719,8 +756,40 @@
 								<target>stock</target>
 								<actions/>
 							</transition>
+							<transition id="ev_redeploy">
+								<target>redeploy</target>
+								<actions/>
+							</transition>							
 						</transitions>
 					</state>
+					<state id="redeploy">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags/>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+							<transition id="ev_redeploy2">
+								<target>redeploy2</target>
+								<actions/>
+							</transition>							
+						</transitions>
+					</state>
+					<state id="redeploy2">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags/>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+							<transition id="ev_redeploy">
+								<target>redeploy</target>
+								<actions/>
+							</transition>							
+						</transitions>
+					</state>					
 					<state id="stock">
 						<inherit_flags_from>production</inherit_flags_from>
 						<flags/>
@@ -941,8 +1010,40 @@
 								<target>stock</target>
 								<actions/>
 							</transition>
+							<transition id="ev_redeploy">
+								<target>redeploy</target>
+								<actions/>
+							</transition>														
 						</transitions>
 					</state>
+					<state id="redeploy">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags/>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+							<transition id="ev_redeploy2">
+								<target>redeploy2</target>
+								<actions/>
+							</transition>							
+						</transitions>
+					</state>
+					<state id="redeploy2">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags/>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+							<transition id="ev_redeploy">
+								<target>redeploy</target>
+								<actions/>
+							</transition>							
+						</transitions>
+					</state>					
 					<state id="stock">
 						<inherit_flags_from>production</inherit_flags_from>
 						<flags/>

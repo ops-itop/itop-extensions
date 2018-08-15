@@ -13,6 +13,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Kubernetes/Attribute:status' => '状态',
 	'Class:Kubernetes/Attribute:status/Value:stock' => '已下线',
 	'Class:Kubernetes/Attribute:status/Value:production' => '在线',
+	'Class:Kubernetes/Attribute:status/Value:redeploy' => '在线',
+	'Class:Kubernetes/Attribute:status/Value:redeploy2' => '在线',
 	'Class:Kubernetes/Error:CanOnlyUpdateK8SObjYourself' => '%1$s 不在您的名下，您没有编辑权限',
 ));
 
@@ -41,7 +43,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	
 	'Class:Deployment/Stimulus:ev_new' => '新建',
 	'Class:Deployment/Stimulus:ev_online' => '上线',
-	'Class:Deployment/Stimulus:ev_offline' => '下线',		
+	'Class:Deployment/Stimulus:ev_offline' => '下线',
+	'Class:Deployment/Stimulus:ev_redeploy' => '重部',
+	'Class:Deployment/Stimulus:ev_redeploy2' => '重部',
 ));
 
 // Ingress
@@ -64,7 +68,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	
 	'Class:Ingress/Stimulus:ev_new' => '新建',
 	'Class:Ingress/Stimulus:ev_online' => '上线',
-	'Class:Ingress/Stimulus:ev_offline' => '下线',		
+	'Class:Ingress/Stimulus:ev_offline' => '下线',
+	'Class:Ingress/Stimulus:ev_redeploy' => '重部',
+	'Class:Ingress/Stimulus:ev_redeploy2' => '重部',	
 ));
 
 // Secret
@@ -82,7 +88,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	
 	'Class:Secret/Stimulus:ev_new' => '新建',
 	'Class:Secret/Stimulus:ev_online' => '上线',
-	'Class:Secret/Stimulus:ev_offline' => '下线',		
+	'Class:Secret/Stimulus:ev_offline' => '下线',	
+	'Class:Secret/Stimulus:ev_redeploy' => '重部',
+	'Class:Secret/Stimulus:ev_redeploy2' => '重部',	
 ));
 
 //K8sNamespace
