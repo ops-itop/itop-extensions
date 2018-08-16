@@ -87,21 +87,18 @@
 							$this->Set("org_id", UserRights::GetContactObject()->Get('org_id'));
 						}
 						
-						if($this->Get('finalclass') != "Secret")
+						// 根据关联的APP自动填充联系人字段
+						$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
+						$list = $app->Get('contact_list_custom')->ToArrayOfValues();
+						$c = DBObjectSet::FromScratch('lnkPersonToKubernetes');;
+						foreach($list as $k => $v)
 						{
-							// 根据关联的APP自动填充联系人字段
-							$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
-							$list = $app->Get('contact_list_custom')->ToArrayOfValues();
-							$c = DBObjectSet::FromScratch('lnkPersonToKubernetes');;
-							foreach($list as $k => $v)
-							{
-								$p = new lnkPersonToKubernetes();
-								$p->Set('person_id', $v['lnkContactToApplicationSolution.contact_id']);
-								$p->Set('kubernetes_id', $this->GetKey());
-								$c->AddObject($p);
-							}
-							$this->Set('person_list', $c);
+							$p = new lnkPersonToKubernetes();
+							$p->Set('person_id', $v['lnkContactToApplicationSolution.contact_id']);
+							$p->Set('kubernetes_id', $this->GetKey());
+							$c->AddObject($p);
 						}
+						$this->Set('person_list', $c);
 						return parent::ComputeValues();
 					}
 					]]>
@@ -975,7 +972,19 @@
 					<default_value/>
 					<is_null_allowed>false</is_null_allowed>
 					<validation_pattern>^[a-z][a-z1-9_]+$</validation_pattern>
-				</field>			
+				</field>
+				<field id="applicationsolution_id" xsi:type="AttributeExternalKey">
+					<sql>applicationsolution_id</sql>
+					<target_class>ApplicationSolution</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<filter>SELECT ApplicationSolution AS app JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id = app.id WHERE l.contact_id = :current_contact_id</filter>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>					
+				</field>
+				<field id="applicationsolution_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>applicationsolution_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>				
 				<field id="data" xsi:type="AttributeText">
 					<sql>data</sql>
 					<is_null_allowed>false</is_null_allowed>
@@ -1063,17 +1072,7 @@
 					<type>Overload-DBObject</type>
 					<code><![CDATA[	  
 					public function DoCheckToWrite()
-					{
-						// 自动填充联系人字段
-						if($this->IsNew())
-						{
-							$p = new lnkPersonToKubernetes();
-							$p->Set('person_id', UserRights::GetContactId());
-							$p->Set('kubernetes_id', $this->GetKey());
-							$c = $this->Get('person_list');
-							$c->AddObject($p);
-						}
-						
+					{						
 						$aChanges = $this->ListChanges();
 						if(array_key_exists('status', $aChanges) && $aChanges['status'] == 'stock')
 						{
@@ -1155,11 +1154,14 @@
 						<item id="name">
 							<rank>10</rank>
 						</item>
-						<item id="data">
+						<item id="applicationsolution_id">
 							<rank>11</rank>
 						</item>
+						<item id="data">
+							<rank>13</rank>
+						</item>
 						<item id="status">
-							<rank>12</rank>
+							<rank>14</rank>
 						</item>
 						<item id="description">
 							<rank>15</rank>
@@ -1183,8 +1185,11 @@
 						<item id="name">
 							<rank>10</rank>
 						</item>
+						<item id="applicationsolution_id">
+							<rank>11</rank>
+						</item>
 						<item id="status">
-							<rank>12</rank>
+							<rank>13</rank>
 						</item>						
 						<item id="description">
 							<rank>15</rank>
@@ -1199,6 +1204,9 @@
 				</search>
 				<list>
 					<items>
+						<item id="applicationsolution_id">
+							<rank>10</rank>
+						</item>
 						<item id="status">
 							<rank>12</rank>
 						</item>					
