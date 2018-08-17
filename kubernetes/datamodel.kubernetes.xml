@@ -69,6 +69,11 @@
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
+				<field id="change_log" xsi:type="AttributeText">
+					<sql>change_log</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>				
 			</fields>
 			<methods>
 				<method id="ComputeValues" _delta="define">
@@ -420,6 +425,16 @@
 							<attribute id="person_list">
 								<read_only/>
 							</attribute>
+							<attribute id="change_log">
+								<must_prompt/>
+								<must_change/>
+							</attribute>
+							<attribute id="image_tag">
+								<must_prompt/>
+							</attribute>
+							<attribute id="replicas">
+								<must_prompt/>
+							</attribute>
 						</flags>
 						<transitions>
 							<transition id="ev_offline">
@@ -434,7 +449,18 @@
 					</state>
 					<state id="redeploy">
 						<inherit_flags_from>production</inherit_flags_from>
-						<flags/>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+								<must_change/>
+							</attribute>
+							<attribute id="image_tag">
+								<must_prompt/>
+							</attribute>
+							<attribute id="replicas">
+								<must_prompt/>
+							</attribute>							
+						</flags>
 						<transitions>
 							<transition id="ev_offline">
 								<target>stock</target>
@@ -448,7 +474,18 @@
 					</state>
 					<state id="redeploy2">
 						<inherit_flags_from>production</inherit_flags_from>
-						<flags/>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+								<must_change/>
+							</attribute>
+							<attribute id="image_tag">
+								<must_prompt/>
+							</attribute>
+							<attribute id="replicas">
+								<must_prompt/>
+							</attribute>							
+						</flags>
 						<transitions>
 							<transition id="ev_offline">
 								<target>stock</target>
@@ -462,7 +499,12 @@
 					</state>										
 					<state id="stock">
 						<inherit_flags_from>production</inherit_flags_from>
-						<flags/>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+								<must_change/>
+							</attribute>						
+						</flags>
 						<transitions>
 							<transition id="ev_online">
 								<target>production</target>
@@ -616,6 +658,19 @@
 								</item>
 							</items>
 						</item>
+						<item id="col:col3">
+							<rank>300</rank>
+							<items>
+								<item id="fieldset:Deployment:other">
+									<rank>310</rank>
+									<items>
+										<item id="change_log">
+											<rank>320</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>						
 					</items>
 				</details>
 				<search>
@@ -795,6 +850,9 @@
 							</attribute>
 							<attribute id="person_list">
 								<read_only/>
+							</attribute>
+							<attribute id="change_log">
+								<must_prompt/>								
 							</attribute>							
 						</flags>
 						<transitions>
@@ -876,7 +934,7 @@
 					// 不允许修改组成friendlyname的属性
 					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
 					{
-						$sArg = array('domain_id','location');
+						$sArg = array('domain_id','location','applicationsolution_id','k8snamespace_id');
 						if (!$this->IsNew() && in_array($sAttCode, $sArg))
 						{
 							return OPT_ATT_READONLY;
@@ -925,6 +983,19 @@
 						</item>
 						<item id="person_list">
 							<rank>60</rank>
+						</item>
+						<item id="col:col3">
+							<rank>300</rank>
+							<items>
+								<item id="fieldset:Ingress:other">
+									<rank>310</rank>
+									<items>
+										<item id="change_log">
+											<rank>320</rank>
+										</item>
+									</items>
+								</item>
+							</items>
 						</item>						
 					</items>
 				</details>
@@ -1040,6 +1111,7 @@
 					<default_value>KEY:VALUE</default_value>
 					<tracking_level>all</tracking_level>
 				</field>
+				<!--
 				<field id="deployment_list" xsi:type="AttributeLinkedSet">
 					<linked_class>Deployment</linked_class>
 					<ext_key_to_me>secret_id</ext_key_to_me>
@@ -1047,7 +1119,7 @@
 					<count_min>0</count_min>
 					<count_max>0</count_max>
 					<duplicates/>					
-				</field>												
+				</field>-->
 			</fields>
 			<lifecycle>
 				<attribute>status</attribute>
@@ -1064,6 +1136,9 @@
 							<attribute id="org_id">
 								<read_only/>
 							</attribute>
+							<attribute id="change_log">
+								<must_prompt/>
+							</attribute>							
 						</flags>
 						<transitions>
 							<transition id="ev_offline">
@@ -1253,9 +1328,19 @@
 						<item id="person_list">
 							<rank>60</rank>
 						</item>
-						<item id="deployment_list">
-							<rank>70</rank>
-						</item>
+						<item id="col:col3">
+							<rank>300</rank>
+							<items>
+								<item id="fieldset:Secret:other">
+									<rank>310</rank>
+									<items>
+										<item id="change_log">
+											<rank>320</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>						
 					</items>
 				</details>
 				<search>

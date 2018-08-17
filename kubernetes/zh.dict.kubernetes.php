@@ -11,6 +11,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Kubernetes/Attribute:org_id' => '组织',
 	'Class:Kubernetes/Attribute:move2production' => '上线日期',
 	'Class:Kubernetes/Attribute:status' => '状态',
+	'Class:Kubernetes/Attribute:change_log' => '变更日志',
 	'Class:Kubernetes/Attribute:status/Value:stock' => '已下线',
 	'Class:Kubernetes/Attribute:status/Value:production' => '在线',
 	'Class:Kubernetes/Attribute:status/Value:redeploy' => '在线',
@@ -50,6 +51,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	
 	'Deployment:baseinfo' => '基本信息',
 	'Deployment:secret' => 'APP配置项数据（YAML格式）',
+	'Deployment:other' => '其他信息',
 ));
 
 // Ingress
@@ -74,7 +76,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress/Stimulus:ev_online' => '上线',
 	'Class:Ingress/Stimulus:ev_offline' => '下线',
 	'Class:Ingress/Stimulus:ev_redeploy' => '重部',
-	'Class:Ingress/Stimulus:ev_redeploy2' => '重部',	
+	'Class:Ingress/Stimulus:ev_redeploy2' => '重部',
+	
+	'Ingress:other' => '其他信息',
 ));
 
 // Secret
@@ -95,6 +99,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Secret/Stimulus:ev_offline' => '下线',	
 	'Class:Secret/Stimulus:ev_redeploy' => '重部',
 	'Class:Secret/Stimulus:ev_redeploy2' => '重部',	
+	
+	'Secret:other' => '其他信息',
 ));
 
 //K8sNamespace
