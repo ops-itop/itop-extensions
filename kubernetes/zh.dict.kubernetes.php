@@ -52,6 +52,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Deployment:baseinfo' => '基本信息',
 	'Deployment:secret' => 'APP配置项数据（YAML格式）',
 	'Deployment:other' => '其他信息',
+	
+	'Class:Deployment/Error:SecretShouldBeYamlFormat' => '配置项须为YAML格式',
+	'Class:Deployment/Error:ReservedAppNameNotAllowed' => '%1$s 为保留名称，不允许部署',
 ));
 
 // Ingress

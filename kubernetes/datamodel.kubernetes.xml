@@ -427,12 +427,14 @@
 							</attribute>
 							<attribute id="change_log">
 								<must_prompt/>
-								<must_change/>
 							</attribute>
 							<attribute id="image_tag">
 								<must_prompt/>
 							</attribute>
 							<attribute id="replicas">
+								<must_prompt/>
+							</attribute>
+							<attribute id="secret">
 								<must_prompt/>
 							</attribute>
 						</flags>
@@ -452,12 +454,14 @@
 						<flags>
 							<attribute id="change_log">
 								<must_prompt/>
-								<must_change/>
 							</attribute>
 							<attribute id="image_tag">
 								<must_prompt/>
 							</attribute>
 							<attribute id="replicas">
+								<must_prompt/>
+							</attribute>
+							<attribute id="secret">
 								<must_prompt/>
 							</attribute>							
 						</flags>
@@ -477,12 +481,14 @@
 						<flags>
 							<attribute id="change_log">
 								<must_prompt/>
-								<must_change/>
 							</attribute>
 							<attribute id="image_tag">
 								<must_prompt/>
 							</attribute>
 							<attribute id="replicas">
+								<must_prompt/>
+							</attribute>
+							<attribute id="secret">
 								<must_prompt/>
 							</attribute>							
 						</flags>
@@ -535,6 +541,15 @@
 						$reserve = array_merge($default_reserve, $reserve);
 						if(in_array($this->Get('applicationsolution_name'), $reserve)) {
 							$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:ReservedAppNameNotAllowed", $this->Get('applicationsolution_name'));
+						}
+
+						// 检查secret是否是yaml格式
+						$yaml = $this->Get('secret');
+						if($yaml) {
+							$parsed = yaml_parse($yaml);
+							if(!is_array($parsed)) {
+								$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:SecretShouldBeYamlFormat", $this->Get('secret'));
+							}
 						}
 						parent::DoCheckToWrite();
 					}
@@ -883,7 +898,11 @@
 					</state>
 					<state id="redeploy">
 						<inherit_flags_from>production</inherit_flags_from>
-						<flags/>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+							</attribute>
+						</flags>
 						<transitions>
 							<transition id="ev_offline">
 								<target>stock</target>
@@ -897,7 +916,11 @@
 					</state>
 					<state id="redeploy2">
 						<inherit_flags_from>production</inherit_flags_from>
-						<flags/>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+							</attribute>
+						</flags>
 						<transitions>
 							<transition id="ev_offline">
 								<target>stock</target>
@@ -911,7 +934,12 @@
 					</state>					
 					<state id="stock">
 						<inherit_flags_from>production</inherit_flags_from>
-						<flags/>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+								<must_change/>
+							</attribute>
+						</flags>
 						<transitions>
 							<transition id="ev_online">
 								<target>production</target>
@@ -1168,7 +1196,11 @@
 					</state>
 					<state id="redeploy">
 						<inherit_flags_from>production</inherit_flags_from>
-						<flags/>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+							</attribute>
+						</flags>
 						<transitions>
 							<transition id="ev_offline">
 								<target>stock</target>
@@ -1182,7 +1214,11 @@
 					</state>
 					<state id="redeploy2">
 						<inherit_flags_from>production</inherit_flags_from>
-						<flags/>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+							</attribute>
+						</flags>
 						<transitions>
 							<transition id="ev_offline">
 								<target>stock</target>
@@ -1196,7 +1232,12 @@
 					</state>					
 					<state id="stock">
 						<inherit_flags_from>production</inherit_flags_from>
-						<flags/>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+								<must_change/>
+							</attribute>
+						</flags>
 						<transitions>
 							<transition id="ev_online">
 								<target>production</target>
