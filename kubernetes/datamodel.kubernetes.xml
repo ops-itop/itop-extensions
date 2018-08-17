@@ -683,8 +683,12 @@
 					<sql>k8snamespace_id</sql>
 					<target_class>K8sNamespace</target_class>
 					<is_null_allowed>false</is_null_allowed>
+					<filter>SELECT K8sNamespace AS ns JOIN Deployment AS d ON d.k8snamespace_id=ns.id JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id WHERE app.id=:this->applicationsolution_id</filter>
 					<on_target_delete>DEL_MANUAL</on_target_delete>
 					<allow_target_creation>false</allow_target_creation>
+					<dependencies>
+						<attribute id="applicationsolution_id"/>
+					</dependencies>					
 				</field>
 				<field id="k8snamespace_name" xsi:type="AttributeExternalField">
 					<extkey_attcode>k8snamespace_id</extkey_attcode>
@@ -811,7 +815,7 @@
 						$namespace = $this->Get('k8snamespace_name');
 						$fname = $namespace . "." . $app;
 						$deploy = MetaModel::GetObjectByColumn('Deployment', 'friendlyname', $fname, false);
-						$this->Set("deployment_id", $deploy->GetKey());
+						if($deploy) $this->Set("deployment_id", $deploy->GetKey());
 						
 						return parent::ComputeValues();
 					}
@@ -845,13 +849,13 @@
 				<details>
 					<items>
 						<item id="k8snamespace_id">
-							<rank>1</rank>
+							<rank>3</rank>
 						</item>
 						<item id="deployment_id">
 							<rank>10</rank>
 						</item>
 						<item id="applicationsolution_id">
-							<rank>2</rank>
+							<rank>1</rank>
 						</item>
 						<item id="domain_id">
 							<rank>5</rank>
