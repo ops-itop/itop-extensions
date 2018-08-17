@@ -549,6 +549,21 @@
 					// 不允许修改组成friendlyname的属性
 					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
 					{
+						// 权限控制，不允许查看非自己名下Deployment的Secret数据
+						if(!$this->IsNew() && $sAttCode == 'secret') 
+						{
+							$myContactId = UserRights::GetContactId();
+							$person_list = $this->Get('person_list')->ToArrayOfValues();
+							$contacts = array();
+							foreach($person_list as $k => $v) {
+								$contacts[] = $v['lnkPersonToKubernetes.person_id'];
+							}
+							if(!in_array($myContactId, $contacts) && !UserRights::IsAdministrator())
+							{
+								return OPT_ATT_HIDDEN;
+							}
+						}
+					
 						$sArg = array('k8snamespace_id','applicationsolution_id');
 						if (!$this->IsNew() && in_array($sAttCode, $sArg))
 						{
