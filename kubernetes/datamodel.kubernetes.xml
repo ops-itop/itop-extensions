@@ -993,7 +993,7 @@
 					<sql>data</sql>
 					<is_null_allowed>false</is_null_allowed>
 					<default_value>KEY:VALUE</default_value>
-					<tracking_level>none</tracking_level>
+					<tracking_level>all</tracking_level>
 				</field>
 				<field id="deployment_list" xsi:type="AttributeLinkedSet">
 					<linked_class>Deployment</linked_class>
@@ -1150,7 +1150,34 @@
 					}
 					]]>
 					</code>
-				</method>						
+				</method>
+				<method id="DisplayBareHistory" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+					// 不允许修改组成friendlyname的属性
+					public function DisplayBareHistory(WebPage $oPage, $bEditMode = false, $iLimitCount = 0, $iLimitStart = 0)
+					{
+						// 权限控制，不允许查看非自己名下对象的history table
+						if(!$this->IsNew()) 
+						{
+							$myContactId = UserRights::GetContactId();
+							$person_list = $this->Get('person_list')->ToArrayOfValues();
+							$contacts = array();
+							foreach($person_list as $k => $v) {
+								$contacts[] = $v['lnkPersonToKubernetes.person_id'];
+							}
+							if(!in_array($myContactId, $contacts) && !UserRights::IsAdministrator())
+							{
+								return "";
+							}
+						}
+						return parent::DisplayBareHistory($oPage, $bEditMode, $iLimitCount, $iLimitStart);
+					}
+					]]>
+					</code>
+				</method>				
 			</methods>
 			<presentation>
 				<details>
