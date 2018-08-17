@@ -6,7 +6,11 @@
  * Mail: i@annhe.net
  * Created Time: 2018-04-18 13:44:54
  **/
-
+ 
+/** To be Update
+ * 目前Secret类暂时不用，后续如果改成Secret链接多个APP的形式，
+ * 需要在这里添加上Secret联系人自动更新的逻辑
+ */
 class UpdateKubernetesContacts implements iBackgroundProcess
 {
 	public function GetPeriodicity()

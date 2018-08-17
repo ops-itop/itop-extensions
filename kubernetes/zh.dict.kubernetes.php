@@ -28,10 +28,11 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Attribute:applicationsolution_id' => 'APP',
 	'Class:Deployment/Attribute:type' => '类型',
 	'Class:Deployment/Attribute:image' => '镜像',
+	'Class:Deployment/Attribute:image_tag' => '镜像Tag',
 	'Class:Deployment/Attribute:url' => 'URL',
 	'Class:Deployment/Attribute:containerport' => '容器端口',
 	'Class:Deployment/Attribute:replicas' => '副本数',
-	'Class:Deployment/Attribute:secret_id' => 'APP配置项',
+	'Class:Deployment/Attribute:secret' => '配置项',
 	'Class:Deployment/Attribute:person_list' => '联系人',
 	'Class:Deployment/Attribute:person_list+' => '链接到此K8S部署的所有联系人',
 	'Class:Deployment/Attribute:ingress_list' => 'Ingress',
@@ -46,6 +47,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Stimulus:ev_offline' => '下线',
 	'Class:Deployment/Stimulus:ev_redeploy' => '重部',
 	'Class:Deployment/Stimulus:ev_redeploy2' => '重部',
+	
+	'Deployment:baseinfo' => '基本信息',
+	'Deployment:secret' => 'APP配置项数据（YAML格式）',
 ));
 
 // Ingress
