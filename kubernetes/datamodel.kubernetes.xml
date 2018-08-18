@@ -119,7 +119,7 @@
 
 						// 设置kubestatus
 						if($this->IsNew()) {
-							$kubestatus = '<p><strong><span style="color:#ffffff"><span style="background-color:#778899"> UNK </span></span></strong></p>';
+							$kubestatus = '<p><strong><span style="color:#ffffff"><span style="background-color:#778899"> UNKN </span></span></strong></p>';
 							$this->Set('kubestatus', $kubestatus);
 						}
 						return parent::ComputeValues();
