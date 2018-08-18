@@ -33,6 +33,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Attribute:url' => 'URL',
 	'Class:Deployment/Attribute:containerport' => '容器端口',
 	'Class:Deployment/Attribute:replicas' => '副本数',
+	'Class:Deployment/Attribute:cpu_request' => 'CPU请求（核）',
+	'Class:Deployment/Attribute:cpu_limit' => 'CPU限制（核）',
+	'Class:Deployment/Attribute:mem_request' => '内存限制（MB）',
 	'Class:Deployment/Attribute:secret' => '配置项',
 	'Class:Deployment/Attribute:person_list' => '联系人',
 	'Class:Deployment/Attribute:person_list+' => '链接到此K8S部署的所有联系人',
@@ -55,6 +58,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	
 	'Class:Deployment/Error:SecretShouldBeYamlFormat' => '配置项须为YAML格式',
 	'Class:Deployment/Error:ReservedAppNameNotAllowed' => '%1$s 为保留名称，不允许部署',
+	'Class:Deployment/Error:CpuLimitCanNotLessThanCpuRequest' => 'CPU限制值必须大于或等于CPU请求值',
 ));
 
 // Ingress
