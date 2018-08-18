@@ -403,6 +403,25 @@
 					<count_max>0</count_max>
 					<duplicates/>
 				</field>
+				<field id="cpu_request" xsi:type="AttributeDecimal">
+					<sql>cpu_request</sql>
+					<default_value>0.1</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<digits>3</digits>
+					<decimals>2</decimals>
+				</field>
+				<field id="cpu_limit" xsi:type="AttributeDecimal">
+					<sql>cpu_limit</sql>
+					<default_value>0.1</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<digits>3</digits>
+					<decimals>2</decimals>
+				</field>
+				<field id="mem_request" xsi:type="AttributeInteger">
+					<sql>mem_request</sql>
+					<default_value>128</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
 			</fields>
 			<lifecycle>
 				<attribute>status</attribute>
@@ -434,6 +453,15 @@
 							<attribute id="replicas">
 								<must_prompt/>
 							</attribute>
+							<attribute id="cpu_request">
+								<must_prompt/>
+							</attribute>
+							<attribute id="cpu_limit">
+								<must_prompt/>
+							</attribute>
+							<attribute id="mem_request">
+								<must_prompt/>
+							</attribute>
 							<attribute id="secret">
 								<must_prompt/>
 							</attribute>
@@ -461,6 +489,15 @@
 							<attribute id="replicas">
 								<must_prompt/>
 							</attribute>
+							<attribute id="cpu_request">
+								<must_prompt/>
+							</attribute>
+							<attribute id="cpu_limit">
+								<must_prompt/>
+							</attribute>
+							<attribute id="mem_request">
+								<must_prompt/>
+							</attribute>
 							<attribute id="secret">
 								<must_prompt/>
 							</attribute>
@@ -486,6 +523,15 @@
 								<must_prompt/>
 							</attribute>
 							<attribute id="replicas">
+								<must_prompt/>
+							</attribute>
+							<attribute id="cpu_request">
+								<must_prompt/>
+							</attribute>
+							<attribute id="cpu_limit">
+								<must_prompt/>
+							</attribute>
+							<attribute id="mem_request">
 								<must_prompt/>
 							</attribute>
 							<attribute id="secret">
@@ -551,6 +597,12 @@
 								$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:SecretShouldBeYamlFormat", $this->Get('secret'));
 							}
 						}
+
+						// cpu_limit >= cpu_request
+						if($this->Get('cpu_limit') < $this->Get('cpu_request')) {
+							$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:CpuLimitCanNotLessThanCpuRequest", $this->Get('cpu_limit'));
+						}
+
 						parent::DoCheckToWrite();
 					}
 					]]>
@@ -650,6 +702,15 @@
 										<item id="replicas">
 											<rank>50</rank>
 										</item>
+										<item id="cpu_request">
+											<rank>52</rank>
+										</item>
+										<item id="cpu_limit">
+											<rank>54</rank>
+										</item>
+										<item id="mem_request">
+											<rank>56</rank>
+										</item>
 										<item id="containerport">
 											<rank>60</rank>
 										</item>
@@ -723,6 +784,15 @@
 						<item id="replicas">
 							<rank>50</rank>
 						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
+						</item>
 						<item id="containerport">
 							<rank>60</rank>
 						</item>
@@ -756,6 +826,15 @@
 						</item>
 						<item id="replicas">
 							<rank>50</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
 						</item>
 						<item id="containerport">
 							<rank>60</rank>
