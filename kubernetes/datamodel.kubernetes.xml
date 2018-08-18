@@ -35,6 +35,18 @@
 					<is_null_allowed>true</is_null_allowed>
 					<display_style>list</display_style>
 				</field>
+				<field id="kubestatus" xsi:type="AttributeHTML">
+					<sql>kubestatus</sql>
+					<default_value></default_value>
+					<is_null_allowed>true</is_null_allowed>
+					<tracking_level>none</tracking_level>
+				</field>
+				<field id="flag_kubestatus" xsi:type="AttributeInteger">
+					<sql>flag_kubestatus</sql>
+					<default_value>0</default_value>
+					<is_null_allowed>true</is_null_allowed>
+					<tracking_level>none</tracking_level>
+				</field>
 				<field id="description" xsi:type="AttributeText">
 				  <sql>description</sql>
 				  <default_value/>
@@ -104,6 +116,12 @@
 							$c->AddObject($p);
 						}
 						$this->Set('person_list', $c);
+
+						// 设置kubestatus
+						if($this->IsNew()) {
+							$kubestatus = '<p><strong><span style="color:#ffffff"><span style="background-color:#778899"> UNK </span></span></strong></p>';
+							$this->Set('kubestatus', $kubestatus);
+						}
 						return parent::ComputeValues();
 					}
 					]]>
@@ -259,6 +277,12 @@
 						{
 							$this->m_aCheckIssues[] = Dict::Format("Class:".$finalclass."/Error:".$finalclass."MustBeUnique", $sTypology);
 						}
+					}
+
+					// kubernetes action如果执行报错，将kubestatus设置为对应颜色代码，并设置 flag_kubestatus 为大于1的值
+					// 如果 kubestatus 和 flag_kubestatus 都没有被更新，说明是人工操作，那么将 flag_kubestatus 还原为 0
+					if(!array_key_exists("flag_kubestatus", $aChanges)) {
+						$this->Set('flag_kubestatus', 0);
 					}
 				}]]></code>
 				</method>
@@ -436,6 +460,9 @@
 					<state id="production">
 						<flags>
 							<attribute id="org_id">
+								<read_only/>
+							</attribute>
+							<attribute id="kubestatus">
 								<read_only/>
 							</attribute>
 							<attribute id="url">
@@ -693,6 +720,9 @@
 										<item id="status">
 											<rank>30</rank>
 										</item>
+										<item id="kubestatus">
+											<rank>35</rank>
+										</item>
 										<item id="image">
 											<rank>40</rank>
 										</item>
@@ -778,6 +808,9 @@
 						<item id="status">
 							<rank>30</rank>
 						</item>
+						<item id="kubestatus">
+							<rank>35</rank>
+						</item>
 						<item id="image">
 							<rank>40</rank>
 						</item>
@@ -823,6 +856,9 @@
 						</item>
 						<item id="status">
 							<rank>30</rank>
+						</item>
+						<item id="kubestatus">
+							<rank>40</rank>
 						</item>
 						<item id="replicas">
 							<rank>50</rank>
@@ -1094,6 +1130,9 @@
 						<item id="status">
 							<rank>70</rank>
 						</item>
+						<item id="kubestatus">
+							<rank>72</rank>
+						</item>
 						<item id="org_id">
 							<rank>75</rank>
 						</item>
@@ -1144,6 +1183,9 @@
 						<item id="status">
 							<rank>70</rank>
 						</item>
+						<item id="kubestatus">
+							<rank>72</rank>
+						</item>
 						<item id="org_id">
 							<rank>75</rank>
 						</item>
@@ -1174,6 +1216,9 @@
 						</item>
 						<item id="status">
 							<rank>70</rank>
+						</item>
+						<item id="kubestatus">
+							<rank>72</rank>
 						</item>
 						<item id="org_id">
 							<rank>75</rank>
@@ -1451,8 +1496,11 @@
 						<item id="status">
 							<rank>14</rank>
 						</item>
+						<item id="kubestatus">
+							<rank>20</rank>
+						</item>
 						<item id="description">
-							<rank>15</rank>
+							<rank>35</rank>
 						</item>
 						<item id="org_id">
 							<rank>40</rank>
@@ -1489,8 +1537,11 @@
 						<item id="status">
 							<rank>13</rank>
 						</item>
+						<item id="kubestatus">
+							<rank>20</rank>
+						</item>
 						<item id="description">
-							<rank>15</rank>
+							<rank>35</rank>
 						</item>
 						<item id="org_id">
 							<rank>40</rank>
@@ -1507,6 +1558,9 @@
 						</item>
 						<item id="status">
 							<rank>12</rank>
+						</item>
+						<item id="kubestatus">
+							<rank>14</rank>
 						</item>
 						<item id="description">
 							<rank>15</rank>
