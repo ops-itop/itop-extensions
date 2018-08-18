@@ -18,7 +18,7 @@
 					<attributes>
 						<attribute id="org_id"/>
 						<attribute id="organization_name"/>
-						<attribute id="finalclass"/>						
+						<attribute id="finalclass"/>
 					</attributes>
 				</reconciliation>
 			</properties>
@@ -34,7 +34,7 @@
 					<default_value>production</default_value>
 					<is_null_allowed>true</is_null_allowed>
 					<display_style>list</display_style>
-				</field>			
+				</field>
 				<field id="description" xsi:type="AttributeText">
 				  <sql>description</sql>
 				  <default_value/>
@@ -62,8 +62,8 @@
 					<count_min>0</count_min>
 					<count_max>0</count_max>
 					<ext_key_to_remote>person_id</ext_key_to_remote>
-					<duplicates/>					
-				</field>	
+					<duplicates/>
+				</field>
 				<field id="update" xsi:type="AttributeString">
 					<sql>update</sql>
 					<default_value/>
@@ -73,7 +73,7 @@
 					<sql>change_log</sql>
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
-				</field>				
+				</field>
 			</fields>
 			<methods>
 				<method id="ComputeValues" _delta="define">
@@ -91,7 +91,7 @@
 						else {
 							$this->Set("org_id", UserRights::GetContactObject()->Get('org_id'));
 						}
-						
+
 						// 根据关联的APP自动填充联系人字段
 						$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
 						$list = $app->Get('contact_list_custom')->ToArrayOfValues();
@@ -120,9 +120,9 @@
 							if($this->IsNew()) {
 								return true;
 							}
-							
+
 							$myContactId = UserRights::GetContactId();
-							
+
 							// Deployment和Ingress使用lnkPersonToKubernetes的person_list会有延迟（依赖UpdateKubernetesContacts的执行间隔），因此使用ApplicationSolution的contact_list）
 							if($this->Get('finalclass') != "Secret")
 							{
@@ -164,14 +164,14 @@
 						{
 							cmdbAbstractObject::SetSessionMessage(get_class($oObj), $oObj->GetKey(), $sMessageId, $sMessage, $sSeverity, 0, true /* must not exist */);
 						}
-						
+
 						$oId = $oObj->getKey();
 						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
 					}
 					]]>
 					</code>
 				</method>
-				
+
 				<method id="DisplayModifyForm" _delta="define">
 					<static>false</static>
 					<access>public</access>
@@ -192,7 +192,7 @@
 					]]>
 					</code>
 				</method>
-				
+
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
 					<access>protected</access>
@@ -200,27 +200,27 @@
 					<code><![CDATA[	   public function DoCheckToWrite()
 				{
 					parent::DoCheckToWrite();
-					
+
 					// 不允许修改非自己名下的对象
 					if(!self::isAllowedModifyCustom())
 					{
 						$this->m_aCheckIssues[] = Dict::Format("Class:Kubernetes/Error:CanOnlyUpdateK8SObjYourself", $this->Get('friendlyname'));
 					}
-						
+
 					// friendlyname has to be unique! Currently it' not possible to define this in datamodel (xml)
-					
+
 					$finalclass = $this->Get('finalclass');
 					$nameSpec = MetaModel::GetNameSpec(get_class($this));
 					$sFormat = preg_replace('/%[1-9]\$s/', '%s', $nameSpec['0']);
 					$sArg = $nameSpec['1'];
 					$oArg = array();
-					
+
 					/*
 					 * 如果组成friendlyname的所有attribute都没有发生变化，那么不进行检查
 					 * 如果不监听变化就进行检查，将导致对象无法更新
 					 */
 					$aChanges = $this->ListChanges();
-					
+
 					$isChanges = false;
 					foreach($aChanges as $key=>$value)
 					{   
@@ -241,7 +241,7 @@
 							$isChanges = true;
 						}
 					}
-					
+
 					foreach($sArg as $value) {
 						array_push($oArg, $this->Get($value));
 					}
@@ -251,7 +251,7 @@
 					//print_r($this->Get('friendlyname') . "<br>");
 					//print_r($oArg);
 					//print_r("<br>");
-					
+
 					if($isChanges) {
 						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT $finalclass WHERE friendlyname=:friendlyname");
 						$oSet = new DBObjectSet($oSearch, array(), array('friendlyname' => $sTypology));
@@ -273,13 +273,13 @@
 							// 不允许删除production状态的对象
 							$oDeletionPlan->AddToDelete($this, null);
 							$oDeletionPlan->SetDeletionIssues($this, array('在线状态的对象不允许直接删除'), true);
-							$oDeletionPlan->ComputeResults();						
+							$oDeletionPlan->ComputeResults();
 							return false;
 						}
 						return parent::CheckToDelete($oDeletionPlan);
 					} 
 					]]></code>
-				</method>				
+				</method>
 			</methods>
 			<presentation>
 				<details>
@@ -288,24 +288,24 @@
 							<rank>10</rank>
 						</item>
 					</items>
-				</details>	
+				</details>
 				<search>
 					<items>
 						<item id="org_id">
 							<rank>10</rank>
 						</item>
-					</items>					
+					</items>
 				</search>
 				<list>
 					<items>
 						<item id="org_id">
 							<rank>10</rank>
 						</item>
-					</items>				
+					</items>
 				</list>
 			</presentation>
 		</class>
-		
+
 		<class id="Deployment" _delta="define">
 			<parent>Kubernetes</parent>
 			<properties>
@@ -317,7 +317,7 @@
 				<db_final_class_field>finalclass</db_final_class_field>
 				<naming>
 					<attributes>
-						<attribute id="k8snamespace_name"/>					
+						<attribute id="k8snamespace_name"/>
 						<attribute id="applicationsolution_name"/>
 					</attributes>
 				</naming>
@@ -325,7 +325,7 @@
 				<icon>images/deployment.png</icon>
 				<reconciliation>
 					<attributes>
-						<attribute id="k8snamespace_id"/>					
+						<attribute id="k8snamespace_id"/>
 						<attribute id="applicationsolution_id"/>
 					</attributes>
 				</reconciliation>
@@ -373,7 +373,7 @@
 					<sql>image_tag</sql>
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
-				</field>				
+				</field>
 				<field id="url" xsi:type="AttributeURL">
 					<sql>url</sql>
 					<default_value/>
@@ -394,14 +394,14 @@
 					<is_null_allowed>true</is_null_allowed>
 					<default_value/>
 					<tracking_level>all</tracking_level>
-				</field>				
+				</field>
 				<field id="ingress_list" xsi:type="AttributeLinkedSet">
 					<linked_class>Ingress</linked_class>
 					<ext_key_to_me>deployment_id</ext_key_to_me>
 					<edit_mode>add_only</edit_mode>
 					<count_min>0</count_min>
 					<count_max>0</count_max>
-					<duplicates/>					
+					<duplicates/>
 				</field>
 			</fields>
 			<lifecycle>
@@ -446,7 +446,7 @@
 							<transition id="ev_redeploy">
 								<target>redeploy</target>
 								<actions/>
-							</transition>							
+							</transition>
 						</transitions>
 					</state>
 					<state id="redeploy">
@@ -463,7 +463,7 @@
 							</attribute>
 							<attribute id="secret">
 								<must_prompt/>
-							</attribute>							
+							</attribute>
 						</flags>
 						<transitions>
 							<transition id="ev_offline">
@@ -473,7 +473,7 @@
 							<transition id="ev_redeploy2">
 								<target>redeploy2</target>
 								<actions/>
-							</transition>							
+							</transition>
 						</transitions>
 					</state>
 					<state id="redeploy2">
@@ -490,7 +490,7 @@
 							</attribute>
 							<attribute id="secret">
 								<must_prompt/>
-							</attribute>							
+							</attribute>
 						</flags>
 						<transitions>
 							<transition id="ev_offline">
@@ -500,16 +500,16 @@
 							<transition id="ev_redeploy">
 								<target>redeploy</target>
 								<actions/>
-							</transition>							
+							</transition>
 						</transitions>
-					</state>										
+					</state>
 					<state id="stock">
 						<inherit_flags_from>production</inherit_flags_from>
 						<flags>
 							<attribute id="change_log">
 								<must_prompt/>
 								<must_change/>
-							</attribute>						
+							</attribute>
 						</flags>
 						<transitions>
 							<transition id="ev_online">
@@ -519,7 +519,7 @@
 						</transitions>
 					</state>
 				</states>
-			</lifecycle>						
+			</lifecycle>
 			<methods>
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
@@ -534,7 +534,7 @@
 						$host = str_replace("_", "-", $this->Get('applicationsolution_name'));
 						$url = 'http://' . $host . "." . $domain;
 						$this->Set('url', $url);
-						
+
 						// 保留名称
 						$default_reserve = array($this->Get('k8snamespace_name') . "-router", 'default-http-backend');
 						$reserve = MetaModel::GetModuleSetting('kubernetes', 'reserve', $default_reserve);
@@ -578,7 +578,7 @@
 								return OPT_ATT_HIDDEN;
 							}
 						}
-					
+
 						$sArg = array('k8snamespace_id','applicationsolution_id');
 						if (!$this->IsNew() && in_array($sAttCode, $sArg))
 						{
@@ -700,7 +700,7 @@
 									</items>
 								</item>
 							</items>
-						</item>						
+						</item>
 					</items>
 				</details>
 				<search>
@@ -770,7 +770,7 @@
 				</list>
 			</presentation>
 		</class>
-		
+
 		<class id="Ingress" _delta="define">
 			<parent>Kubernetes</parent>
 			<properties>
@@ -802,7 +802,7 @@
 					<target_class>Deployment</target_class>
 					<is_null_allowed>false</is_null_allowed>
 					<on_target_delete>DEL_AUTO</on_target_delete>
-					<allow_target_creation>false</allow_target_creation>					
+					<allow_target_creation>false</allow_target_creation>
 				</field>
 				<field id="deployment_name" xsi:type="AttributeExternalField">
 					<extkey_attcode>deployment_id</extkey_attcode>
@@ -817,7 +817,7 @@
 					<allow_target_creation>false</allow_target_creation>
 					<dependencies>
 						<attribute id="applicationsolution_id"/>
-					</dependencies>					
+					</dependencies>
 				</field>
 				<field id="k8snamespace_name" xsi:type="AttributeExternalField">
 					<extkey_attcode>k8snamespace_id</extkey_attcode>
@@ -882,8 +882,8 @@
 								<read_only/>
 							</attribute>
 							<attribute id="change_log">
-								<must_prompt/>								
-							</attribute>							
+								<must_prompt/>
+							</attribute>
 						</flags>
 						<transitions>
 							<transition id="ev_offline">
@@ -893,7 +893,7 @@
 							<transition id="ev_redeploy">
 								<target>redeploy</target>
 								<actions/>
-							</transition>							
+							</transition>
 						</transitions>
 					</state>
 					<state id="redeploy">
@@ -911,7 +911,7 @@
 							<transition id="ev_redeploy2">
 								<target>redeploy2</target>
 								<actions/>
-							</transition>							
+							</transition>
 						</transitions>
 					</state>
 					<state id="redeploy2">
@@ -929,9 +929,9 @@
 							<transition id="ev_redeploy">
 								<target>redeploy</target>
 								<actions/>
-							</transition>							
+							</transition>
 						</transitions>
-					</state>					
+					</state>
 					<state id="stock">
 						<inherit_flags_from>production</inherit_flags_from>
 						<flags>
@@ -948,7 +948,7 @@
 						</transitions>
 					</state>
 				</states>
-			</lifecycle>			
+			</lifecycle>
 			<methods>
 				<method id="ComputeValues" _delta="define">
 					<static>false</static>
@@ -962,13 +962,13 @@
 						$fname = $namespace . "." . $app;
 						$deploy = MetaModel::GetObjectByColumn('Deployment', 'friendlyname', $fname, false);
 						if($deploy) $this->Set("deployment_id", $deploy->GetKey());
-						
+
 						return parent::ComputeValues();
 					}
 					]]>
 					</code>
 				</method>
-			
+
 				<method id="GetAttributeFlags" _delta="define">
 					<static>false</static>
 					<access>public</access>
@@ -989,7 +989,7 @@
 					}
 					]]>
 					</code>
-				</method>						
+				</method>
 			</methods>
 			<presentation>
 				<details>
@@ -1039,7 +1039,7 @@
 									</items>
 								</item>
 							</items>
-						</item>						
+						</item>
 					</items>
 				</details>
 				<search>
@@ -1049,7 +1049,7 @@
 						</item>
 						<item id="deployment_id">
 							<rank>16</rank>
-						</item>						
+						</item>
 						<item id="applicationsolution_id">
 							<rank>15</rank>
 						</item>
@@ -1080,7 +1080,7 @@
 						</item>
 						<item id="deployment_id">
 							<rank>16</rank>
-						</item>						
+						</item>
 						<item id="applicationsolution_id">
 							<rank>15</rank>
 						</item>
@@ -1142,12 +1142,12 @@
 					<is_null_allowed>false</is_null_allowed>
 					<filter>SELECT ApplicationSolution AS app JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id = app.id WHERE l.contact_id = :current_contact_id</filter>
 					<on_target_delete>DEL_MANUAL</on_target_delete>
-					<allow_target_creation>false</allow_target_creation>					
+					<allow_target_creation>false</allow_target_creation>
 				</field>
 				<field id="applicationsolution_name" xsi:type="AttributeExternalField">
 					<extkey_attcode>applicationsolution_id</extkey_attcode>
 					<target_attcode>name</target_attcode>
-				</field>				
+				</field>
 				<field id="data" xsi:type="AttributeText">
 					<sql>data</sql>
 					<is_null_allowed>false</is_null_allowed>
@@ -1161,7 +1161,7 @@
 					<edit_mode>add_only</edit_mode>
 					<count_min>0</count_min>
 					<count_max>0</count_max>
-					<duplicates/>					
+					<duplicates/>
 				</field>-->
 			</fields>
 			<lifecycle>
@@ -1181,7 +1181,7 @@
 							</attribute>
 							<attribute id="change_log">
 								<must_prompt/>
-							</attribute>							
+							</attribute>
 						</flags>
 						<transitions>
 							<transition id="ev_offline">
@@ -1191,7 +1191,7 @@
 							<transition id="ev_redeploy">
 								<target>redeploy</target>
 								<actions/>
-							</transition>														
+							</transition>
 						</transitions>
 					</state>
 					<state id="redeploy">
@@ -1209,7 +1209,7 @@
 							<transition id="ev_redeploy2">
 								<target>redeploy2</target>
 								<actions/>
-							</transition>							
+							</transition>
 						</transitions>
 					</state>
 					<state id="redeploy2">
@@ -1227,9 +1227,9 @@
 							<transition id="ev_redeploy">
 								<target>redeploy</target>
 								<actions/>
-							</transition>							
+							</transition>
 						</transitions>
-					</state>					
+					</state>
 					<state id="stock">
 						<inherit_flags_from>production</inherit_flags_from>
 						<flags>
@@ -1246,7 +1246,7 @@
 						</transitions>
 					</state>
 				</states>
-			</lifecycle>			
+			</lifecycle>
 			<methods>
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
@@ -1254,19 +1254,19 @@
 					<type>Overload-DBObject</type>
 					<code><![CDATA[	  
 					public function DoCheckToWrite()
-					{						
+					{
 						$aChanges = $this->ListChanges();
 						if(array_key_exists('status', $aChanges) && $aChanges['status'] == 'stock')
 						{
 							$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Deployment WHERE status='production' AND secret_id=:secret_id");
 							$oSet = new DBObjectSet($oSearch, array(), array("secret_id" => $this->GetKey()));
-							
+
 							if ($oSet->Count() > 0)
 							{
 								$this->m_aCheckIssues[] = Dict::Format("Class:Secret/Error:NotAllowedForSomeDeploymentUseThisSecret", $this->GetKey());
-							}				
+							}
 						}
-						
+
 						parent::DoCheckToWrite();
 					}
 					]]>
@@ -1281,19 +1281,19 @@
 					{
 						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Deployment WHERE status='production' AND secret_id=:secret_id");
 						$oSet = new DBObjectSet($oSearch, array(), array("secret_id" => $this->GetKey()));
-						
+
 						if ($oSet->Count() > 0)
 						{
 							// 被在线状态Deployment使用的Seret不允许直接删除
 							$oDeletionPlan->AddToDelete($this, null);
 							$oDeletionPlan->SetDeletionIssues($this, array('有在线状态Deployment使用此Secret对象，不允许直接删除'), true);
-							$oDeletionPlan->ComputeResults();						
+							$oDeletionPlan->ComputeResults();
 							return false;
-						}				
+						}
 						return parent::CheckToDelete($oDeletionPlan);
 					} 
 					]]></code>
-				</method>				
+				</method>
 				<method id="GetAttributeFlags" _delta="define">
 					<static>false</static>
 					<access>public</access>
@@ -1355,7 +1355,7 @@
 					}
 					]]>
 					</code>
-				</method>				
+				</method>
 			</methods>
 			<presentation>
 				<details>
@@ -1396,7 +1396,7 @@
 									</items>
 								</item>
 							</items>
-						</item>						
+						</item>
 					</items>
 				</details>
 				<search>
@@ -1409,7 +1409,7 @@
 						</item>
 						<item id="status">
 							<rank>13</rank>
-						</item>						
+						</item>
 						<item id="description">
 							<rank>15</rank>
 						</item>
@@ -1428,7 +1428,7 @@
 						</item>
 						<item id="status">
 							<rank>12</rank>
-						</item>					
+						</item>
 						<item id="description">
 							<rank>15</rank>
 						</item>
@@ -1437,11 +1437,11 @@
 						</item>
 						<item id="move2production">
 							<rank>50</rank>
-						</item>					
+						</item>
 					</items>
 				</list>
 			</presentation>
-		</class>	
+		</class>
 
 		<class id="K8sNamespace" _delta="define">
 			<parent>Typology</parent>
@@ -1481,7 +1481,7 @@
 					<edit_mode>add_only</edit_mode>
 					<count_min>0</count_min>
 					<count_max>0</count_max>
-					<duplicates/>					
+					<duplicates/>
 				</field>
 				<field id="ingress_list" xsi:type="AttributeLinkedSet">
 					<linked_class>Ingress</linked_class>
@@ -1489,8 +1489,8 @@
 					<edit_mode>add_only</edit_mode>
 					<count_min>0</count_min>
 					<count_max>0</count_max>
-					<duplicates/>					
-				</field>				
+					<duplicates/>
+				</field>
 			</fields>
 			<methods>
 			</methods>
@@ -1511,7 +1511,7 @@
 						</item>
 						<item id="ingress_list">
 							<rank>40</rank>
-						</item>						
+						</item>
 					</items>
 				</details>
 				<search>
@@ -1521,7 +1521,7 @@
 						</item>
 						<item id="domain">
 							<rank>12</rank>
-						</item>						
+						</item>
 						<item id="note">
 							<rank>15</rank>
 						</item>
@@ -1534,7 +1534,7 @@
 						</item>
 						<item id="domain">
 							<rank>12</rank>
-						</item>						
+						</item>
 						<item id="note">
 							<rank>15</rank>
 						</item>
@@ -1603,13 +1603,13 @@
 						{
 							cmdbAbstractObject::SetSessionMessage(get_class($oObj), $oObj->GetKey(), $sMessageId, $sMessage, $sSeverity, 0, true /* must not exist */);
 						}
-						
+
 						$oId = $oObj->getKey();
 						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
 					}
 					]]>
 					</code>
-				</method>			
+				</method>
 				<method id="DisplayModifyForm" _delta="define">
 					<static>false</static>
 					<access>public</access>
@@ -1635,7 +1635,7 @@
 						}
 					]]>
 					</code>
-				</method>			
+				</method>
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
 					<access>protected</access>
@@ -1649,23 +1649,23 @@
 				$this->m_aCheckIssues[] = Dict::Format("Class:lnkPersonToKubernetes/Error:CanOnlyAddLinkForYourself", $thisContactName);
 			}
 			*/
-			
+
 			$aChanges = $this->ListChanges();
 			if($aChanges)
 			{
 				$friendlyname = $this->Get('person_id') . " " . $this->Get('kubernetes_id');
 				if(!$this->IsNew())
 				{
-					$this->m_aCheckIssues[] = Dict::Format("Class:lnkPersonToKubernetes/Error:OnlyAddAndDeleteIsAllow", $friendlyname);				
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkPersonToKubernetes/Error:OnlyAddAndDeleteIsAllow", $friendlyname);
 				}else
 				{
 					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkPersonToKubernetes WHERE friendlyname=:friendlyname");
 					$oSet = new DBObjectSet($oSearch, array(), array("friendlyname" => $friendlyname));
-					
+
 					if ($oSet->Count() > 0)
 					{
 						$this->m_aCheckIssues[] = Dict::Format("Class:lnkPersonToKubernetes/Error:ThisLnkAlreadyExists", $friendlyname);
-					}				
+					}
 				}
 			}
 		}]]>
@@ -1702,7 +1702,7 @@
 						</item>
 						<item id="person_id">
 							<rank>20</rank>
-						</item>						
+						</item>
 					</items>
 				</details>
 				<search>
@@ -1712,7 +1712,7 @@
 						</item>
 						<item id="person_id">
 							<rank>20</rank>
-						</item>						
+						</item>
 					</items>
 				</search>
 				<list>
@@ -1722,11 +1722,11 @@
 						</item>
 						<item id="person_id">
 							<rank>20</rank>
-						</item>						
+						</item>
 					</items>
 				</list>
 			</presentation>
-		</class>		
+		</class>
 	</classes>
 	<menus>
 		<menu id="Kubernetes" xsi:type="MenuGroup" _delta="define">
@@ -1749,7 +1749,7 @@
 			<parent>Kubernetes</parent>
 			<oql>SELECT Secret AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
 			<do_search>1</do_search>
-		</menu>	
+		</menu>
 		<menu id="Typology" xsi:type="DashboardMenuNode">
 			<definition>
 				<cells>
@@ -1763,7 +1763,7 @@
 					</cell>
 				</cells>
 			</definition>
-		</menu>		
+		</menu>
 	</menus>
 	<user_rights>
 		<groups>
@@ -1793,7 +1793,7 @@
 							<action id="action:bulk write">allow</action>
 							<action id="stimulus:ev_new">allow</action>
 							<action id="stimulus:ev_online">allow</action>
-							<action id="stimulus:ev_offline">allow</action>								
+							<action id="stimulus:ev_offline">allow</action>
 						</actions>
 					</group>
 					<group id="K8SSecret" _delta="define">
@@ -1803,7 +1803,7 @@
 							<action id="action:bulk write">allow</action>
 							<action id="stimulus:ev_new">allow</action>
 							<action id="stimulus:ev_online">allow</action>
-							<action id="stimulus:ev_offline">allow</action>								
+							<action id="stimulus:ev_offline">allow</action>
 						</actions>
 					</group>
 					<group id="lnkPersonToKubernetes" _delta="define">
