@@ -991,6 +991,9 @@
 							<attribute id="org_id">
 								<read_only/>
 							</attribute>
+							<attribute id="kubestatus">
+								<read_only/>
+							</attribute>
 							<attribute id="deployment_id">
 								<read_only/>
 							</attribute>
@@ -1302,6 +1305,9 @@
 					<state id="production">
 						<flags>
 							<attribute id="org_id">
+								<read_only/>
+							</attribute>
+							<attribute id="kubestatus">
 								<read_only/>
 							</attribute>
 							<attribute id="change_log">
