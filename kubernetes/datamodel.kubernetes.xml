@@ -99,23 +99,23 @@
 						{
 							$app = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $this->Get('applicationsolution_name'), false);
 							$this->Set("org_id", $app->Get("org_id"));
+
+							// 根据关联的APP自动填充联系人字段
+							$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
+							$list = $app->Get('contact_list_custom')->ToArrayOfValues();
+							$c = DBObjectSet::FromScratch('lnkPersonToKubernetes');;
+							foreach($list as $k => $v)
+							{
+								$p = new lnkPersonToKubernetes();
+								$p->Set('person_id', $v['lnkContactToApplicationSolution.contact_id']);
+								$p->Set('kubernetes_id', $this->GetKey());
+								$c->AddObject($p);
+							}
+							$this->Set('person_list', $c);
 						} 
 						else {
 							$this->Set("org_id", UserRights::GetContactObject()->Get('org_id'));
 						}
-
-						// 根据关联的APP自动填充联系人字段
-						$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
-						$list = $app->Get('contact_list_custom')->ToArrayOfValues();
-						$c = DBObjectSet::FromScratch('lnkPersonToKubernetes');;
-						foreach($list as $k => $v)
-						{
-							$p = new lnkPersonToKubernetes();
-							$p->Set('person_id', $v['lnkContactToApplicationSolution.contact_id']);
-							$p->Set('kubernetes_id', $this->GetKey());
-							$c->AddObject($p);
-						}
-						$this->Set('person_list', $c);
 
 						// 设置kubestatus
 						if($this->IsNew()) {
