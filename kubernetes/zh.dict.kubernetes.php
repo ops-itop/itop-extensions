@@ -60,6 +60,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Error:SecretShouldBeYamlFormat' => '配置项须为YAML格式',
 	'Class:Deployment/Error:ReservedAppNameNotAllowed' => '%1$s 为保留名称，不允许部署',
 	'Class:Deployment/Error:CpuLimitCanNotLessThanCpuRequest' => 'CPU限制值必须大于或等于CPU请求值',
+
+	'Class:Deployment/Tab:Debug' => '调试',
 ));
 
 // Ingress

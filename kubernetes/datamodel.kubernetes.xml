@@ -699,6 +699,30 @@
 					]]>
 					</code>
 				</method>
+				<method id="DisplayBareRelations" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[	  public function DisplayBareRelations(WebPage $oPage, $bEditMode = false)
+					{
+						parent::DisplayBareRelations($oPage, $bEditMode);
+
+						$kubedash = trim(MetaModel::GetModuleSetting('kubernetes', 'kubernetes_dashboard_url', 'http://localhost/'));
+						$iframeHeight = trim(MetaModel::GetModuleSetting('kubernetes', 'iframe_height', '600px'));
+						$app = $this->Get('applicationsolution_name');
+						$ns = $this->Get('k8snamespace_name');
+						$tabUrl = $kubedash . "/#!/deployment/" . $ns . "/" . $app . "?namespace=" . $ns;
+						$iframe_start = '<iframe style="border:0;padding:0;margin:0;width:100%;height:' . $iframeHeight . ';overflow:auto" ';
+						$iframe_end = '</iframe></div>';
+						$addStr = $iframe_start . 'src=' . '"' . $tabUrl . '"' . '>' . $iframe_end;
+						if (!$bEditMode)
+						{
+							$oPage->SetCurrentTab(Dict::S('Class:Deployment/Tab:Debug'));
+							$oPage->add('<div id="kubernetes_dashboard_url" style="width:100%;height:' . $iframeHeight . ';">');
+							$oPage->add($addStr);
+						}
+					}]]></code>
+				</method>
 			</methods>
 			<presentation>
 				<details>
