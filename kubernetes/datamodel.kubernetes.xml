@@ -41,9 +41,9 @@
 					<is_null_allowed>true</is_null_allowed>
 					<tracking_level>none</tracking_level>
 				</field>
-				<field id="flag_kubestatus" xsi:type="AttributeInteger">
+				<field id="flag_kubestatus" xsi:type="AttributeString">
 					<sql>flag_kubestatus</sql>
-					<default_value>0</default_value>
+					<default_value></default_value>
 					<is_null_allowed>true</is_null_allowed>
 					<tracking_level>none</tracking_level>
 				</field>
