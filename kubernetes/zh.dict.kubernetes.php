@@ -42,7 +42,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Attribute:person_list+' => '链接到此K8S部署的所有联系人',
 	'Class:Deployment/Attribute:ingress_list' => 'Ingress',
 	'Class:Deployment/Attribute:ingress_list+' => '链接到此K8S部署的所有Ingress',
-	
+	'Class:Deployment/Attribute:affinity_list' => '约束条件',
+	'Class:Deployment/Attribute:affinity_list+' => '链接到此K8S部署的所有约束条件',
 	
 	'Menu:Deployment' => 'K8S部署',
 	'Menu:Deployment+' => '所有K8S部署',
@@ -62,6 +63,27 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Error:CpuLimitCanNotLessThanCpuRequest' => 'CPU限制值必须大于或等于CPU请求值',
 
 	'Class:Deployment/Tab:Debug' => '调试',
+));
+
+// K8sAffinity
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:K8sAffinity/Attribute:affinitytype' => '约束类型',
+	'Class:K8sAffinity/Attribute:labeltype' => '标签类型',
+	'Class:K8sAffinity/Attribute:requiretype' => '约束强度',
+	'Class:K8sAffinity/Attribute:topologykey' => 'topologyKey',
+	'Class:K8sAffinity/Attribute:operator' => '操作符',
+	'Class:K8sAffinity/Attribute:expressions' => '表达式',
+	'Class:K8sAffinity/Attribute:note' => '注释',
+	'Class:K8sAffinity/Attribute:deployment_list' => '部署',
+	'Class:K8sAffinity/Error:ExpressionsShouldBeYamlFormat' => '表达式必须是YAML格式',
+));
+
+// lnkK8sAffinityToDeployment
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:lnkK8sAffinityToDeployment/Attribute:k8saffinity_id' => 'K8sAffinity',
+	'Class:lnkK8sAffinityToDeployment/Attribute:k8saffinity_name' => 'K8sAffinity名称',
+	'Class:lnkK8sAffinityToDeployment/Attribute:deployment_id' => '部署',
+	'Class:lnkK8sAffinityToDeployment/Attribute:deployment_name' => '部署名称',
 ));
 
 // Ingress
