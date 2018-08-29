@@ -2152,6 +2152,26 @@
 					<extkey_attcode>k8saffinity_id</extkey_attcode>
 					<target_attcode>name</target_attcode>
 				</field>
+				<field id="k8saffinity_affinitytype" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8saffinity_id</extkey_attcode>
+					<target_attcode>affinitytype</target_attcode>
+				</field>
+				<field id="k8saffinity_labeltype" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8saffinity_id</extkey_attcode>
+					<target_attcode>labeltype</target_attcode>
+				</field>
+				<field id="k8saffinity_requiretype" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8saffinity_id</extkey_attcode>
+					<target_attcode>requiretype</target_attcode>
+				</field>
+				<field id="k8saffinity_topologykey" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8saffinity_id</extkey_attcode>
+					<target_attcode>topologykey</target_attcode>
+				</field>
+				<field id="k8saffinity_expressions" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8saffinity_id</extkey_attcode>
+					<target_attcode>expressions</target_attcode>
+				</field>
 				<field id="deployment_id" xsi:type="AttributeExternalKey">
 					<sql>deployment_id</sql>
 					<target_class>Deployment</target_class>
@@ -2248,6 +2268,21 @@
 						<item id="k8saffinity_id">
 							<rank>20</rank>
 						</item>
+						<item id="k8saffinity_affinitytype">
+							<rank>25</rank>
+						</item>
+						<item id="k8saffinity_labeltype">
+							<rank>30</rank>
+						</item>
+						<item id="k8saffinity_requiretype">
+							<rank>35</rank>
+						</item>
+						<item id="k8saffinity_topologykey">
+							<rank>40</rank>
+						</item>
+						<item id="k8saffinity_expressions">
+							<rank>45</rank>
+						</item>
 					</items>
 				</details>
 				<search>
@@ -2258,6 +2293,18 @@
 						<item id="k8saffinity_id">
 							<rank>20</rank>
 						</item>
+						<item id="k8saffinity_affinitytype">
+							<rank>25</rank>
+						</item>
+						<item id="k8saffinity_labeltype">
+							<rank>30</rank>
+						</item>
+						<item id="k8saffinity_requiretype">
+							<rank>35</rank>
+						</item>
+						<item id="k8saffinity_topologykey">
+							<rank>40</rank>
+						</item>
 					</items>
 				</search>
 				<list>
@@ -2267,6 +2314,21 @@
 						</item>
 						<item id="k8saffinity_id">
 							<rank>20</rank>
+						</item>
+						<item id="k8saffinity_affinitytype">
+							<rank>25</rank>
+						</item>
+						<item id="k8saffinity_labeltype">
+							<rank>30</rank>
+						</item>
+						<item id="k8saffinity_requiretype">
+							<rank>35</rank>
+						</item>
+						<item id="k8saffinity_topologykey">
+							<rank>40</rank>
+						</item>
+						<item id="k8saffinity_expressions">
+							<rank>45</rank>
 						</item>
 					</items>
 				</list>
