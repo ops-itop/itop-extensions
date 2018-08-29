@@ -614,7 +614,7 @@
 						$k8snamespace = MetaModel::GetObject('K8sNamespace',$this->Get('k8snamespace_id'));
 						$domain = $k8snamespace->Get('domain');
 						$host = str_replace("_", "-", $this->Get('applicationsolution_name'));
-						$url = 'http://' . $host . "." . $domain;
+						$url = 'http://' . $host . $domain;
 						$this->Set('url', $url);
 
 						// 保留名称
