@@ -2182,6 +2182,19 @@
 					<extkey_attcode>deployment_id</extkey_attcode>
 					<target_attcode>friendlyname</target_attcode>
 				</field>
+				<field id="group" xsi:type="AttributeEnum">
+					<values>
+						<value id="g1">g1</value>
+						<value id="g2">g2</value>
+						<value id="g3">g3</value>
+						<value id="g4">g4</value>
+						<value id="g5">g5</value>
+					</values>
+					<sql>group</sql>
+					<default_value>g1</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
 			</fields>
 			<methods>
 				<method id="ReloadAndDisplayCustom" _delta="define">
@@ -2212,9 +2225,19 @@
 			if($aChanges)
 			{
 				$friendlyname = $this->Get('k8saffinity_id') . " " . $this->Get('deployment_id');
+				$allowmodify = array("group");
+				$allow = true;
+				foreach($aChanges as $key => $val) {
+					if(!in_array($key, $allowmodify)) {
+						$allow = false;
+					}
+				}
+
 				if(!$this->IsNew())
 				{
-					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sAffinityToDeployment/Error:OnlyAddAndDeleteIsAllow", $friendlyname);
+					if(!$allow) {
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sAffinityToDeployment/Error:ModifyNotAllowed", $friendlyname);
+					}
 				}else
 				{
 					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkK8sAffinityToDeployment WHERE friendlyname=:friendlyname");
@@ -2262,6 +2285,9 @@
 			<presentation>
 				<details>
 					<items>
+						<item id="group">
+							<rank>5</rank>
+						</item>
 						<item id="deployment_id">
 							<rank>10</rank>
 						</item>
@@ -2287,6 +2313,9 @@
 				</details>
 				<search>
 					<items>
+						<item id="group">
+							<rank>5</rank>
+						</item>
 						<item id="deployment_id">
 							<rank>10</rank>
 						</item>
@@ -2309,6 +2338,9 @@
 				</search>
 				<list>
 					<items>
+						<item id="group">
+							<rank>5</rank>
+						</item>
 						<item id="deployment_id">
 							<rank>10</rank>
 						</item>
