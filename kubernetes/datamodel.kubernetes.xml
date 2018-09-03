@@ -372,7 +372,7 @@
 					<target_class>ApplicationSolution</target_class>
 					<is_null_allowed>false</is_null_allowed>
 					<filter>SELECT ApplicationSolution AS app JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id = app.id WHERE l.contact_id = :current_contact_id</filter>
-					<on_target_delete>DEL_AUTO</on_target_delete>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
 					<allow_target_creation>false</allow_target_creation>
 				</field>
 				<field id="applicationsolution_name" xsi:type="AttributeExternalField">
@@ -979,7 +979,7 @@
 					<target_class>ApplicationSolution</target_class>
 					<is_null_allowed>false</is_null_allowed>
 					<filter>SELECT ApplicationSolution AS app JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id = app.id JOIN Deployment AS d ON d.applicationsolution_id=app.id WHERE l.contact_id = :current_contact_id</filter>
-					<on_target_delete>DEL_AUTO</on_target_delete>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
 					<allow_target_creation>false</allow_target_creation>
 				</field>
 				<field id="applicationsolution_name" xsi:type="AttributeExternalField">
@@ -991,7 +991,7 @@
 					<target_class>Domain</target_class>
 					<is_null_allowed>false</is_null_allowed>
 					<filter>SELECT Domain AS d JOIN lnkApplicationSolutionToFunctionalCI AS l ON l.functionalci_id=d.id WHERE l.applicationsolution_id = :this->applicationsolution_id</filter>
-					<on_target_delete>DEL_AUTO</on_target_delete>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
 					<dependencies>
 						<attribute id="applicationsolution_id"/>
 					</dependencies>
@@ -1961,7 +1961,7 @@
 					<sql>person_id</sql>
 					<target_class>Person</target_class>
 					<is_null_allowed>false</is_null_allowed>
-					<on_target_delete>DEL_AUTO</on_target_delete>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
 				</field>
 				<field id="person_name" xsi:type="AttributeExternalField">
 					<extkey_attcode>person_id</extkey_attcode>
@@ -1971,7 +1971,7 @@
 					<sql>kubernetes_id</sql>
 					<target_class>Kubernetes</target_class>
 					<is_null_allowed>false</is_null_allowed>
-					<on_target_delete>DEL_AUTO</on_target_delete>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
 				</field>
 				<field id="kubernetes_name" xsi:type="AttributeExternalField">
 					<extkey_attcode>kubernetes_id</extkey_attcode>
@@ -2146,7 +2146,7 @@
 					<sql>k8saffinity_id</sql>
 					<target_class>K8sAffinity</target_class>
 					<is_null_allowed>false</is_null_allowed>
-					<on_target_delete>DEL_AUTO</on_target_delete>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
 				</field>
 				<field id="k8saffinity_name" xsi:type="AttributeExternalField">
 					<extkey_attcode>k8saffinity_id</extkey_attcode>
