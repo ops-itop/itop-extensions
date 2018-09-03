@@ -29,6 +29,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Attribute:k8snamespace_id' => 'K8S集群',
 	'Class:Deployment/Attribute:applicationsolution_id' => 'APP',
 	'Class:Deployment/Attribute:type' => '类型',
+	'Class:Deployment/Attribute:repo' => '代码地址',
 	'Class:Deployment/Attribute:image' => '镜像',
 	'Class:Deployment/Attribute:image_tag' => '镜像Tag',
 	'Class:Deployment/Attribute:url' => 'URL',
@@ -63,6 +64,12 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Error:CpuLimitCanNotLessThanCpuRequest' => 'CPU限制值必须大于或等于CPU请求值',
 
 	'Class:Deployment/Tab:Debug' => '调试',
+));
+
+// ApplicationSolution
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:ApplicationSolution/Attribute:deployment_list' => 'K8S部署',
+	'Class:ApplicationSolution/Attribute:deployment_list+' => '此APP的所有K8S部署',
 ));
 
 // K8sAffinity
