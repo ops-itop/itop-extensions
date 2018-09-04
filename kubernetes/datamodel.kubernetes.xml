@@ -2224,6 +2224,11 @@
 					<is_null_allowed>false</is_null_allowed>
 					<display_style>list</display_style>
 				</field>
+				<field id="values" xsi:type="AttributeText">
+					<sql>values</sql>
+					<default_value>替换表达式__VALUES值__ 请用逗号分隔</default_value>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
 			</fields>
 			<methods>
 				<method id="ReloadAndDisplayCustom" _delta="define">
@@ -2254,7 +2259,7 @@
 			if($aChanges)
 			{
 				$friendlyname = $this->Get('k8saffinity_id') . " " . $this->Get('deployment_id');
-				$allowmodify = array("group");
+				$allowmodify = array("group", "values");
 				$allow = true;
 				foreach($aChanges as $key => $val) {
 					if(!in_array($key, $allowmodify)) {
@@ -2338,6 +2343,9 @@
 						<item id="k8saffinity_expressions">
 							<rank>45</rank>
 						</item>
+						<item id="values">
+							<rank>50</rank>
+						</item>
 					</items>
 				</details>
 				<search>
@@ -2362,6 +2370,9 @@
 						</item>
 						<item id="k8saffinity_topologykey">
 							<rank>40</rank>
+						</item>
+						<item id="values">
+							<rank>50</rank>
 						</item>
 					</items>
 				</search>
@@ -2390,6 +2401,9 @@
 						</item>
 						<item id="k8saffinity_expressions">
 							<rank>45</rank>
+						</item>
+						<item id="values">
+							<rank>50</rank>
 						</item>
 					</items>
 				</list>

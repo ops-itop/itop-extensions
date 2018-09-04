@@ -92,6 +92,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sAffinityToDeployment/Attribute:deployment_id' => '部署',
 	'Class:lnkK8sAffinityToDeployment/Attribute:deployment_name' => '部署名称',
 	'Class:lnkK8sAffinityToDeployment/Attribute:group' => '分组',
+	'Class:lnkK8sAffinityToDeployment/Attribute:values' => '表达式VALUES',
 ));
 
 // Ingress
