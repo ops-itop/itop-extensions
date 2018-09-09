@@ -460,6 +460,14 @@
 					<ext_key_to_remote>k8saffinity_id</ext_key_to_remote>
 					<duplicates/>
 				</field>
+				<field id="volume_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkK8sVolumeToDeployment</linked_class>
+					<ext_key_to_me>deployment_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>k8svolume_id</ext_key_to_remote>
+					<duplicates/>
+				</field>
 			</fields>
 			<lifecycle>
 				<attribute>status</attribute>
@@ -809,6 +817,9 @@
 						</item>
 						<item id="affinity_list">
 							<rank>120</rank>
+						</item>
+						<item id="volume_list">
+							<rank>130</rank>
 						</item>
 						<item id="col:col2">
 							<rank>200</rank>
@@ -1960,6 +1971,101 @@
 			</presentation>
 		</class>
 
+		<class id="K8sVolume" _delta="define">
+			<parent>Typology</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>k8svolume</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<reconciliation>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="volumetype" xsi:type="AttributeEnum">
+					<sql>volumetype</sql>
+					<values>
+						<value id="hostpath">hostpath</value>
+						<value id="rbd">rbd</value>
+						<value id="cephfs">cephfs</value>
+						<value id="glusterfs">glusterfs</value>
+					</values>
+					<default_value>hostpath</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
+				<field id="note" xsi:type="AttributeString">
+					<sql>note</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="deployment_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkK8sVolumeToDeployment</linked_class>
+					<ext_key_to_me>k8svolume_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>deployment_id</ext_key_to_remote>
+					<duplicates/>
+				</field>
+			</fields>
+			<methods></methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="volumetype">
+							<rank>15</rank>
+						</item>
+						<item id="note">
+							<rank>20</rank>
+						</item>
+						<item id="deployment_list">
+							<rank>100</rank>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="volumetype">
+							<rank>12</rank>
+						</item>
+						<item id="note">
+							<rank>40</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="volumetype">
+							<rank>12</rank>
+						</item>
+						<item id="note">
+							<rank>40</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+
 		<class id="lnkPersonToKubernetes" _delta="define">
 			<parent>cmdbAbstractObject</parent>
 			<properties>
@@ -2409,6 +2515,219 @@
 				</list>
 			</presentation>
 		</class>
+
+		<class id="lnkK8sVolumeToDeployment" _delta="define">
+			<parent>cmdbAbstractObject</parent>
+			<properties>
+				<is_link>1</is_link>
+				<category>bizmodel</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>lnkk8svolumetodeployment</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field/>
+				<naming>
+					<attributes>
+						<attribute id="k8svolume_id"/>
+						<attribute id="deployment_id"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon/>
+				<reconciliation>
+					<attributes>
+						<attribute id="k8svolume_id"/>
+						<attribute id="deployment_id"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="k8svolume_id" xsi:type="AttributeExternalKey">
+					<sql>k8svolume_id</sql>
+					<target_class>K8sVolume</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+				</field>
+				<field id="k8svolume_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8svolume_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="k8svolume_type" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8svolume_id</extkey_attcode>
+					<target_attcode>volumetype</target_attcode>
+				</field>
+				<field id="k8svolume_note" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8svolume_id</extkey_attcode>
+					<target_attcode>note</target_attcode>
+				</field>
+				<field id="deployment_id" xsi:type="AttributeExternalKey">
+					<sql>deployment_id</sql>
+					<target_class>Deployment</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="deployment_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>deployment_id</extkey_attcode>
+					<target_attcode>friendlyname</target_attcode>
+				</field>
+				<field id="mountpath" xsi:type="AttributeString">
+					<sql>mountpath</sql>
+					<default_value>/mnt</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+			</fields>
+			<methods>
+				<method id="ReloadAndDisplayCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+					function ReloadAndDisplayCustom($oPage, $oObj, $sMessageId = '', $sMessage = '', $sSeverity = null)
+					{
+						$oAppContext = new ApplicationContext();
+						if ($sMessageId != '')
+						{
+							cmdbAbstractObject::SetSessionMessage(get_class($oObj), $oObj->GetKey(), $sMessageId, $sMessage, $sSeverity, 0, true /* must not exist */);
+						}
+
+						$oId = $oObj->getKey();
+						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
+					}
+					]]>
+					</code>
+				</method>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[  public function DoCheckToWrite(){
+			$aChanges = $this->ListChanges();
+			if($aChanges)
+			{
+				$friendlyname = $this->Get('k8svolume_id') . " " . $this->Get('deployment_id');
+				$allowmodify = array("mountpath");
+				$allow = true;
+				foreach($aChanges as $key => $val) {
+					if(!in_array($key, $allowmodify)) {
+						$allow = false;
+					}
+				}
+
+				if(!$this->IsNew())
+				{
+					if(!$allow) {
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sVolumeToDeployment/Error:ModifyNotAllowed", $friendlyname);
+					}
+				}else
+				{
+					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkK8sVolumeToDeployment WHERE friendlyname=:friendlyname");
+					$oSet = new DBObjectSet($oSearch, array(), array("friendlyname" => $friendlyname));
+
+					if ($oSet->Count() > 0)
+					{
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sVolumeToDeployment/Error:ThisLnkAlreadyExists", $friendlyname);
+					}
+				}
+			}
+		}]]>
+					</code>
+				</method>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   
+  	public function CheckToDelete(&$oDeletionPlan)
+  	{
+		$myContactId = UserRights::GetContactId();
+		$deploy = MetaModel::GetObject("Deployment", $this->Get('deployment_id'));
+		$contacts = $deploy->Get('person_list')->ToArrayOfValues();
+		$flag = false;
+		foreach($contacts as $k => $v) {
+			if($v['lnkk8svolumetodeployment.person_id'] == $myContactId) {
+				$flag = true;
+				break;
+			}
+		}
+  		if (!$flag && !UserRights::IsAdministrator())
+		{
+			// 普通用户不允许删除非自己名下的lnkK8sVolumeToDeployment
+			$oDeletionPlan->AddToDelete($this, null);
+			$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下的关联'), true);
+			$oDeletionPlan->ComputeResults();
+			return false;
+		}
+		return parent::CheckToDelete($oDeletionPlan);
+  	} 
+					]]></code>
+				</method>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="mountpath">
+							<rank>5</rank>
+						</item>
+						<item id="deployment_id">
+							<rank>10</rank>
+						</item>
+						<item id="k8svolume_id">
+							<rank>20</rank>
+						</item>
+						<item id="k8svolume_name">
+							<rank>25</rank>
+						</item>
+						<item id="k8svolume_type">
+							<rank>30</rank>
+						</item>
+						<item id="k8svolume_note">
+							<rank>35</rank>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="mountpath">
+							<rank>5</rank>
+						</item>
+						<item id="deployment_id">
+							<rank>10</rank>
+						</item>
+						<item id="k8svolume_id">
+							<rank>20</rank>
+						</item>
+						<item id="k8svolume_name">
+							<rank>25</rank>
+						</item>
+						<item id="k8svolume_type">
+							<rank>30</rank>
+						</item>
+						<item id="k8svolume_note">
+							<rank>35</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="mountpath">
+							<rank>5</rank>
+						</item>
+						<item id="deployment_id">
+							<rank>10</rank>
+						</item>
+						<item id="k8svolume_id">
+							<rank>20</rank>
+						</item>
+						<item id="k8svolume_type">
+							<rank>30</rank>
+						</item>
+						<item id="k8svolume_note">
+							<rank>35</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
 	</classes>
 	<menus>
 		<menu id="Kubernetes" xsi:type="MenuGroup" _delta="define">
@@ -2445,6 +2764,10 @@
 								<rank>10</rank>
 								<class>K8sAffinity</class>
 							</dashlet>
+							<dashlet id="k8svolume" xsi:type="DashletBadge" _delta="define">
+								<rank>10</rank>
+								<class>K8sVolume</class>
+							</dashlet>
 						</dashlets>
 					</cell>
 				</cells>
@@ -2472,6 +2795,11 @@
 			<group id="lnkK8sAffinityToDeployment" _delta="define">
 				<classes>
 					<class id="lnkK8sAffinityToDeployment"/>
+				</classes>
+			</group>
+			<group id="lnkK8sVolumeToDeployment" _delta="define">
+				<classes>
+					<class id="lnkk8svolumetodeployment"/>
 				</classes>
 			</group>
 		</groups>
@@ -2505,6 +2833,13 @@
 						</actions>
 					</group>
 					<group id="lnkK8sAffinityToDeployment" _delta="define">
+						<actions>
+							<action id="action:write">allow</action>
+							<action id="action:bulk write">allow</action>
+							<action id="action:delete">allow</action>
+						</actions>
+					</group>
+					<group id="lnkk8svolumetodeployment" _delta="define">
 						<actions>
 							<action id="action:write">allow</action>
 							<action id="action:bulk write">allow</action>

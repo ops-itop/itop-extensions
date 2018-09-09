@@ -45,7 +45,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Attribute:ingress_list+' => '链接到此K8S部署的所有Ingress',
 	'Class:Deployment/Attribute:affinity_list' => '约束条件',
 	'Class:Deployment/Attribute:affinity_list+' => '链接到此K8S部署的所有约束条件',
-	
+	'Class:Deployment/Attribute:volume_list' => 'Volumes',
+	'Class:Deployment/Attribute:volume_list+' => '链接到此K8S部署的所有Volumes',
+
 	'Menu:Deployment' => 'K8S部署',
 	'Menu:Deployment+' => '所有K8S部署',
 	
@@ -93,6 +95,22 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sAffinityToDeployment/Attribute:deployment_name' => '部署名称',
 	'Class:lnkK8sAffinityToDeployment/Attribute:group' => '分组',
 	'Class:lnkK8sAffinityToDeployment/Attribute:values' => '表达式VALUES',
+));
+
+// K8sVolume
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:K8sVolume/Attribute:volumetype' => 'Volume类型',
+	'Class:K8sVolume/Attribute:note' => '注释',
+	'Class:K8sVolume/Attribute:deployment_list' => 'K8S部署',
+	'Class:K8sVolume/Attribute:deployment_list+' => '链接到此Volume的所有K8S部署',
+));
+
+// lnkK8sVolumeToDeployment
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:lnkK8sVolumeToDeployment/Attribute:k8svolume_type' => 'Volume类型',
+	'Class:lnkK8sVolumeToDeployment/Attribute:k8svolume_note' => '注释',
+	'Class:lnkK8sVolumeToDeployment/Attribute:mountpath' => '挂载路径',
+	'Class:lnkK8sVolumeToDeployment/Attribute:k8svolume_id' => 'Volume',
 ));
 
 // Ingress
