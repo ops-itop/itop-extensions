@@ -468,6 +468,16 @@
 					<ext_key_to_remote>k8svolume_id</ext_key_to_remote>
 					<duplicates/>
 				</field>
+				<field id="hostnetwork" xsi:type="AttributeEnum">
+					<values>
+						<value id="true">true</value>
+						<value id="false">false</value>
+					</values>
+					<sql>hostnetwork</sql>
+					<default_value>false</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>  
 			</fields>
 			<lifecycle>
 				<attribute>status</attribute>
@@ -679,7 +689,12 @@
 								return OPT_ATT_HIDDEN;
 							}
 						}
-
+  
+						// hostnetwork 只允许管理员配置
+						if(!UserRights::IsAdministrator() && $sAttCode == 'hostnetwork') {
+							return OPT_ATT_READONLY;
+						}
+  
 						$sArg = array('k8snamespace_id','applicationsolution_id');
 						if (!$this->IsNew() && in_array($sAttCode, $sArg))
 						{
@@ -792,6 +807,9 @@
 										</item>
 										<item id="containerport">
 											<rank>60</rank>
+										</item>
+										<item id="hostnetwork">
+											<rank>65</rank>
 										</item>
 										<item id="org_id">
 											<rank>70</rank>

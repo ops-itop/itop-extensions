@@ -34,6 +34,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Attribute:image_tag' => '镜像Tag',
 	'Class:Deployment/Attribute:url' => 'URL',
 	'Class:Deployment/Attribute:containerport' => '容器端口',
+	'Class:Deployment/Attribute:hostnetwork' => 'hostNetwork',
 	'Class:Deployment/Attribute:replicas' => '副本数',
 	'Class:Deployment/Attribute:cpu_request' => 'CPU请求（核）',
 	'Class:Deployment/Attribute:cpu_limit' => 'CPU限制（核）',
