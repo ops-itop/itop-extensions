@@ -437,14 +437,14 @@
 					<sql>cpu_request</sql>
 					<default_value>0.1</default_value>
 					<is_null_allowed>false</is_null_allowed>
-					<digits>3</digits>
+					<digits>4</digits>
 					<decimals>2</decimals>
 				</field>
 				<field id="cpu_limit" xsi:type="AttributeDecimal">
 					<sql>cpu_limit</sql>
 					<default_value>0.1</default_value>
 					<is_null_allowed>false</is_null_allowed>
-					<digits>3</digits>
+					<digits>4</digits>
 					<decimals>2</decimals>
 				</field>
 				<field id="mem_request" xsi:type="AttributeInteger">
