@@ -2831,6 +2831,8 @@
 							<action id="stimulus:ev_new">allow</action>
 							<action id="stimulus:ev_online">allow</action>
 							<action id="stimulus:ev_offline">allow</action>
+							<action id="stimulus:ev_redeploy">allow</action>
+							<action id="stimulus:ev_redeploy2">allow</action>
 						</actions>
 					</group>
 					<group id="K8SSecret" _delta="define">
