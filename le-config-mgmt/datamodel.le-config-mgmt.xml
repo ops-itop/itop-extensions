@@ -1109,6 +1109,26 @@
 					<is_null_allowed>true</is_null_allowed>
 					<tracking_level>none</tracking_level>
 				</field>
+				<field id="pdnum" xsi:type="AttributeInteger" _delta="define">
+					<sql>pdnum</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="pdsize" xsi:type="AttributeInteger" _delta="define">
+					<sql>pdsize</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="raid" xsi:type="AttributeString" _delta="define">
+					<sql>raid</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="kernel" xsi:type="AttributeString" _delta="define">
+					<sql>kernel</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
 			</fields>
 			<methods>
 				<method id="ComputeValues" _delta="define">
@@ -1236,7 +1256,19 @@
 										</item>
 										<item id="manage_rootpwd">
 											<rank>70</rank>
-										</item>										
+										</item>	
+										<item id="pdnum">
+											<rank>80</rank>
+										</item>
+										<item id="pdsize">
+											<rank>90</rank>
+										</item>
+										<item id="raid">
+											<rank>100</rank>
+										</item>
+										<item id="kernel">
+											<rank>110</rank>
+										</item>
 									</items>
 								</item>
 							</items>
@@ -1337,6 +1369,18 @@
 						</item>						
 						<item id="osversion_id">
 							<rank>165</rank>
+						</item>
+						<item id="pdnum">
+							<rank>180</rank>
+						</item>
+						<item id="pdsize">
+							<rank>190</rank>
+						</item>
+						<item id="raid">
+							<rank>200</rank>
+						</item>
+						<item id="kernel">
+							<rank>210</rank>
 						</item>						
 					</items>
 				</search>
@@ -1374,6 +1418,18 @@
 						</item>						
 						<item id="org_id">
 							<rank>70</rank>
+						</item>
+						<item id="pdnum">
+							<rank>180</rank>
+						</item>
+						<item id="pdsize">
+							<rank>190</rank>
+						</item>
+						<item id="raid">
+							<rank>200</rank>
+						</item>
+						<item id="kernel">
+							<rank>210</rank>
 						</item>
 					</items>
 				</list>
