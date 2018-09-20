@@ -57,6 +57,10 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Server/Attribute:use_pam' => 'PAM验证',
 	'Class:Server/Attribute:rootpwd_date' => '密码更新日期',
 	'Class:Server/Attribute:manage_rootpwd' => '管理root密码',
+	'Class:Server/Attribute:pdnum' => '硬盘数量',
+	'Class:Server/Attribute:pdsize' => '硬盘Size(T)',
+	'Class:Server/Attribute:raid' => 'RAID',
+	'Class:Server/Attribute:kernel' => 'Kernel',
 	'Class:Server/Stimulus:ev_step1' => '发送root密码',
 	'Class:Server/Stimulus:ev_step2' => '发送root密码',	
 ));
