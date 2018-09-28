@@ -1751,9 +1751,6 @@
 						<item id="server_list" _delta="define">
 							<rank>10</rank>
 						</item>
-						<item id="connectableci_id">
-							<rank>20</rank>
-						</item>
 						<item id="ipaddress">
 							<rank>10</rank>
 						</item>
@@ -1777,10 +1774,6 @@
 						<item id="type">
 							<rank>15</rank>
 						</item>
-
-						<item id="connectableci_id">
-							<rank>20</rank>
-						</item>
 						<item id="isp_id">
 							<rank>30</rank>
 						</item>
@@ -1793,10 +1786,6 @@
 						</item>
 						<item id="type">
 							<rank>10</rank>
-						</item>
-
-						<item id="connectableci_id">
-							<rank>11</rank>
 						</item>
 						<item id="isp_id">
 							<rank>20</rank>
