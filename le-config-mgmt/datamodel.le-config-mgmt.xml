@@ -5414,7 +5414,7 @@
 		<menu id="Server" xsi:type="OQLMenuNode" _delta="define">
 			<rank>7</rank>
 			<parent>SearchCIs</parent>
-			<oql>SELECT Server</oql>
+			<oql>SELECT Server WHERE status!='obsolete'</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Domain" xsi:type="OQLMenuNode" _delta="define">
@@ -5426,7 +5426,7 @@
 		<menu id="ApplicationSolution" xsi:type="OQLMenuNode" _delta="define">
 			<rank>20</rank>
 			<parent>SearchCIs</parent>
-			<oql>SELECT ApplicationSolution</oql>
+			<oql>SELECT ApplicationSolution WHERE status!='obsolete'</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="lnkContactToApplicationSolution" xsi:type="OQLMenuNode" _delta="define">
@@ -5452,13 +5452,13 @@
 		<menu id="IPAddress" xsi:type="OQLMenuNode" _delta="define">
 			<rank>40</rank>
 			<parent>SearchCIs</parent>
-			<oql>SELECT PhysicalIP</oql>
+			<oql>SELECT PhysicalIP AS ip JOIN Server AS s ON ip.connectableci_id=s.id WHERE s.status!='obsolete'</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="VirtualIP" xsi:type="OQLMenuNode" _delta="define">
 			<rank>50</rank>
 			<parent>SearchCIs</parent>
-			<oql>SELECT VirtualIP</oql>
+			<oql>SELECT VirtualIP AS vip JOIN lnkServerToVirtualIP AS l ON l.vip_id=vip.id JOIN Server AS s ON l.server_id=s.id WHERE s.status!='obsolete'</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Middleware" xsi:type="DashboardMenuNode" _delta="define">
