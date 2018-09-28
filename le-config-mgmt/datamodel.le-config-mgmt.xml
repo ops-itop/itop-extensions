@@ -1719,24 +1719,12 @@
 				<reconciliation>
 					<attributes>
 						<attribute id="ipaddress"/>
-						<attribute id="connectableci_id"/>
-						<attribute id="connectableci_name"/>
 						<attribute id="isp_id"/>
 						<attribute id="isp_name"/>
 					</attributes>
 				</reconciliation>
 			</properties>
 			<fields>
-				<field id="connectableci_id" xsi:type="AttributeExternalKey">
-					<sql>connectableci_id</sql>
-					<target_class>Cluster</target_class>
-					<is_null_allowed>false</is_null_allowed>
-					<on_target_delete>DEL_AUTO</on_target_delete>
-				</field>
-				<field id="connectableci_name" xsi:type="AttributeExternalField">
-					<extkey_attcode>connectableci_id</extkey_attcode>
-					<target_attcode>name</target_attcode>
-				</field>
 				<field id="isp_id" xsi:type="AttributeExternalKey">
 					<sql>isp_id</sql>
 					<target_class>ISP</target_class>
