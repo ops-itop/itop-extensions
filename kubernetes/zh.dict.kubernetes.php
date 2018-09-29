@@ -48,6 +48,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Attribute:affinity_list+' => '链接到此K8S部署的所有约束条件',
 	'Class:Deployment/Attribute:volume_list' => 'Volumes',
 	'Class:Deployment/Attribute:volume_list+' => '链接到此K8S部署的所有Volumes',
+	'Class:Deployment/Attribute:ingressannotations_list' => 'Nginx',
+	'Class:Deployment/Attribute:ingressannotations_list+' => '自定义Nginx配置',
 
 	'Menu:Deployment' => 'K8S部署',
 	'Menu:Deployment+' => '所有K8S部署',
@@ -112,6 +114,26 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sVolumeToDeployment/Attribute:k8svolume_note' => '注释',
 	'Class:lnkK8sVolumeToDeployment/Attribute:mountpath' => '挂载路径',
 	'Class:lnkK8sVolumeToDeployment/Attribute:k8svolume_id' => 'Volume',
+));
+
+// K8sIngressAnnotations
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:K8sIngressAnnotations/Attribute:note' => '用途',
+	'Class:K8sIngressAnnotations/Attribute:description' => '详情',
+	'Class:K8sIngressAnnotations/Attribute:validate' => '正则校验',
+	'Class:K8sIngressAnnotations/Attribute:deployment_list' => 'K8S部署',
+	'Class:K8sIngressAnnotations/Attribute:deployment_list+' => '所有K8S部署',	
+));
+
+// lnkK8sIngressAnnotationsToDeployment
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:value' => '配置值',
+	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_id' => '配置项',
+	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_id' => '配置项',
+	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_name' => '配置项',
+	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_note' => '用途',
+	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_description' => '详情',
+	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_validate' => '配置值校验',
 ));
 
 // Ingress
