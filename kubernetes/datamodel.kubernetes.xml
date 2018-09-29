@@ -2928,7 +2928,7 @@
 					<extkey_attcode>deployment_id</extkey_attcode>
 					<target_attcode>friendlyname</target_attcode>
 				</field>
-				<field id="value" xsi:type="AttributeString">
+				<field id="value" xsi:type="AttributeText">
 					<sql>value</sql>
 					<default_value></default_value>
 					<is_null_allowed>false</is_null_allowed>
