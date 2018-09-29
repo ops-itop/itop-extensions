@@ -4656,7 +4656,6 @@
 					<extkey_attcode>server_id</extkey_attcode>
 					<target_attcode>model_id</target_attcode>
 				</field>
-
 				<field id="vip_id" xsi:type="AttributeExternalKey">
 					<sql>vip_id</sql>
 					<target_class>VirtualIP</target_class>
@@ -4666,6 +4665,10 @@
 				<field id="vip_name" xsi:type="AttributeExternalField">
 					<extkey_attcode>vip_id</extkey_attcode>
 					<target_attcode>ipaddress</target_attcode>
+				</field>
+				<field id="vip_type" xsi:type="AttributeExternalField">
+					<extkey_attcode>vip_id</extkey_attcode>
+					<target_attcode>type</target_attcode>
 				</field>
 			</fields>
 			<methods/>
@@ -4677,6 +4680,9 @@
 						</item>
 						<item id="vip_id">
 							<rank>20</rank>
+						</item>
+						<item id="vip_type">
+							<rank>30</rank>
 						</item>
 					</items>
 				</details>
@@ -4691,9 +4697,11 @@
 						<item id="server_location">
 							<rank>60</rank>
 						</item>
-
 						<item id="vip_id">
 							<rank>20</rank>
+						</item>
+						<item id="vip_type">
+							<rank>30</rank>
 						</item>
 					</items>
 				</search>
@@ -4704,6 +4712,9 @@
 						</item>
 						<item id="vip_id">
 							<rank>20</rank>
+						</item>
+						<item id="vip_type">
+							<rank>30</rank>
 						</item>
 						<item id="server_cpu">
 							<rank>40</rank>
@@ -4720,7 +4731,6 @@
 					</items>
 				</list>
 			</presentation>
-
 		</class>
 
 		<class id="lnkContactToApplicationSolution" _delta="define">
