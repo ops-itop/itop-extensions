@@ -1980,14 +1980,6 @@
 					<count_min>0</count_min>
 					<duplicates/>
 				</field>
-				<field id="vip_list" xsi:type="AttributeLinkedSet" _delta="define">
-					<linked_class>VirtualIP</linked_class>
-					<ext_key_to_me>connectableci_id</ext_key_to_me>
-					<edit_mode>add_only</edit_mode>
-					<count_min>0</count_min>
-					<count_max>0</count_max>
-					<duplicates/>
-				</field>
 				<field id="type" xsi:type="AttributeEnum" _delta="define">
 					<values>
 						<value id="compute">Compute</value>
@@ -2017,9 +2009,6 @@
 			<presentation>
 				<details>
 					<items>
-						<item id="vip_list" _delta="define">
-							<rank>5</rank>
-						</item>
 						<item id="domain_list" _delta="define">
 							<rank>6</rank>
 						</item>
