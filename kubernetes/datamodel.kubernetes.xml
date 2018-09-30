@@ -3167,7 +3167,8 @@
 			</group>
 			<group id="lnkK8sVolumeToDeployment" _delta="define">
 				<classes>
-					<class id="lnkk8svolumetodeployment"/>
+					<class id="lnkK8sVolumeToDeployment"/>
+					<class id="lnkK8sIngressAnnotationsToDeployment"/>
 				</classes>
 			</group>
 		</groups>
@@ -3209,7 +3210,7 @@
 							<action id="action:delete">allow</action>
 						</actions>
 					</group>
-					<group id="lnkk8svolumetodeployment" _delta="define">
+					<group id="lnkK8sVolumeToDeployment" _delta="define">
 						<actions>
 							<action id="action:write">allow</action>
 							<action id="action:bulk write">allow</action>
