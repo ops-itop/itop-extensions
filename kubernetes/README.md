@@ -2,6 +2,14 @@
 
 面向Kubernetes最终用户
 
+## 打补丁
+iTop 2.3.x中link set 类型中如果包含AttributeText，在新增item时会重复出现，经测试iTop 2.5中无此问题。以下patch是将2.5中的代码应用到2.3.3
+```
+cp cmdbabstract.patch ../../
+cd ../../
+patch -p0 --binary < cmdbabstract.patch
+```
+
 ## 工作原理
 iTop对象创建或删除时触发动作执行脚本，脚本中调用Kubernetes API应用iTop中的更新
 
@@ -31,3 +39,4 @@ TriggerOnObjectUpdate
 ```
 
 动作脚本参见 https://github.com/annProg/cmdbApi/tree/master/actions
+
