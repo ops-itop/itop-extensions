@@ -15,6 +15,16 @@
 // - either no new class or menu defined in the XML file
 // - or no XML file at all supplied by the module
 
+//cron任务忽略sso认证
+if(isset($_SERVER['REQUEST_URI']))
+{
+	//如果访问 toolkit 或者 setup 等工具页面，则不跳转到sso
+	if(preg_match('/^\/toolkit\/|^\/webservices\/|^\/setup\//i',$_SERVER['REQUEST_URI']))
+	{
+		return true;
+	}
+}
+
 // 登录后才检查，防止和sso检查代码冲突
 $rootUrl = trim(MetaModel::GetConfig()->Get('app_root_url'));
 if(isset($_SESSION['auth_user'])) {
