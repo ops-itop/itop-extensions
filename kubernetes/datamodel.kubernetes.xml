@@ -2190,9 +2190,6 @@
 				</search>
 				<list>
 					<items>
-						<item id="name">
-							<rank>10</rank>
-						</item>
 						<item id="note">
 							<rank>20</rank>
 						</item>
@@ -2545,7 +2542,7 @@
 		$contacts = $deploy->Get('person_list')->ToArrayOfValues();
 		$flag = false;
 		foreach($contacts as $k => $v) {
-			if($v['lnkk8saffinitytodeployment.person_id'] == $myContactId) {
+			if($v['lnkPersonToKubernetes.person_id'] == $myContactId) {
 				$flag = true;
 				break;
 			}
@@ -2785,7 +2782,7 @@
 		$contacts = $deploy->Get('person_list')->ToArrayOfValues();
 		$flag = false;
 		foreach($contacts as $k => $v) {
-			if($v['lnkk8svolumetodeployment.person_id'] == $myContactId) {
+			if($v['lnkPersonToKubernetes.person_id'] == $myContactId) {
 				$flag = true;
 				break;
 			}
@@ -2932,6 +2929,8 @@
 					<sql>value</sql>
 					<default_value></default_value>
 					<is_null_allowed>false</is_null_allowed>
+					<width>200px</width>
+					<height>50px</height>
 				</field>
 			</fields>
 			<methods>
@@ -3009,7 +3008,7 @@
 		$contacts = $deploy->Get('person_list')->ToArrayOfValues();
 		$flag = false;
 		foreach($contacts as $k => $v) {
-			if($v['lnkk8singressannotationstodeployment.person_id'] == $myContactId) {
+			if($v['lnkPersonToKubernetes.person_id'] == $myContactId) {
 				$flag = true;
 				break;
 			}

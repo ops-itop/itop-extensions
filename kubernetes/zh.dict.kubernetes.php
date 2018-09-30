@@ -111,6 +111,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 // lnkK8sVolumeToDeployment
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sVolumeToDeployment/Attribute:k8svolume_type' => 'Volume类型',
+	'Class:lnkK8sVolumeToDeployment/Attribute:deployment_id' => '部署',
 	'Class:lnkK8sVolumeToDeployment/Attribute:k8svolume_note' => '注释',
 	'Class:lnkK8sVolumeToDeployment/Attribute:mountpath' => '挂载路径',
 	'Class:lnkK8sVolumeToDeployment/Attribute:k8svolume_id' => 'Volume',
@@ -118,6 +119,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 
 // K8sIngressAnnotations
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:K8sIngressAnnotations' => '自定义Nginx配置',
+	'Class:K8sIngressAnnotations/Attribute:name' => '自定义Nginx配置',
 	'Class:K8sIngressAnnotations/Attribute:note' => '用途',
 	'Class:K8sIngressAnnotations/Attribute:description' => '详情',
 	'Class:K8sIngressAnnotations/Attribute:validate' => '正则校验',
@@ -128,6 +131,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 // lnkK8sIngressAnnotationsToDeployment
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:value' => '配置值',
+	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:deployment_id' => '部署',
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_id' => '配置项',
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_id' => '配置项',
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_name' => '配置项',
