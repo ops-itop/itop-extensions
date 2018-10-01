@@ -2,7 +2,7 @@
 iTop扩展
 
 ## 版本
-- v2.0-beta 基于新版portal
+- v2.0-beta 基于新版portal(2.3.3)
 - v1.0 基于legency portal
 
 ## 扩展列表

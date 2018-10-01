@@ -5,9 +5,9 @@
 ## 打补丁
 iTop 2.3.x中link set 类型中如果包含AttributeText，在新增item时会重复出现，经测试iTop 2.5中无此问题。以下patch是将2.5中的代码应用到2.3.3
 ```
-cp cmdbabstract.patch ../../
+cp ../patches/fix_attributetext_edit.patch ../../
 cd ../../
-patch -p0 --binary < cmdbabstract.patch
+patch -p1 --binary < fix_attributetext_edit.patch
 ```
 
 ## 工作原理

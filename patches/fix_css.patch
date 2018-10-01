@@ -1,0 +1,68 @@
+--- itop-2.3.3/web/css/light-grey.css	2016-12-22 17:35:38.000000000 +0800
++++ web/css/light-grey.css	2018-10-01 12:04:40.357572462 +0800
+@@ -197,6 +197,8 @@
+   color: #696969;
+   nobackground-color: #fff;
+   padding: 0px;
++  max-width: 600px;
++  word-break: break-word;
+ }
+ tr.clicked td {
+   font-family: Tahoma, Verdana, Arial, Helvetica;
+@@ -1746,3 +1748,56 @@
+ .mfp-close {
+   cursor: pointer !important;
+ }
++
++/* This is extracted from the ".details > .field_container ..." because of the fullscreen option (element is moved at the end of the body */
++.field_input_text {
++  border: none;
++}
++.field_input_text .f_i_text_header {
++  /* Inspired by .cke_top */
++  padding: 6px 8px 6px;
++  white-space: normal;
++  border-bottom: 1px solid #fff;
++  background: #f2f2f2;
++}
++.field_input_text .f_i_text_header .fullscreen_button {
++  display: block;
++  width: 15px;
++  height: 15px;
++  border: 1px #a6a6a6 solid;
++  cursor: pointer;
++  background-image: url('../images/full-screen.png');
++  background-repeat: no-repeat;
++  background-position: center center;
++  background-size: 98%;
++}
++.field_input_text .f_i_text_header .fullscreen_button:hover, .field_input_text .f_i_text_header .fullscreen_button:focus {
++  background-color: #ccc;
++}
++.field_input_text textarea {
++  /* Size for default display */
++  height: 100%;
++  margin: 0px;
++  padding: 5px 10px;
++  border: none;
++  resize: none;
++}
++.field_input_text.fullscreen {
++  z-index: 100;
++  position: fixed;
++  top: 0px;
++  left: 0px;
++  width: 100%;
++  height: 100%;
++}
++.field_input_text.fullscreen textarea {
++  /* Size set again here to override resize value when in fullscreen */
++  width: 100% !important;
++  height: 100% !important;
++}
++.field_input_text.fullscreen .fullscreen_button {
++  width: 22px;
++  height: 22px;
++  background-color: #ccc;
++}
++

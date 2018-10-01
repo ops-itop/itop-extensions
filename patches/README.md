@@ -2,14 +2,15 @@
 
 基于iTop-2.3.3-3159
 
-## break-word.patch
-表格内容过多时自动换行
+## fix_css.patch
+- 表格内容过多时自动换行
+- 支持AttributeText 编辑时全屏(from 2.5)
 
 ## date_zh_bug.patch
 修复中文日期bug
 
 ## fix_attributetext_edit.patch
-修复link set 新增Object时，如果有AttributeText类型，将重复添加的问题。Kubernetes扩展中需要打此补丁
+修复link set 新增Object时，如果有AttributeText类型，将重复添加的问题。Kubernetes扩展中需要打此补丁(from 2.5)
 
 ## fix_portal_url_notification.patch
 修复邮件提醒中portal url错误问题
