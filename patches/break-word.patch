@@ -1,0 +1,11 @@
+--- itop-2.3.3/web/css/light-grey.css	2016-12-22 17:35:38.000000000 +0800
++++ web/css/light-grey.css	2018-08-22 17:44:35.395627180 +0800
+@@ -197,6 +197,8 @@
+   color: #696969;
+   nobackground-color: #fff;
+   padding: 0px;
++  max-width: 600px;
++  word-break: break-word;
+ }
+ tr.clicked td {
+   font-family: Tahoma, Verdana, Arial, Helvetica;

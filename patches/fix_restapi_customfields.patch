@@ -1,0 +1,26 @@
+--- itop-2.3.3/web/application/applicationextension.inc.php	2016-12-22 17:35:38.000000000 +0800
++++ web/application/applicationextension.inc.php	2017-12-08 14:38:47.751504701 +0800
+@@ -944,6 +944,10 @@
+ 				}
+ 				$value = DBObjectSet::FromArray($sLnkClass, $aLinks);
+ 			}
++			elseif($oAttDef instanceof AttributeCustomFields)
++			{
++				$value = json_decode(json_encode($value), true);
++			}
+ 			else
+ 			{
+ 				$value = $oAttDef->FromJSONToValue($value);
+--- itop-2.3.3/web/core/restservices.class.inc.php	2016-12-22 17:35:38.000000000 +0800
++++ web/core/restservices.class.inc.php	2017-12-08 14:38:35.545462315 +0800
+@@ -102,6 +102,10 @@
+ 					$value[] = $aLnkValues;
+ 				}
+ 			}
++			elseif($oAttDef instanceof AttributeCustomFields)
++			{
++				$value = $oObject->Get($sAttCode)->GetValues();
++			}
+ 			else
+ 			{
+ 				$value = $oAttDef->GetForJSON($oObject->Get($sAttCode));

@@ -1,0 +1,14 @@
+--- itop-2.3.3/web/application/itopwebpage.class.inc.php	2016-12-22 17:35:38.000000000 +0800
++++ web/application/itopwebpage.class.inc.php	2018-09-03 00:00:23.754695001 +0800
+@@ -174,6 +174,11 @@
+ 		$sTimeFormat = AttributeDateTime::GetFormat()->ToTimeFormat();
+ 		$oTimeFormat = new DateTimeFormat($sTimeFormat);
+ 		$sJSLangShort = json_encode(strtolower(substr(Dict::GetUserLanguage(), 0, 2)));
++		// 中文bug
++		if($sJSLangShort == '"zh"')
++		{
++			$sJSLangShort = '"zh-CN"';
++		}
+ 		
+ 		// Date picker options
+ 		$aPickerOptions = array(

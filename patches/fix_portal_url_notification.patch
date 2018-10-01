@@ -1,0 +1,28 @@
+From 9d730dbb37c95211b112166db26b0a930c07c96e Mon Sep 17 00:00:00 2001
+From: Jasper Aikema <jasper.aikema@gmail.com
+Date: Sat, 18 Feb 2017 00:12:33 +0100
+Subject: [PATCH] Fix regression bug: Add the part after the questionmark to
+ the hyperlink
+
+---
+ datamodels/2.x/itop-portal/main.itop-portal.php | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/datamodels/2.x/itop-portal/main.itop-portal.php b/datamodels/2.x/itop-portal/main.itop-portal.php
+index d27479a..06ee0c1 100644
+--- a/datamodels/2.x/itop-portal/main.itop-portal.php
++++ b/datamodels/2.x/itop-portal/main.itop-portal.php
+@@ -68,9 +68,9 @@ class iTopPortalEditUrlMaker implements iDBObjectURLMaker
+		}
+ 
+		$sPortalAbsoluteUrl = utils::GetAbsoluteUrlModulePage($sPortalId, 'index.php');
+-		if (strpos($sPortalAbsoluteUrl, '?') !== false)
++		if (($positionOfFirstQuestionMark = strpos($sPortalAbsoluteUrl, '?')) !== false)
+		{
+-			$sUrl = substr($sPortalAbsoluteUrl, 0, strpos($sPortalAbsoluteUrl, '?')).$sObjectQueryString;
++			$sUrl = substr($sPortalAbsoluteUrl, 0, $positionOfFirstQuestionMark).$sObjectQueryString.substr($sPortalAbsoluteUrl, $positionOfFirstQuestionMark, strlen($sPortalAbsoluteUrl));
+		}
+		else
+		{
+-- 
+2.9.3
