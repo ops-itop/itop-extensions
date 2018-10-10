@@ -390,11 +390,11 @@
 				</field>
 				<field id="https" xsi:type="AttributeEnum">
 					<values>
-						<value id="on">On</value>
-						<value id="off">Off</value>
+						<value id="on">on</value>
+						<value id="off">off</value>
 					</values>
 					<sql>https</sql>
-					<default_value>Off</default_value>
+					<default_value>off</default_value>
 					<is_null_allowed>false</is_null_allowed>
 					<display_style>list</display_style>
 				</field>
