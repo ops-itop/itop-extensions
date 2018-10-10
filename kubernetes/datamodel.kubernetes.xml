@@ -388,6 +388,16 @@
 					<is_null_allowed>false</is_null_allowed>
 					<display_style>list</display_style>
 				</field>
+				<field id="https" xsi:type="AttributeEnum">
+					<values>
+						<value id="on">On</value>
+						<value id="off">Off</value>
+					</values>
+					<sql>https</sql>
+					<default_value>Off</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
 				<field id="image" xsi:type="AttributeString">
 					<sql>image</sql>
 					<default_value/>
@@ -796,6 +806,9 @@
 										<item id="type">
 											<rank>20</rank>
 										</item>
+										<item id="https">
+											<rank>25</rank>
+										</item>
 										<item id="status">
 											<rank>30</rank>
 										</item>
@@ -899,6 +912,9 @@
 						<item id="type">
 							<rank>20</rank>
 						</item>
+						<item id="https">
+							<rank>25</rank>
+						</item>
 						<item id="status">
 							<rank>30</rank>
 						</item>
@@ -947,6 +963,9 @@
 						</item>
 						<item id="type">
 							<rank>20</rank>
+						</item>
+						<item id="https">
+							<rank>25</rank>
 						</item>
 						<item id="status">
 							<rank>30</rank>
