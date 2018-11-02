@@ -502,6 +502,11 @@
 					<validation_pattern>^[0-9]+%?:[0-9]+%?$</validation_pattern>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
+				<field id="hostaliases" xsi:type="AttributeText">
+					<sql>hostaliases</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
 			</fields>
 			<lifecycle>
 				<attribute>status</attribute>
@@ -681,6 +686,25 @@
 							}
 						}
 
+						// 检查hostaliases
+						$hosts = $this->Get('hostaliases');
+						if($hosts) {
+							$parsed = yaml_parse($hosts);
+							if(!is_array($parsed)) {
+								$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:hostaliasesShouldBeYamlFormat", $this->Get('hostaliases'));
+							} else {
+								// k8s hostaliases域名校验正则为：[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*
+								$ips = array_keys($parsed);
+								foreach($parsed as $ip => $domain) {
+									if(!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+										$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:IpIsInvalid", $ip);
+									}
+									if(!preg_match('/^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/', $domain)) {
+										$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:DomainIsInvalid", $domain);
+									}
+								}
+							}
+						}
 						// 检查ingressannotations格式
 						$validate = $this->Get('ingressannotations_list')->ToArrayOfValues();
 						foreach($validate as $val) {
@@ -912,6 +936,9 @@
 										</item>
 										<item id="rolling_strategy">
 											<rank>330</rank>
+										</item>
+										<item id="hostaliases">
+											<rank>340</rank>
 										</item>
 									</items>
 								</item>

@@ -41,6 +41,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Attribute:mem_request' => '内存限制（MB）',
 	'Class:Deployment/Attribute:secret' => '配置项',
 	'Class:Deployment/Attribute:rolling_strategy' => '更新策略',
+	'Class:Deployment/Attribute:hostaliases' => '自定义hosts',
 	'Class:Deployment/Attribute:person_list' => '联系人',
 	'Class:Deployment/Attribute:person_list+' => '链接到此K8S部署的所有联系人',
 	'Class:Deployment/Attribute:ingress_list' => 'Ingress',
@@ -69,6 +70,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Error:ReservedAppNameNotAllowed' => '%1$s 为保留名称，不允许部署',
 	'Class:Deployment/Error:CpuLimitCanNotLessThanCpuRequest' => 'CPU限制值必须大于或等于CPU请求值',
 	'Class:Deployment/Error:maxSurgeAndmaxUnavailableCannotBeZeroBoth' => 'maxUnavailable:maxSurge不能同时为0',
+	'Class:Deployment/Error:hostaliasesShouldBeYamlFormat' => '自定义hosts须为YAML格式',
+	'Class:Deployment/Error:IpIsInvalid' => '自定义hosts包含非法IP: %1$s',
+	'Class:Deployment/Error:DomainIsInvalid' => '自定义hosts包含非法域名: %1$s',
 
 	'Class:Deployment/Tab:Debug' => '调试',
 ));
