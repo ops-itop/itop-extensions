@@ -496,8 +496,8 @@
 					<is_null_allowed>false</is_null_allowed>
 					<display_style>list</display_style>
 				</field>
-				<field id="rollings_trategy" xsi:type="AttributeString">
-					<sql>rollings_trategy</sql>
+				<field id="rolling_strategy" xsi:type="AttributeString">
+					<sql>rolling_strategy</sql>
 					<default_value/>
 					<validation_pattern>^[0-9]+%?:[0-9]+%?$</validation_pattern>
 					<is_null_allowed>true</is_null_allowed>
@@ -697,12 +697,12 @@
 						}
 
 						// maxSurge maxUnavailable不能同时为0
-						$strategy = $this->Get("rollings_trategy");
+						$strategy = $this->Get("rolling_strategy");
 						if($strategy) {
 							$s = str_replace("%", "", $strategy);
 							$arr = explode(":",$s);
 							if($arr[0] == 0 && $arr[1] == 0) {
-								$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:maxSurgeAndmaxUnavailableCannotBeZeroBoth", $this->Get('rollings_trategy'));
+								$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:maxSurgeAndmaxUnavailableCannotBeZeroBoth", $this->Get('rolling_strategy'));
 							}
 						}
 						parent::DoCheckToWrite();
@@ -910,7 +910,7 @@
 										<item id="change_log">
 											<rank>320</rank>
 										</item>
-										<item id="rollings_trategy">
+										<item id="rolling_strategy">
 											<rank>330</rank>
 										</item>
 									</items>
