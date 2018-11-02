@@ -495,7 +495,13 @@
 					<default_value>false</default_value>
 					<is_null_allowed>false</is_null_allowed>
 					<display_style>list</display_style>
-				</field>  
+				</field>
+				<field id="rollings_trategy" xsi:type="AttributeString">
+					<sql>rollings_trategy</sql>
+					<default_value/>
+					<validation_pattern>^[0-9]+%?:[0-9]+%?$</validation_pattern>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
 			</fields>
 			<lifecycle>
 				<attribute>status</attribute>
@@ -690,6 +696,15 @@
 							$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:CpuLimitCanNotLessThanCpuRequest", $this->Get('cpu_limit'));
 						}
 
+						// maxSurge maxUnavailable不能同时为0
+						$strategy = $this->Get("rollings_trategy");
+						if($strategy) {
+							$s = str_replace("%", "", $strategy);
+							$arr = explode(":",$s);
+							if($arr[0] == 0 && $arr[1] == 0) {
+								$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:maxSurgeAndmaxUnavailableCannotBeZeroBoth", $this->Get('rollings_trategy'));
+							}
+						}
 						parent::DoCheckToWrite();
 					}
 					]]>
@@ -894,6 +909,9 @@
 									<items>
 										<item id="change_log">
 											<rank>320</rank>
+										</item>
+										<item id="rollings_trategy">
+											<rank>330</rank>
 										</item>
 									</items>
 								</item>
