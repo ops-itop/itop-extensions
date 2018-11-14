@@ -23,6 +23,29 @@
 				</reconciliation>
 			</properties>
 			<fields>
+				<field id="k8snamespace_id" xsi:type="AttributeExternalKey">
+					<sql>k8snamespace_id</sql>
+					<target_class>K8sNamespace</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>
+				</field>
+				<field id="k8snamespace_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8snamespace_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="applicationsolution_id" xsi:type="AttributeExternalKey">
+					<sql>applicationsolution_id</sql>
+					<target_class>ApplicationSolution</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<filter>SELECT ApplicationSolution AS app JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id = app.id WHERE l.contact_id = :current_contact_id</filter>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>
+				</field>
+				<field id="applicationsolution_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>applicationsolution_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
 				<field id="status" xsi:type="AttributeEnum">
 					<values>
 						<value id="production">production</value>
@@ -330,14 +353,13 @@
 				</list>
 			</presentation>
 		</class>
-
-		<class id="Deployment" _delta="define">
+		<class id="Controller" _delta="define">
 			<parent>Kubernetes</parent>
 			<properties>
 				<category>bizmodel,searchable</category>
 				<abstract>false</abstract>
 				<key_type>autoincrement</key_type>
-				<db_table>deployment</db_table>
+				<db_table>controller</db_table>
 				<db_key_field>id</db_key_field>
 				<db_final_class_field>finalclass</db_final_class_field>
 				<naming>
@@ -356,48 +378,6 @@
 				</reconciliation>
 			</properties>
 			<fields>
-				<field id="k8snamespace_id" xsi:type="AttributeExternalKey">
-					<sql>k8snamespace_id</sql>
-					<target_class>K8sNamespace</target_class>
-					<is_null_allowed>false</is_null_allowed>
-					<on_target_delete>DEL_MANUAL</on_target_delete>
-					<allow_target_creation>false</allow_target_creation>
-				</field>
-				<field id="k8snamespace_name" xsi:type="AttributeExternalField">
-					<extkey_attcode>k8snamespace_id</extkey_attcode>
-					<target_attcode>name</target_attcode>
-				</field>
-				<field id="applicationsolution_id" xsi:type="AttributeExternalKey">
-					<sql>applicationsolution_id</sql>
-					<target_class>ApplicationSolution</target_class>
-					<is_null_allowed>false</is_null_allowed>
-					<filter>SELECT ApplicationSolution AS app JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id = app.id WHERE l.contact_id = :current_contact_id</filter>
-					<on_target_delete>DEL_MANUAL</on_target_delete>
-					<allow_target_creation>false</allow_target_creation>
-				</field>
-				<field id="applicationsolution_name" xsi:type="AttributeExternalField">
-					<extkey_attcode>applicationsolution_id</extkey_attcode>
-					<target_attcode>name</target_attcode>
-				</field>
-				<field id="type" xsi:type="AttributeEnum">
-					<values>
-						<value id="web">Web</value>
-					</values>
-					<sql>type</sql>
-					<default_value>Web</default_value>
-					<is_null_allowed>false</is_null_allowed>
-					<display_style>list</display_style>
-				</field>
-				<field id="https" xsi:type="AttributeEnum">
-					<values>
-						<value id="on">on</value>
-						<value id="off">off</value>
-					</values>
-					<sql>https</sql>
-					<default_value>off</default_value>
-					<is_null_allowed>false</is_null_allowed>
-					<display_style>list</display_style>
-				</field>
 				<field id="image" xsi:type="AttributeString">
 					<sql>image</sql>
 					<default_value/>
@@ -411,11 +391,6 @@
 				</field>
 				<field id="repo" xsi:type="AttributeString">
 					<sql>repo</sql>
-					<default_value/>
-					<is_null_allowed>true</is_null_allowed>
-				</field>
-				<field id="url" xsi:type="AttributeURL">
-					<sql>url</sql>
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
@@ -434,14 +409,6 @@
 					<is_null_allowed>true</is_null_allowed>
 					<default_value/>
 					<tracking_level>all</tracking_level>
-				</field>
-				<field id="ingress_list" xsi:type="AttributeLinkedSet">
-					<linked_class>Ingress</linked_class>
-					<ext_key_to_me>deployment_id</ext_key_to_me>
-					<edit_mode>add_only</edit_mode>
-					<count_min>0</count_min>
-					<count_max>0</count_max>
-					<duplicates/>
 				</field>
 				<field id="cpu_request" xsi:type="AttributeDecimal">
 					<sql>cpu_request</sql>
@@ -476,14 +443,6 @@
 					<count_min>0</count_min>
 					<count_max>0</count_max>
 					<ext_key_to_remote>k8svolume_id</ext_key_to_remote>
-					<duplicates/>
-				</field>
-				<field id="ingressannotations_list" xsi:type="AttributeLinkedSetIndirect">
-					<linked_class>lnkK8sIngressAnnotationsToDeployment</linked_class>
-					<ext_key_to_me>deployment_id</ext_key_to_me>
-					<count_min>0</count_min>
-					<count_max>0</count_max>
-					<ext_key_to_remote>k8singressannotations_id</ext_key_to_remote>
 					<duplicates/>
 				</field>
 				<field id="hostnetwork" xsi:type="AttributeEnum">
@@ -524,9 +483,6 @@
 								<read_only/>
 							</attribute>
 							<attribute id="kubestatus">
-								<read_only/>
-							</attribute>
-							<attribute id="url">
 								<read_only/>
 							</attribute>
 							<attribute id="person_list">
@@ -662,19 +618,12 @@
 					<code><![CDATA[	  
 					public function DoCheckToWrite()
 					{
-						// 自动填充url字段
-						$k8snamespace = MetaModel::GetObject('K8sNamespace',$this->Get('k8snamespace_id'));
-						$domain = $k8snamespace->Get('domain');
-						$host = str_replace("_", "-", $this->Get('applicationsolution_name'));
-						$url = 'http://' . $host . $domain;
-						$this->Set('url', $url);
-
 						// 保留名称
 						$default_reserve = array($this->Get('k8snamespace_name') . "-router", 'default-http-backend');
 						$reserve = MetaModel::GetModuleSetting('kubernetes', 'reserve', $default_reserve);
 						$reserve = array_merge($default_reserve, $reserve);
 						if(in_array($this->Get('applicationsolution_name'), $reserve)) {
-							$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:ReservedAppNameNotAllowed", $this->Get('applicationsolution_name'));
+							$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:ReservedAppNameNotAllowed", $this->Get('applicationsolution_name'));
 						}
 
 						// 检查secret是否是yaml格式
@@ -682,7 +631,7 @@
 						if($yaml) {
 							$parsed = yaml_parse($yaml);
 							if(!is_array($parsed)) {
-								$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:SecretShouldBeYamlFormat", $this->Get('applicationsolution_name'));
+								$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:SecretShouldBeYamlFormat", $this->Get('applicationsolution_name'));
 							}
 						}
 
@@ -691,33 +640,24 @@
 						if($hosts) {
 							$parsed = yaml_parse($hosts);
 							if(!is_array($parsed)) {
-								$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:hostaliasesShouldBeYamlFormat", $this->Get('hostaliases'));
+								$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:hostaliasesShouldBeYamlFormat", $this->Get('hostaliases'));
 							} else {
 								// k8s hostaliases域名校验正则为：[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*
 								$ips = array_keys($parsed);
 								foreach($parsed as $ip => $domain) {
 									if(!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-										$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:IpIsInvalid", $ip);
+										$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:IpIsInvalid", $ip);
 									}
 									if(!preg_match('/^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/', $domain)) {
-										$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:DomainIsInvalid", $domain);
+										$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:DomainIsInvalid", $domain);
 									}
 								}
-							}
-						}
-						// 检查ingressannotations格式
-						$validate = $this->Get('ingressannotations_list')->ToArrayOfValues();
-						foreach($validate as $val) {
-							$value = $val['lnkK8sIngressAnnotationsToDeployment.value'];
-							$pattern = $val['lnkK8sIngressAnnotationsToDeployment.k8singressannotations_validate'];
-							if($pattern && !preg_match($pattern, $value)) {
-								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToDeployment/Error:ValueNotValid", $pattern);
 							}
 						}
 
 						// cpu_limit >= cpu_request
 						if($this->Get('cpu_limit') < $this->Get('cpu_request')) {
-							$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:CpuLimitCanNotLessThanCpuRequest", $this->Get('cpu_limit'));
+							$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:CpuLimitCanNotLessThanCpuRequest", $this->Get('cpu_limit'));
 						}
 
 						// maxSurge maxUnavailable不能同时为0
@@ -726,7 +666,7 @@
 							$s = str_replace("%", "", $strategy);
 							$arr = explode(":",$s);
 							if($arr[0] == 0 && $arr[1] == 0) {
-								$this->m_aCheckIssues[] = Dict::Format("Class:Deployment/Error:maxSurgeAndmaxUnavailableCannotBeZeroBoth", $this->Get('rolling_strategy'));
+								$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:maxSurgeAndmaxUnavailableCannotBeZeroBoth", $this->Get('rolling_strategy'));
 							}
 						}
 						parent::DoCheckToWrite();
@@ -742,7 +682,7 @@
 					// 不允许修改组成friendlyname的属性
 					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
 					{
-						// 权限控制，不允许查看非自己名下Deployment的Secret数据
+						// 权限控制，不允许查看非自己名下Controller的Secret数据
 						if(!$this->IsNew() && $sAttCode == 'secret') 
 						{
 							$myContactId = UserRights::GetContactId();
@@ -814,13 +754,14 @@
 						$iframeHeight = trim(MetaModel::GetModuleSetting('kubernetes', 'iframe_height', '600px'));
 						$app = $this->Get('applicationsolution_name');
 						$ns = $this->Get('k8snamespace_name');
+						// Fix me! 除deployment之外还有其他类型
 						$tabUrl = $kubedash . "/#!/deployment/" . $ns . "/" . $app . "?namespace=" . $ns;
 						$iframe_start = '<iframe style="border:0;padding:0;margin:0;width:100%;height:' . $iframeHeight . ';overflow:auto" ';
 						$iframe_end = '</iframe></div>';
 						$addStr = $iframe_start . 'src=' . '"' . $tabUrl . '"' . '>' . $iframe_end;
 						if (!$bEditMode)
 						{
-							$oPage->SetCurrentTab(Dict::S('Class:Deployment/Tab:Debug'));
+							$oPage->SetCurrentTab(Dict::S('Class:Controller/Tab:Debug'));
 							$oPage->add('<div id="kubernetes_dashboard_url" style="width:100%;height:' . $iframeHeight . ';">');
 							$oPage->add($addStr);
 						}
@@ -1044,10 +985,471 @@
 			</presentation>
 		</class>
 
+		<class id="Deployment" _delta="define">
+			<parent>Controller</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>deployment</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="k8snamespace_name"/>
+						<attribute id="applicationsolution_name"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon>images/deployment.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="k8snamespace_id"/>
+						<attribute id="applicationsolution_id"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="type" xsi:type="AttributeEnum">
+					<values>
+						<value id="web">web</value>
+						<value id="worker">worker</value>
+					</values>
+					<sql>type</sql>
+					<default_value>web</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
+				<field id="https" xsi:type="AttributeEnum">
+					<values>
+						<value id="on">on</value>
+						<value id="off">off</value>
+					</values>
+					<sql>https</sql>
+					<default_value>on</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
+				<field id="url" xsi:type="AttributeURL">
+					<sql>url</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="ingress_list" xsi:type="AttributeLinkedSet">
+					<linked_class>Ingress</linked_class>
+					<ext_key_to_me>deployment_id</ext_key_to_me>
+					<edit_mode>add_only</edit_mode>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<duplicates/>
+				</field>
+				<field id="ingressannotations_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkK8sIngressAnnotationsToDeployment</linked_class>
+					<ext_key_to_me>deployment_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>k8singressannotations_id</ext_key_to_remote>
+					<duplicates/>
+				</field>
+			</fields>
+			<lifecycle>
+				<attribute>status</attribute>
+				<stimuli>
+					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
+					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_redeploy" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_redeploy2" xsi:type="StimulusUserAction"/>
+				</stimuli>
+				<states>
+					<state id="production">
+						<flags>
+							<attribute id="org_id">
+								<read_only/>
+							</attribute>
+							<attribute id="kubestatus">
+								<read_only/>
+							</attribute>
+							<attribute id="url">
+								<read_only/>
+							</attribute>
+							<attribute id="person_list">
+								<read_only/>
+							</attribute>
+							<attribute id="change_log">
+								<must_prompt/>
+							</attribute>
+							<attribute id="image_tag">
+								<must_prompt/>
+							</attribute>
+							<attribute id="replicas">
+								<must_prompt/>
+							</attribute>
+							<attribute id="cpu_request">
+								<must_prompt/>
+							</attribute>
+							<attribute id="cpu_limit">
+								<must_prompt/>
+							</attribute>
+							<attribute id="mem_request">
+								<must_prompt/>
+							</attribute>
+							<attribute id="secret">
+								<must_prompt/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+							<transition id="ev_redeploy">
+								<target>redeploy</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="redeploy">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+							</attribute>
+							<attribute id="image_tag">
+								<must_prompt/>
+							</attribute>
+							<attribute id="replicas">
+								<must_prompt/>
+							</attribute>
+							<attribute id="cpu_request">
+								<must_prompt/>
+							</attribute>
+							<attribute id="cpu_limit">
+								<must_prompt/>
+							</attribute>
+							<attribute id="mem_request">
+								<must_prompt/>
+							</attribute>
+							<attribute id="secret">
+								<must_prompt/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+							<transition id="ev_redeploy2">
+								<target>redeploy2</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="redeploy2">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+							</attribute>
+							<attribute id="image_tag">
+								<must_prompt/>
+							</attribute>
+							<attribute id="replicas">
+								<must_prompt/>
+							</attribute>
+							<attribute id="cpu_request">
+								<must_prompt/>
+							</attribute>
+							<attribute id="cpu_limit">
+								<must_prompt/>
+							</attribute>
+							<attribute id="mem_request">
+								<must_prompt/>
+							</attribute>
+							<attribute id="secret">
+								<must_prompt/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+							<transition id="ev_redeploy">
+								<target>redeploy</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="stock">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+								<must_change/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_online">
+								<target>production</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+				</states>
+			</lifecycle>
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	  
+					public function DoCheckToWrite()
+					{
+						// 自动填充url字段
+						$k8snamespace = MetaModel::GetObject('K8sNamespace',$this->Get('k8snamespace_id'));
+						$domain = $k8snamespace->Get('domain');
+						$host = str_replace("_", "-", $this->Get('applicationsolution_name'));
+						$url = 'http://' . $host . $domain;
+						$this->Set('url', $url);
+
+						// 检查ingressannotations格式
+						$validate = $this->Get('ingressannotations_list')->ToArrayOfValues();
+						foreach($validate as $val) {
+							$value = $val['lnkK8sIngressAnnotationsToDeployment.value'];
+							$pattern = $val['lnkK8sIngressAnnotationsToDeployment.k8singressannotations_validate'];
+							if($pattern && !preg_match($pattern, $value)) {
+								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToDeployment/Error:ValueNotValid", $pattern);
+							}
+						}
+
+						parent::DoCheckToWrite();
+					}
+					]]>
+					</code>
+				</method>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="col:col1">
+							<rank>10</rank>
+							<items>
+								<item id="fieldset:Deployment:baseinfo">
+									<rank>10</rank>
+									<items>
+										<item id="k8snamespace_id">
+											<rank>10</rank>
+										</item>
+										<item id="applicationsolution_id">
+											<rank>15</rank>
+										</item>
+										<item id="type">
+											<rank>20</rank>
+										</item>
+										<item id="https">
+											<rank>25</rank>
+										</item>
+										<item id="status">
+											<rank>30</rank>
+										</item>
+										<item id="kubestatus">
+											<rank>35</rank>
+										</item>
+										<item id="image">
+											<rank>40</rank>
+										</item>
+										<item id="image_tag">
+											<rank>42</rank>
+										</item>
+										<item id="repo">
+											<rank>45</rank>
+										</item>
+										<item id="replicas">
+											<rank>50</rank>
+										</item>
+										<item id="cpu_request">
+											<rank>52</rank>
+										</item>
+										<item id="cpu_limit">
+											<rank>54</rank>
+										</item>
+										<item id="mem_request">
+											<rank>56</rank>
+										</item>
+										<item id="containerport">
+											<rank>60</rank>
+										</item>
+										<item id="hostnetwork">
+											<rank>65</rank>
+										</item>
+										<item id="org_id">
+											<rank>70</rank>
+										</item>
+										<item id="move2production">
+											<rank>80</rank>
+										</item>
+										<item id="description">
+											<rank>90</rank>
+										</item>
+										<item id="url">
+											<rank>100</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+						<item id="ingress_list">
+							<rank>110</rank>
+						</item>
+						<item id="person_list">
+							<rank>60</rank>
+						</item>
+						<item id="affinity_list">
+							<rank>120</rank>
+						</item>
+						<item id="volume_list">
+							<rank>130</rank>
+						</item>
+						<item id="ingressannotations_list">
+							<rank>140</rank>
+						</item>
+						<item id="col:col2">
+							<rank>200</rank>
+							<items>
+								<item id="fieldset:Deployment:secret">
+									<rank>210</rank>
+									<items>
+										<item id="secret">
+											<rank>220</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+						<item id="col:col3">
+							<rank>300</rank>
+							<items>
+								<item id="fieldset:Deployment:other">
+									<rank>310</rank>
+									<items>
+										<item id="change_log">
+											<rank>320</rank>
+										</item>
+										<item id="rolling_strategy">
+											<rank>330</rank>
+										</item>
+										<item id="hostaliases">
+											<rank>340</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="k8snamespace_id">
+							<rank>10</rank>
+						</item>
+						<item id="applicationsolution_id">
+							<rank>15</rank>
+						</item>
+						<item id="type">
+							<rank>20</rank>
+						</item>
+						<item id="https">
+							<rank>25</rank>
+						</item>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="kubestatus">
+							<rank>35</rank>
+						</item>
+						<item id="image">
+							<rank>40</rank>
+						</item>
+						<item id="replicas">
+							<rank>50</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="org_id">
+							<rank>70</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+						<item id="description">
+							<rank>90</rank>
+						</item>
+						<item id="url">
+							<rank>100</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="k8snamespace_id">
+							<rank>10</rank>
+						</item>
+						<item id="applicationsolution_id">
+							<rank>15</rank>
+						</item>
+						<item id="type">
+							<rank>20</rank>
+						</item>
+						<item id="https">
+							<rank>25</rank>
+						</item>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="kubestatus">
+							<rank>40</rank>
+						</item>
+						<item id="replicas">
+							<rank>50</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="org_id">
+							<rank>70</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+
 		<class id="ApplicationSolution">
 			<fields>
 				<field id="deployment_list" xsi:type="AttributeLinkedSet" _delta="define">
-					<linked_class>Deployment</linked_class>
+					<linked_class>Controller</linked_class>
 					<ext_key_to_me>applicationsolution_id</ext_key_to_me>
 					<edit_mode>add_only</edit_mode>
 					<count_min>0</count_min>
@@ -1058,13 +1460,14 @@
 			<presentation>
 				<details>
 					<items>
-						<item id="deployment_list" _delta="define">
+						<item id="controller_list" _delta="define">
 							<rank>100</rank>
 						</item>
 					</items>
 				</details>
 			</presentation>
 		</class>
+
 		<class id="Ingress" _delta="define">
 			<parent>Kubernetes</parent>
 			<properties>
@@ -1102,33 +1505,6 @@
 					<extkey_attcode>deployment_id</extkey_attcode>
 					<target_attcode>friendlyname</target_attcode>
 				</field>
-				<field id="k8snamespace_id" xsi:type="AttributeExternalKey">
-					<sql>k8snamespace_id</sql>
-					<target_class>K8sNamespace</target_class>
-					<is_null_allowed>false</is_null_allowed>
-					<filter>SELECT K8sNamespace AS ns JOIN Deployment AS d ON d.k8snamespace_id=ns.id JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id WHERE app.id=:this->applicationsolution_id</filter>
-					<on_target_delete>DEL_MANUAL</on_target_delete>
-					<allow_target_creation>false</allow_target_creation>
-					<dependencies>
-						<attribute id="applicationsolution_id"/>
-					</dependencies>
-				</field>
-				<field id="k8snamespace_name" xsi:type="AttributeExternalField">
-					<extkey_attcode>k8snamespace_id</extkey_attcode>
-					<target_attcode>name</target_attcode>
-				</field>
-				<field id="applicationsolution_id" xsi:type="AttributeExternalKey">
-					<sql>applicationsolution_id</sql>
-					<target_class>ApplicationSolution</target_class>
-					<is_null_allowed>false</is_null_allowed>
-					<filter>SELECT ApplicationSolution AS app JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id = app.id JOIN Deployment AS d ON d.applicationsolution_id=app.id WHERE l.contact_id = :current_contact_id</filter>
-					<on_target_delete>DEL_MANUAL</on_target_delete>
-					<allow_target_creation>false</allow_target_creation>
-				</field>
-				<field id="applicationsolution_name" xsi:type="AttributeExternalField">
-					<extkey_attcode>applicationsolution_id</extkey_attcode>
-					<target_attcode>name</target_attcode>
-				</field>
 				<field id="domain_id" xsi:type="AttributeExternalKey">
 					<sql>domain_id</sql>
 					<target_class>Domain</target_class>
@@ -1160,8 +1536,6 @@
 					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
 					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
-					<stimulus id="ev_redeploy" xsi:type="StimulusUserAction"/>
-					<stimulus id="ev_redeploy2" xsi:type="StimulusUserAction"/>
 				</stimuli>
 				<states>
 					<state id="production">
@@ -1172,7 +1546,7 @@
 							<attribute id="kubestatus">
 								<read_only/>
 							</attribute>
-							<attribute id="deployment_id">
+							<attribute id="controller_id">
 								<read_only/>
 							</attribute>
 							<attribute id="person_list">
@@ -1185,46 +1559,6 @@
 						<transitions>
 							<transition id="ev_offline">
 								<target>stock</target>
-								<actions/>
-							</transition>
-							<transition id="ev_redeploy">
-								<target>redeploy</target>
-								<actions/>
-							</transition>
-						</transitions>
-					</state>
-					<state id="redeploy">
-						<inherit_flags_from>production</inherit_flags_from>
-						<flags>
-							<attribute id="change_log">
-								<must_prompt/>
-							</attribute>
-						</flags>
-						<transitions>
-							<transition id="ev_offline">
-								<target>stock</target>
-								<actions/>
-							</transition>
-							<transition id="ev_redeploy2">
-								<target>redeploy2</target>
-								<actions/>
-							</transition>
-						</transitions>
-					</state>
-					<state id="redeploy2">
-						<inherit_flags_from>production</inherit_flags_from>
-						<flags>
-							<attribute id="change_log">
-								<must_prompt/>
-							</attribute>
-						</flags>
-						<transitions>
-							<transition id="ev_offline">
-								<target>stock</target>
-								<actions/>
-							</transition>
-							<transition id="ev_redeploy">
-								<target>redeploy</target>
 								<actions/>
 							</transition>
 						</transitions>
@@ -1413,8 +1747,250 @@
 			</presentation>
 		</class>
 
-		<class id="Secret" _delta="define">
+		<class id="Configuration" _delta="define">
 			<parent>Kubernetes</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>configuration</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="k8snamespace_id"/>
+						<attribute id="applicationsolution_id"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon>images/configuration.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="k8snamespace_id"/>
+						<attribute id="applicationsolution_id"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="controller_id" xsi:type="AttributeExternalKey">
+					<sql>controller_id</sql>
+					<target_class>Controller</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>
+				</field>
+				<field id="controller_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>controller_id</extkey_attcode>
+					<target_attcode>friendlyname</target_attcode>
+				</field>
+				<field id="k8snamespace_id" xsi:type="AttributeExternalKey">
+					<sql>k8snamespace_id</sql>
+					<target_class>K8sNamespace</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<filter>SELECT K8sNamespace AS ns JOIN Deployment AS d ON d.k8snamespace_id=ns.id JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id WHERE app.id=:this->applicationsolution_id</filter>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>
+					<dependencies>
+						<attribute id="applicationsolution_id"/>
+					</dependencies>
+				</field>
+				<field id="k8snamespace_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8snamespace_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+			</fields>
+			<lifecycle>
+				<attribute>status</attribute>
+				<stimuli>
+					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
+					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
+				</stimuli>
+				<states>
+					<state id="production">
+						<flags>
+							<attribute id="org_id">
+								<read_only/>
+							</attribute>
+							<attribute id="kubestatus">
+								<read_only/>
+							</attribute>
+							<attribute id="controller_id">
+								<read_only/>
+							</attribute>
+							<attribute id="person_list">
+								<read_only/>
+							</attribute>
+							<attribute id="change_log">
+								<must_prompt/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="stock">
+						<inherit_flags_from>production</inherit_flags_from>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+								<must_change/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_online">
+								<target>production</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+				</states>
+			</lifecycle>
+			<methods>
+				<method id="ComputeValues" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+					public function ComputeValues()
+					{
+						$app = $this->Get('applicationsolution_name');
+						$namespace = $this->Get('k8snamespace_name');
+						$fname = $namespace . "." . $app;
+						$deploy = MetaModel::GetObjectByColumn('Controller', 'friendlyname', $fname, false);
+						if($deploy) $this->Set("deployment_id", $deploy->GetKey());
+
+						return parent::ComputeValues();
+					}
+					]]>
+					</code>
+				</method>
+
+				<method id="GetAttributeFlags" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+					// 不允许修改组成friendlyname的属性
+					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+					{
+						$sArg = array('applicationsolution_id','k8snamespace_id');
+						if (!$this->IsNew() && in_array($sAttCode, $sArg))
+						{
+							return OPT_ATT_READONLY;
+						}
+						else
+						{
+							return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+						}
+					}
+					]]>
+					</code>
+				</method>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="k8snamespace_id">
+							<rank>3</rank>
+						</item>
+						<item id="controller_id">
+							<rank>10</rank>
+						</item>
+						<item id="applicationsolution_id">
+							<rank>1</rank>
+						</item>
+						<item id="status">
+							<rank>70</rank>
+						</item>
+						<item id="kubestatus">
+							<rank>72</rank>
+						</item>
+						<item id="org_id">
+							<rank>75</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+						<item id="description">
+							<rank>90</rank>
+						</item>
+						<item id="person_list">
+							<rank>60</rank>
+						</item>
+						<item id="col:col3">
+							<rank>300</rank>
+							<items>
+								<item id="fieldset:Configuration:other">
+									<rank>310</rank>
+									<items>
+										<item id="change_log">
+											<rank>320</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="k8snamespace_id">
+							<rank>10</rank>
+						</item>
+						<item id="controller_id">
+							<rank>16</rank>
+						</item>
+						<item id="applicationsolution_id">
+							<rank>15</rank>
+						</item>
+						<item id="status">
+							<rank>70</rank>
+						</item>
+						<item id="kubestatus">
+							<rank>72</rank>
+						</item>
+						<item id="org_id">
+							<rank>75</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="k8snamespace_id">
+							<rank>10</rank>
+						</item>
+						<item id="controller_id">
+							<rank>16</rank>
+						</item>
+						<item id="applicationsolution_id">
+							<rank>15</rank>
+						</item>
+						<item id="status">
+							<rank>70</rank>
+						</item>
+						<item id="kubestatus">
+							<rank>72</rank>
+						</item>
+						<item id="org_id">
+							<rank>75</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+
+		<class id="Secret" _delta="define">
+			<parent>Configuration</parent>
 			<properties>
 				<category>bizmodel,searchable</category>
 				<abstract>false</abstract>
@@ -1424,6 +2000,7 @@
 				<db_final_class_field>finalclass</db_final_class_field>
 				<naming>
 					<attributes>
+						<attribute id="k8snamespace_name"/>
 						<attribute id="name"/>
 					</attributes>
 				</naming>
@@ -1431,6 +2008,7 @@
 				<icon>images/secret.png</icon>
 				<reconciliation>
 					<attributes>
+						<attribute id="k8snamespace_id"/>
 						<attribute id="name"/>
 					</attributes>
 				</reconciliation>
@@ -1442,33 +2020,12 @@
 					<is_null_allowed>false</is_null_allowed>
 					<validation_pattern>^[a-z][a-z1-9_]+$</validation_pattern>
 				</field>
-				<field id="applicationsolution_id" xsi:type="AttributeExternalKey">
-					<sql>applicationsolution_id</sql>
-					<target_class>ApplicationSolution</target_class>
-					<is_null_allowed>false</is_null_allowed>
-					<filter>SELECT ApplicationSolution AS app JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id = app.id WHERE l.contact_id = :current_contact_id</filter>
-					<on_target_delete>DEL_MANUAL</on_target_delete>
-					<allow_target_creation>false</allow_target_creation>
-				</field>
-				<field id="applicationsolution_name" xsi:type="AttributeExternalField">
-					<extkey_attcode>applicationsolution_id</extkey_attcode>
-					<target_attcode>name</target_attcode>
-				</field>
 				<field id="data" xsi:type="AttributeText">
 					<sql>data</sql>
 					<is_null_allowed>false</is_null_allowed>
 					<default_value>KEY:VALUE</default_value>
 					<tracking_level>all</tracking_level>
 				</field>
-				<!--
-				<field id="deployment_list" xsi:type="AttributeLinkedSet">
-					<linked_class>Deployment</linked_class>
-					<ext_key_to_me>secret_id</ext_key_to_me>
-					<edit_mode>add_only</edit_mode>
-					<count_min>0</count_min>
-					<count_max>0</count_max>
-					<duplicates/>
-				</field>-->
 			</fields>
 			<lifecycle>
 				<attribute>status</attribute>
@@ -1495,46 +2052,6 @@
 						<transitions>
 							<transition id="ev_offline">
 								<target>stock</target>
-								<actions/>
-							</transition>
-							<transition id="ev_redeploy">
-								<target>redeploy</target>
-								<actions/>
-							</transition>
-						</transitions>
-					</state>
-					<state id="redeploy">
-						<inherit_flags_from>production</inherit_flags_from>
-						<flags>
-							<attribute id="change_log">
-								<must_prompt/>
-							</attribute>
-						</flags>
-						<transitions>
-							<transition id="ev_offline">
-								<target>stock</target>
-								<actions/>
-							</transition>
-							<transition id="ev_redeploy2">
-								<target>redeploy2</target>
-								<actions/>
-							</transition>
-						</transitions>
-					</state>
-					<state id="redeploy2">
-						<inherit_flags_from>production</inherit_flags_from>
-						<flags>
-							<attribute id="change_log">
-								<must_prompt/>
-							</attribute>
-						</flags>
-						<transitions>
-							<transition id="ev_offline">
-								<target>stock</target>
-								<actions/>
-							</transition>
-							<transition id="ev_redeploy">
-								<target>redeploy</target>
 								<actions/>
 							</transition>
 						</transitions>
@@ -1567,12 +2084,12 @@
 						$aChanges = $this->ListChanges();
 						if(array_key_exists('status', $aChanges) && $aChanges['status'] == 'stock')
 						{
-							$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Deployment WHERE status='production' AND secret_id=:secret_id");
+							$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Controller WHERE status='production' AND secret_id=:secret_id");
 							$oSet = new DBObjectSet($oSearch, array(), array("secret_id" => $this->GetKey()));
 
 							if ($oSet->Count() > 0)
 							{
-								$this->m_aCheckIssues[] = Dict::Format("Class:Secret/Error:NotAllowedForSomeDeploymentUseThisSecret", $this->GetKey());
+								$this->m_aCheckIssues[] = Dict::Format("Class:Secret/Error:NotAllowedForSomeControllerUseThisSecret", $this->GetKey());
 							}
 						}
 
@@ -1588,14 +2105,14 @@
 					<code><![CDATA[	   
 					public function CheckToDelete(&$oDeletionPlan)
 					{
-						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Deployment WHERE status='production' AND secret_id=:secret_id");
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Controller WHERE status='production' AND secret_id=:secret_id");
 						$oSet = new DBObjectSet($oSearch, array(), array("secret_id" => $this->GetKey()));
 
 						if ($oSet->Count() > 0)
 						{
-							// 被在线状态Deployment使用的Seret不允许直接删除
+							// 被在线状态Controller使用的Seret不允许直接删除
 							$oDeletionPlan->AddToDelete($this, null);
-							$oDeletionPlan->SetDeletionIssues($this, array('有在线状态Deployment使用此Secret对象，不允许直接删除'), true);
+							$oDeletionPlan->SetDeletionIssues($this, array('有在线状态K8S控制器使用此Secret对象，不允许直接删除'), true);
 							$oDeletionPlan->ComputeResults();
 							return false;
 						}
@@ -1625,7 +2142,7 @@
 								return OPT_ATT_HIDDEN;
 							}
 						}
-						$sArg = array('name');
+						$sArg = array('name', 'applicationsolution_id', 'k8snamespace_id');
 						if (!$this->IsNew() && in_array($sAttCode, $sArg))
 						{
 							return OPT_ATT_READONLY;
@@ -1671,6 +2188,9 @@
 					<items>
 						<item id="name">
 							<rank>10</rank>
+						</item>
+						<item id="k8snamespace_id">
+							<rank>12</rank>
 						</item>
 						<item id="applicationsolution_id">
 							<rank>11</rank>
@@ -1719,6 +2239,9 @@
 						<item id="applicationsolution_id">
 							<rank>11</rank>
 						</item>
+						<item id="k8snamespace_id">
+							<rank>12</rank>
+						</item>
 						<item id="status">
 							<rank>13</rank>
 						</item>
@@ -1741,6 +2264,9 @@
 						<item id="applicationsolution_id">
 							<rank>10</rank>
 						</item>
+						<item id="k8snamespace_id">
+							<rank>11</rank>
+						</item>
 						<item id="status">
 							<rank>12</rank>
 						</item>
@@ -1761,6 +2287,8 @@
 			</presentation>
 		</class>
 
+
+		<!-- 以下是类型配置及lnk类-->
 		<class id="K8sNamespace" _delta="define">
 			<parent>Typology</parent>
 			<properties>
@@ -2453,20 +2981,20 @@
 			</presentation>
 		</class>
 
-		<class id="lnkK8sAffinityToDeployment" _delta="define">
+		<class id="lnkK8sAffinityToController" _delta="define">
 			<parent>cmdbAbstractObject</parent>
 			<properties>
 				<is_link>1</is_link>
 				<category>bizmodel</category>
 				<abstract>false</abstract>
 				<key_type>autoincrement</key_type>
-				<db_table>lnkk8saffinitytodeployment</db_table>
+				<db_table>lnkk8saffinitytocontroller</db_table>
 				<db_key_field>id</db_key_field>
 				<db_final_class_field/>
 				<naming>
 					<attributes>
 						<attribute id="k8saffinity_id"/>
-						<attribute id="deployment_id"/>
+						<attribute id="controller_id"/>
 					</attributes>
 				</naming>
 				<display_template/>
@@ -2474,7 +3002,7 @@
 				<reconciliation>
 					<attributes>
 						<attribute id="k8saffinity_id"/>
-						<attribute id="deployment_id"/>
+						<attribute id="controller_id"/>
 					</attributes>
 				</reconciliation>
 			</properties>
@@ -2509,16 +3037,17 @@
 					<extkey_attcode>k8saffinity_id</extkey_attcode>
 					<target_attcode>expressions</target_attcode>
 				</field>
-				<field id="deployment_id" xsi:type="AttributeExternalKey">
-					<sql>deployment_id</sql>
-					<target_class>Deployment</target_class>
+				<field id="controller_id" xsi:type="AttributeExternalKey">
+					<sql>controller_id</sql>
+					<target_class>Controller</target_class>
 					<is_null_allowed>false</is_null_allowed>
 					<on_target_delete>DEL_AUTO</on_target_delete>
 				</field>
-				<field id="deployment_name" xsi:type="AttributeExternalField">
-					<extkey_attcode>deployment_id</extkey_attcode>
+				<field id="controller_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>controller_id</extkey_attcode>
 					<target_attcode>friendlyname</target_attcode>
 				</field>
+				<!-- need comment for group, I had forgotten this attribute useage-->
 				<field id="group" xsi:type="AttributeEnum">
 					<values>
 						<value id="g1">g1</value>
@@ -2566,7 +3095,7 @@
 			$aChanges = $this->ListChanges();
 			if($aChanges)
 			{
-				$friendlyname = $this->Get('k8saffinity_id') . " " . $this->Get('deployment_id');
+				$friendlyname = $this->Get('k8saffinity_id') . " " . $this->Get('controller_id');
 				$allowmodify = array("group", "values");
 				$allow = true;
 				foreach($aChanges as $key => $val) {
@@ -2578,16 +3107,16 @@
 				if(!$this->IsNew())
 				{
 					if(!$allow) {
-						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sAffinityToDeployment/Error:ModifyNotAllowed", $friendlyname);
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sAffinityToController/Error:ModifyNotAllowed", $friendlyname);
 					}
 				}else
 				{
-					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkK8sAffinityToDeployment WHERE friendlyname=:friendlyname");
+					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkK8sAffinityToController WHERE friendlyname=:friendlyname");
 					$oSet = new DBObjectSet($oSearch, array(), array("friendlyname" => $friendlyname));
 
 					if ($oSet->Count() > 0)
 					{
-						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sAffinityToDeployment/Error:ThisLnkAlreadyExists", $friendlyname);
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sAffinityToController/Error:ThisLnkAlreadyExists", $friendlyname);
 					}
 				}
 			}
@@ -2602,8 +3131,8 @@
   	public function CheckToDelete(&$oDeletionPlan)
   	{
 		$myContactId = UserRights::GetContactId();
-		$deploy = MetaModel::GetObject("Deployment", $this->Get('deployment_id'));
-		$contacts = $deploy->Get('person_list')->ToArrayOfValues();
+		$controller = MetaModel::GetObject("Controller", $this->Get('controller_id'));
+		$contacts = $controller->Get('person_list')->ToArrayOfValues();
 		$flag = false;
 		foreach($contacts as $k => $v) {
 			if($v['lnkPersonToKubernetes.person_id'] == $myContactId) {
@@ -2630,7 +3159,7 @@
 						<item id="group">
 							<rank>5</rank>
 						</item>
-						<item id="deployment_id">
+						<item id="controller_id">
 							<rank>10</rank>
 						</item>
 						<item id="k8saffinity_id">
@@ -2661,7 +3190,7 @@
 						<item id="group">
 							<rank>5</rank>
 						</item>
-						<item id="deployment_id">
+						<item id="controller_id">
 							<rank>10</rank>
 						</item>
 						<item id="k8saffinity_id">
@@ -2689,7 +3218,7 @@
 						<item id="group">
 							<rank>5</rank>
 						</item>
-						<item id="deployment_id">
+						<item id="controller_id">
 							<rank>10</rank>
 						</item>
 						<item id="k8saffinity_id">
@@ -2718,20 +3247,20 @@
 			</presentation>
 		</class>
 
-		<class id="lnkK8sVolumeToDeployment" _delta="define">
+		<class id="lnkK8sVolumeToController" _delta="define">
 			<parent>cmdbAbstractObject</parent>
 			<properties>
 				<is_link>1</is_link>
 				<category>bizmodel</category>
 				<abstract>false</abstract>
 				<key_type>autoincrement</key_type>
-				<db_table>lnkk8svolumetodeployment</db_table>
+				<db_table>lnkk8svolumetocontroller</db_table>
 				<db_key_field>id</db_key_field>
 				<db_final_class_field/>
 				<naming>
 					<attributes>
 						<attribute id="k8svolume_id"/>
-						<attribute id="deployment_id"/>
+						<attribute id="controller_id"/>
 					</attributes>
 				</naming>
 				<display_template/>
@@ -2739,7 +3268,7 @@
 				<reconciliation>
 					<attributes>
 						<attribute id="k8svolume_id"/>
-						<attribute id="deployment_id"/>
+						<attribute id="controller_id"/>
 					</attributes>
 				</reconciliation>
 			</properties>
@@ -2762,14 +3291,14 @@
 					<extkey_attcode>k8svolume_id</extkey_attcode>
 					<target_attcode>note</target_attcode>
 				</field>
-				<field id="deployment_id" xsi:type="AttributeExternalKey">
-					<sql>deployment_id</sql>
-					<target_class>Deployment</target_class>
+				<field id="controller_id" xsi:type="AttributeExternalKey">
+					<sql>controller_id</sql>
+					<target_class>Controller</target_class>
 					<is_null_allowed>false</is_null_allowed>
 					<on_target_delete>DEL_AUTO</on_target_delete>
 				</field>
-				<field id="deployment_name" xsi:type="AttributeExternalField">
-					<extkey_attcode>deployment_id</extkey_attcode>
+				<field id="controller_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>controller_id</extkey_attcode>
 					<target_attcode>friendlyname</target_attcode>
 				</field>
 				<field id="mountpath" xsi:type="AttributeString">
@@ -2806,7 +3335,7 @@
 			$aChanges = $this->ListChanges();
 			if($aChanges)
 			{
-				$friendlyname = $this->Get('k8svolume_id') . " " . $this->Get('deployment_id');
+				$friendlyname = $this->Get('k8svolume_id') . " " . $this->Get('controller_id');
 				$allowmodify = array("mountpath");
 				$allow = true;
 				foreach($aChanges as $key => $val) {
@@ -2818,16 +3347,16 @@
 				if(!$this->IsNew())
 				{
 					if(!$allow) {
-						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sVolumeToDeployment/Error:ModifyNotAllowed", $friendlyname);
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sVolumeToController/Error:ModifyNotAllowed", $friendlyname);
 					}
 				}else
 				{
-					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkK8sVolumeToDeployment WHERE friendlyname=:friendlyname");
+					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkK8sVolumeToController WHERE friendlyname=:friendlyname");
 					$oSet = new DBObjectSet($oSearch, array(), array("friendlyname" => $friendlyname));
 
 					if ($oSet->Count() > 0)
 					{
-						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sVolumeToDeployment/Error:ThisLnkAlreadyExists", $friendlyname);
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sVolumeToController/Error:ThisLnkAlreadyExists", $friendlyname);
 					}
 				}
 			}
@@ -2842,7 +3371,7 @@
   	public function CheckToDelete(&$oDeletionPlan)
   	{
 		$myContactId = UserRights::GetContactId();
-		$deploy = MetaModel::GetObject("Deployment", $this->Get('deployment_id'));
+		$deploy = MetaModel::GetObject("Controller", $this->Get('controller_id'));
 		$contacts = $deploy->Get('person_list')->ToArrayOfValues();
 		$flag = false;
 		foreach($contacts as $k => $v) {
@@ -2870,7 +3399,7 @@
 						<item id="mountpath">
 							<rank>5</rank>
 						</item>
-						<item id="deployment_id">
+						<item id="controller_id">
 							<rank>10</rank>
 						</item>
 						<item id="k8svolume_id">
@@ -2892,7 +3421,7 @@
 						<item id="mountpath">
 							<rank>5</rank>
 						</item>
-						<item id="deployment_id">
+						<item id="controller_id">
 							<rank>10</rank>
 						</item>
 						<item id="k8svolume_id">
@@ -2914,7 +3443,7 @@
 						<item id="mountpath">
 							<rank>5</rank>
 						</item>
-						<item id="deployment_id">
+						<item id="controller_id">
 							<rank>10</rank>
 						</item>
 						<item id="k8svolume_id">
@@ -3161,29 +3690,47 @@
 		<menu id="Kubernetes" xsi:type="MenuGroup" _delta="define">
 		  <rank>21</rank>
 		</menu>
+		<menu id="Controller" xsi:type="OQLMenuNode" _delta="define">
+			<rank>5</rank>
+			<parent>Kubernetes</parent>
+			<oql>SELECT Controller AS c JOIN ApplicationSolution AS app ON c.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
+			<do_search>1</do_search>
+		</menu>
 		<menu id="Deployment" xsi:type="OQLMenuNode" _delta="define">
 			<rank>10</rank>
-			<parent>Kubernetes</parent>
+			<parent>Controller</parent>
 			<oql>SELECT Deployment AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
-		<menu id="Ingress" xsi:type="OQLMenuNode" _delta="define">
-			<rank>15</rank>
+		<menu id="Configuration" xsi:type="OQLMenuNode" _delta="define">
+			<rank>20</rank>
 			<parent>Kubernetes</parent>
+			<oql>SELECT Configuration AS c JOIN ApplicationSolution AS app ON c.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
+			<do_search>1</do_search>
+		</menu>
+		<menu id="Ingress" xsi:type="OQLMenuNode" _delta="define">
+			<rank>25</rank>
+			<parent>Configuration</parent>
 			<oql>SELECT Ingress AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Secret" xsi:type="OQLMenuNode" _delta="define">
-			<rank>20</rank>
-			<parent>Kubernetes</parent>
+			<rank>30</rank>
+			<parent>Configuration</parent>
 			<oql>SELECT Secret AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Typology" xsi:type="DashboardMenuNode">
 			<definition>
 				<cells>
-					<cell id="0">
+					<cell id="10" _delta="define">
+						<rank>10</rank>
 						<dashlets>
+							<dashlet id="k8s" xsi:type="DashletHeaderStatic" _delta="define">
+								<rank>0</rank>
+								<title>Menu:KubernetesTypology</title>
+								<icon>kubernetes/images/deployment.png</icon>
+							</dashlet>
 							<dashlet id="k8snamespace" xsi:type="DashletBadge" _delta="define">
 								<rank>9</rank>
 								<class>K8sNamespace</class>
@@ -3208,30 +3755,21 @@
 	</menus>
 	<user_rights>
 		<groups>
-			<group id="K8S" _delta="define">
+			<group id="KubeController" _delta="define">
 				<classes>
-					<class id="Deployment"/>
-					<class id="Ingress"/>
+					<class id="Controller"/>
 				</classes>
 			</group>
-			<group id="K8SSecret" _delta="define">
+			<group id="KubeConfiguration" _delta="define">
 				<classes>
-					<class id="Secret"/>
+					<class id="Configuration"/>
 				</classes>
 			</group>
-			<group id="lnkPersonToKubernetes" _delta="define">
+			<group id="Kubelnk" _delta="define">
 				<classes>
 					<class id="lnkPersonToKubernetes"/>
-				</classes>
-			</group>
-			<group id="lnkK8sAffinityToDeployment" _delta="define">
-				<classes>
-					<class id="lnkK8sAffinityToDeployment"/>
-				</classes>
-			</group>
-			<group id="lnkK8sVolumeToDeployment" _delta="define">
-				<classes>
-					<class id="lnkK8sVolumeToDeployment"/>
+					<class id="lnkK8sAffinityToController"/>
+					<class id="lnkK8sVolumeToController"/>
 					<class id="lnkK8sIngressAnnotationsToDeployment"/>
 				</classes>
 			</group>
@@ -3239,7 +3777,7 @@
 		<profiles>
 			<profile id="102">
 				<groups>
-					<group id="K8S" _delta="define">
+					<group id="KubeController" _delta="define">
 						<actions>
 							<action id="action:write">allow</action>
 							<action id="action:bulk write">allow</action>
@@ -3250,7 +3788,7 @@
 							<action id="stimulus:ev_redeploy2">allow</action>
 						</actions>
 					</group>
-					<group id="K8SSecret" _delta="define">
+					<group id="KubeConfiguration" _delta="define">
 						<actions>
 							<action id="action:bulk read">deny</action>
 							<action id="action:write">allow</action>
@@ -3260,21 +3798,7 @@
 							<action id="stimulus:ev_offline">allow</action>
 						</actions>
 					</group>
-					<group id="lnkPersonToKubernetes" _delta="define">
-						<actions>
-							<action id="action:write">allow</action>
-							<action id="action:bulk write">allow</action>
-							<action id="action:delete">allow</action>
-						</actions>
-					</group>
-					<group id="lnkK8sAffinityToDeployment" _delta="define">
-						<actions>
-							<action id="action:write">allow</action>
-							<action id="action:bulk write">allow</action>
-							<action id="action:delete">allow</action>
-						</actions>
-					</group>
-					<group id="lnkK8sVolumeToDeployment" _delta="define">
+					<group id="Kubelnk" _delta="define">
 						<actions>
 							<action id="action:write">allow</action>
 							<action id="action:bulk write">allow</action>
