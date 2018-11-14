@@ -783,12 +783,6 @@
 										<item id="applicationsolution_id">
 											<rank>15</rank>
 										</item>
-										<item id="type">
-											<rank>20</rank>
-										</item>
-										<item id="https">
-											<rank>25</rank>
-										</item>
 										<item id="status">
 											<rank>30</rank>
 										</item>
@@ -831,15 +825,9 @@
 										<item id="description">
 											<rank>90</rank>
 										</item>
-										<item id="url">
-											<rank>100</rank>
-										</item>
 									</items>
 								</item>
 							</items>
-						</item>
-						<item id="ingress_list">
-							<rank>110</rank>
 						</item>
 						<item id="person_list">
 							<rank>60</rank>
@@ -850,13 +838,10 @@
 						<item id="volume_list">
 							<rank>130</rank>
 						</item>
-						<item id="ingressannotations_list">
-							<rank>140</rank>
-						</item>
 						<item id="col:col2">
 							<rank>200</rank>
 							<items>
-								<item id="fieldset:Deployment:secret">
+								<item id="fieldset:Controller:secret">
 									<rank>210</rank>
 									<items>
 										<item id="secret">
@@ -869,7 +854,7 @@
 						<item id="col:col3">
 							<rank>300</rank>
 							<items>
-								<item id="fieldset:Deployment:other">
+								<item id="fieldset:Controller:other">
 									<rank>310</rank>
 									<items>
 										<item id="change_log">
@@ -894,12 +879,6 @@
 						</item>
 						<item id="applicationsolution_id">
 							<rank>15</rank>
-						</item>
-						<item id="type">
-							<rank>20</rank>
-						</item>
-						<item id="https">
-							<rank>25</rank>
 						</item>
 						<item id="status">
 							<rank>30</rank>
@@ -934,9 +913,6 @@
 						<item id="description">
 							<rank>90</rank>
 						</item>
-						<item id="url">
-							<rank>100</rank>
-						</item>
 					</items>
 				</search>
 				<list>
@@ -946,12 +922,6 @@
 						</item>
 						<item id="applicationsolution_id">
 							<rank>15</rank>
-						</item>
-						<item id="type">
-							<rank>20</rank>
-						</item>
-						<item id="https">
-							<rank>25</rank>
 						</item>
 						<item id="status">
 							<rank>30</rank>
@@ -1448,7 +1418,7 @@
 
 		<class id="ApplicationSolution">
 			<fields>
-				<field id="deployment_list" xsi:type="AttributeLinkedSet" _delta="define">
+				<field id="controller_list" xsi:type="AttributeLinkedSet" _delta="define">
 					<linked_class>Controller</linked_class>
 					<ext_key_to_me>applicationsolution_id</ext_key_to_me>
 					<edit_mode>add_only</edit_mode>
@@ -1536,6 +1506,8 @@
 					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
 					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_redeploy" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_redeploy2" xsi:type="StimulusUserAction"/>
 				</stimuli>
 				<states>
 					<state id="production">
@@ -1562,6 +1534,14 @@
 								<actions/>
 							</transition>
 						</transitions>
+					</state>
+					<state id="redeploy">
+						<flags></flags>
+						<transitions></transitions>
+					</state>
+					<state id="redeploy2">
+						<flags></flags>
+						<transitions></transitions>
 					</state>
 					<state id="stock">
 						<inherit_flags_from>production</inherit_flags_from>
@@ -1783,21 +1763,6 @@
 					<extkey_attcode>controller_id</extkey_attcode>
 					<target_attcode>friendlyname</target_attcode>
 				</field>
-				<field id="k8snamespace_id" xsi:type="AttributeExternalKey">
-					<sql>k8snamespace_id</sql>
-					<target_class>K8sNamespace</target_class>
-					<is_null_allowed>false</is_null_allowed>
-					<filter>SELECT K8sNamespace AS ns JOIN Deployment AS d ON d.k8snamespace_id=ns.id JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id WHERE app.id=:this->applicationsolution_id</filter>
-					<on_target_delete>DEL_MANUAL</on_target_delete>
-					<allow_target_creation>false</allow_target_creation>
-					<dependencies>
-						<attribute id="applicationsolution_id"/>
-					</dependencies>
-				</field>
-				<field id="k8snamespace_name" xsi:type="AttributeExternalField">
-					<extkey_attcode>k8snamespace_id</extkey_attcode>
-					<target_attcode>name</target_attcode>
-				</field>
 			</fields>
 			<lifecycle>
 				<attribute>status</attribute>
@@ -1805,6 +1770,8 @@
 					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
 					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_redeploy" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_redeploy2" xsi:type="StimulusUserAction"/>
 				</stimuli>
 				<states>
 					<state id="production">
@@ -1831,6 +1798,14 @@
 								<actions/>
 							</transition>
 						</transitions>
+					</state>
+					<state id="redeploy">
+						<flags></flags>
+						<transitions></transitions>
+					</state>
+					<state id="redeploy2">
+						<flags></flags>
+						<transitions></transitions>
 					</state>
 					<state id="stock">
 						<inherit_flags_from>production</inherit_flags_from>
@@ -2055,6 +2030,14 @@
 								<actions/>
 							</transition>
 						</transitions>
+					</state>
+					<state id="redeploy">
+						<flags></flags>
+						<transitions></transitions>
+					</state>
+					<state id="redeploy2">
+						<flags></flags>
+						<transitions></transitions>
 					</state>
 					<state id="stock">
 						<inherit_flags_from>production</inherit_flags_from>
@@ -3710,7 +3693,7 @@
 		</menu>
 		<menu id="Ingress" xsi:type="OQLMenuNode" _delta="define">
 			<rank>25</rank>
-			<parent>Configuration</parent>
+			<parent>Kubernetes</parent>
 			<oql>SELECT Ingress AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
