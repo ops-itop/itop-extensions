@@ -7,6 +7,8 @@
  */
 //Kubernetes
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:Kubernetes/Attribute:applicationsolution_id' => 'APP',
+	'Class:Kubernetes/Attribute:k8snamespace_id' => 'K8S集群',
 	'Class:Kubernetes/Attribute:description' => '描述',
 	'Class:Kubernetes/Attribute:org_id' => '组织',
 	'Class:Kubernetes/Attribute:move2production' => '上线日期',
@@ -171,6 +173,14 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_note' => '用途',
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_description' => '详情',
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_validate' => '配置值校验',
+));
+
+// Configuration
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:Configuration' => '配置项',
+	'Class:Configuration+' => '所有配置项',
+	'Menu:Configuration' =>'配置项',
+	'Menu:Configuration+' =>'所有配置项',
 ));
 
 // Ingress
