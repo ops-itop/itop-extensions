@@ -157,6 +157,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:K8sIngressAnnotations' => '自定义Nginx配置',
 	'Class:K8sIngressAnnotations/Attribute:name' => '自定义Nginx配置',
 	'Class:K8sIngressAnnotations/Attribute:note' => '用途',
+	'Class:K8sIngressAnnotations/Attribute:enable' => '是否启用',
+	'Class:K8sIngressAnnotations/Attribute:default_value' => '默认值',
 	'Class:K8sIngressAnnotations/Attribute:description' => '详情',
 	'Class:K8sIngressAnnotations/Attribute:validate' => '正则校验',
 	'Class:K8sIngressAnnotations/Attribute:deployment_list' => '无状态服务',
@@ -180,7 +182,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 // lnkK8sIngressAnnotationsToIngress
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:value' => '配置值',
-	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:deployment_id' => '部署',
+	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:ingress_id' => '负载均衡',
 	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:k8singressannotations_id' => '配置项',
 	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:k8singressannotations_id' => '配置项',
 	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:k8singressannotations_name' => '配置项',

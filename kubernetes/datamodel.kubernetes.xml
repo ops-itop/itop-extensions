@@ -1194,11 +1194,13 @@
 						foreach($validate as $val) {
 							$value = $val['lnkK8sIngressAnnotationsToDeployment.value'];
 							$pattern = $val['lnkK8sIngressAnnotationsToDeployment.k8singressannotations_validate'];
+							if(!$value) {
+								$value = $val['lnkK8sIngressAnnotationsToDeployment.k8singressannotations_default_value'];
+							}
 							if($pattern && !preg_match($pattern, $value)) {
 								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToDeployment/Error:ValueNotValid", $pattern);
 							}
 						}
-
 						parent::DoCheckToWrite();
 					}
 					]]>
@@ -1593,7 +1595,30 @@
 					]]>
 					</code>
 				</method>
-
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	  
+					public function DoCheckToWrite()
+					{
+						// 检查ingressannotations格式
+						$validate = $this->Get('ingressannotations_list')->ToArrayOfValues();
+						foreach($validate as $key => $val) {
+							$value = $val['lnkK8sIngressAnnotationsToIngress.value'];
+							$pattern = $val['lnkK8sIngressAnnotationsToIngress.k8singressannotations_validate'];
+							if(!$value) {
+								$value = $val['lnkK8sIngressAnnotationsToIngress.k8singressannotations_default_value'];
+							}
+							if($pattern && !preg_match($pattern, $value)) {
+								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToIngress/Error:ValueNotValid", $pattern);
+							}
+						}
+						parent::DoCheckToWrite();
+					}
+					]]>
+					</code>
+				</method>
 				<method id="GetAttributeFlags" _delta="define">
 					<static>false</static>
 					<access>public</access>
@@ -2719,6 +2744,16 @@
 				</reconciliation>
 			</properties>
 			<fields>
+				<field id="enable" xsi:type="AttributeEnum">
+					<sql>enable</sql>
+					<values>
+						<value id="yes">yes</value>
+						<value id="no">no</value>
+					</values>
+					<default_value>yes</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
 				<field id="note" xsi:type="AttributeString">
 					<sql>note</sql>
 					<default_value/>
@@ -2728,6 +2763,11 @@
 					<sql>validate</sql>
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="default_value" xsi:type="AttributeText">
+					<sql>default_value</sql>
+					<default_value/>
+					<is_null_allowed>false</is_null_allowed>
 				</field>
 				<field id="description" xsi:type="AttributeText">
 					<sql>description</sql>
@@ -2751,18 +2791,43 @@
 					<duplicates/>
 				</field>
 			</fields>
-			<methods></methods>
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[  public function DoCheckToWrite(){
+			$aChanges = $this->ListChanges();
+			if($aChanges)
+			{
+				// 校验default_value格式是否合法
+				$value = $this->Get('default_value');
+				$pattern = $this->Get('validate');
+				if($pattern && !preg_match($pattern, $value)) {
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotations/Error:DefaultValueNotValid", $this->Get('name'));
+				}
+			}
+		}]]>
+					</code>
+				</method>
+			</methods>
 			<presentation>
 				<details>
 					<items>
 						<item id="name">
 							<rank>10</rank>
 						</item>
+						<item id="enable">
+							<rank>13</rank>
+						</item>
 						<item id="note">
 							<rank>15</rank>
 						</item>
 						<item id="validate">
 							<rank>17</rank>
+						</item>
+						<item id="default_value">
+							<rank>19</rank>
 						</item>
 						<item id="description">
 							<rank>20</rank>
@@ -2780,6 +2845,9 @@
 						<item id="name">
 							<rank>10</rank>
 						</item>
+						<item id="enable">
+							<rank>13</rank>
+						</item>
 						<item id="note">
 							<rank>20</rank>
 						</item>
@@ -2796,11 +2864,17 @@
 						<item id="note">
 							<rank>20</rank>
 						</item>
+						<item id="enable">
+							<rank>25</rank>
+						</item>
 						<item id="validate">
 							<rank>30</rank>
 						</item>
 						<item id="description">
 							<rank>40</rank>
+						</item>
+						<item id="default_value">
+							<rank>50</rank>
 						</item>
 					</items>
 				</list>
@@ -3519,6 +3593,10 @@
 					<extkey_attcode>k8singressannotations_id</extkey_attcode>
 					<target_attcode>description</target_attcode>
 				</field>
+				<field id="k8singressannotations_default_value" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8singressannotations_id</extkey_attcode>
+					<target_attcode>default_value</target_attcode>
+				</field>
 				<field id="deployment_id" xsi:type="AttributeExternalKey">
 					<sql>deployment_id</sql>
 					<target_class>Deployment</target_class>
@@ -3532,7 +3610,7 @@
 				<field id="value" xsi:type="AttributeText">
 					<sql>value</sql>
 					<default_value></default_value>
-					<is_null_allowed>false</is_null_allowed>
+					<is_null_allowed>true</is_null_allowed>
 					<width>200px</width>
 					<height>50px</height>
 				</field>
@@ -3581,6 +3659,11 @@
 					} else {
 						// 校验value格式是否合法
 						$value = $this->Get('value');
+						// 允许value为空，为空时自动设置为default_value的值
+						if(!$value) {
+							$value = $this->Get('k8singressannotations_default_value');
+							$this->Set('value', $value);
+						}
 						$pattern = $this->Get('k8singressannotations_validate');
 						if($pattern && !preg_match($pattern, $value)) {
 							$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToDeployment/Error:ValueNotValid", $friendlyname);
@@ -3654,6 +3737,9 @@
 						<item id="k8singressannotations_description">
 							<rank>35</rank>
 						</item>
+						<item id="k8singressannotations_default_value">
+							<rank>40</rank>
+						</item>
 					</items>
 				</details>
 				<search>
@@ -3691,6 +3777,9 @@
 						</item>
 						<item id="k8singressannotations_validate">
 							<rank>40</rank>
+						</item>
+						<item id="k8singressannotations_default_value">
+							<rank>50</rank>
 						</item>
 					</items>
 				</list>
@@ -3744,6 +3833,10 @@
 					<extkey_attcode>k8singressannotations_id</extkey_attcode>
 					<target_attcode>description</target_attcode>
 				</field>
+				<field id="k8singressannotations_default_value" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8singressannotations_id</extkey_attcode>
+					<target_attcode>default_value</target_attcode>
+				</field>
 				<field id="ingress_id" xsi:type="AttributeExternalKey">
 					<sql>ingress_id</sql>
 					<target_class>Ingress</target_class>
@@ -3757,7 +3850,7 @@
 				<field id="value" xsi:type="AttributeText">
 					<sql>value</sql>
 					<default_value></default_value>
-					<is_null_allowed>false</is_null_allowed>
+					<is_null_allowed>true</is_null_allowed>
 					<width>200px</width>
 					<height>50px</height>
 				</field>
@@ -3806,6 +3899,11 @@
 					} else {
 						// 校验value格式是否合法
 						$value = $this->Get('value');
+						// 允许value为空，为空时自动设置为default_value的值
+						if(!$value) {
+							$value = $this->Get('k8singressannotations_default_value');
+							$this->Set('value', $value);
+						}
 						$pattern = $this->Get('k8singressannotations_validate');
 						if($pattern && !preg_match($pattern, $value)) {
 							$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToIngress/Error:ValueNotValid", $friendlyname);
@@ -3879,6 +3977,9 @@
 						<item id="k8singressannotations_description">
 							<rank>35</rank>
 						</item>
+						<item id="k8singressannotations_default_value">
+							<rank>40</rank>
+						</item>
 					</items>
 				</details>
 				<search>
@@ -3916,6 +4017,9 @@
 						</item>
 						<item id="k8singressannotations_validate">
 							<rank>40</rank>
+						</item>
+						<item id="k8singressannotations_default_value">
+							<rank>50</rank>
 						</item>
 					</items>
 				</list>
