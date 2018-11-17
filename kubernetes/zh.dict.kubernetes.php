@@ -160,7 +160,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:K8sIngressAnnotations/Attribute:description' => '详情',
 	'Class:K8sIngressAnnotations/Attribute:validate' => '正则校验',
 	'Class:K8sIngressAnnotations/Attribute:deployment_list' => '无状态服务',
-	'Class:K8sIngressAnnotations/Attribute:deployment_list+' => '所有无状态服务',	
+	'Class:K8sIngressAnnotations/Attribute:deployment_list+' => '所有无状态服务',
+	'Class:K8sIngressAnnotations/Attribute:ingress_list' => '负载均衡',
+	'Class:K8sIngressAnnotations/Attribute:ingress_list+' => '所有负载均衡',
 ));
 
 // lnkK8sIngressAnnotationsToDeployment
@@ -173,6 +175,18 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_note' => '用途',
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_description' => '详情',
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_validate' => '配置值校验',
+));
+
+// lnkK8sIngressAnnotationsToIngress
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:value' => '配置值',
+	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:deployment_id' => '部署',
+	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:k8singressannotations_id' => '配置项',
+	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:k8singressannotations_id' => '配置项',
+	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:k8singressannotations_name' => '配置项',
+	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:k8singressannotations_note' => '用途',
+	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:k8singressannotations_description' => '详情',
+	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:k8singressannotations_validate' => '配置值校验',
 ));
 
 // Configuration
@@ -197,6 +211,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress/Attribute:deployment_id' => '无状态服务',
 	'Class:Ingress/Attribute:person_list' => '联系人',
 	'Class:Ingress/Attribute:person_list+' => '链接到此负载均衡的所有联系人',
+	'Class:Ingress/Attribute:ingressannotations_list' => '自定义Nginx配置',
+	'Class:Ingress/Attribute:ingressannotations_list+' => '此负载均衡的所有自定义Nginx配置',
 	
 	'Menu:Ingress' => '负载均衡',
 	'Menu:Ingress+' => '所有负载均衡',

@@ -1505,6 +1505,14 @@
 					<default_value>80</default_value>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
+				<field id="ingressannotations_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkK8sIngressAnnotationsToIngress</linked_class>
+					<ext_key_to_me>ingress_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>k8singressannotations_id</ext_key_to_remote>
+					<duplicates/>
+				</field>
 			</fields>
 			<lifecycle>
 				<attribute>status</attribute>
@@ -1646,6 +1654,9 @@
 						</item>
 						<item id="person_list">
 							<rank>60</rank>
+						</item>
+						<item id="ingressannotations_list">
+							<rank>70</rank>
 						</item>
 						<item id="col:col3">
 							<rank>300</rank>
@@ -2731,6 +2742,14 @@
 					<ext_key_to_remote>deployment_id</ext_key_to_remote>
 					<duplicates/>
 				</field>
+				<field id="ingress_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkK8sIngressAnnotationsToIngress</linked_class>
+					<ext_key_to_me>k8singressannotations_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>ingress_id</ext_key_to_remote>
+					<duplicates/>
+				</field>
 			</fields>
 			<methods></methods>
 			<presentation>
@@ -2750,6 +2769,9 @@
 						</item>
 						<item id="deployment_list">
 							<rank>100</rank>
+						</item>
+						<item id="ingress_list">
+							<rank>110</rank>
 						</item>
 					</items>
 				</details>
@@ -3674,6 +3696,231 @@
 				</list>
 			</presentation>
 		</class>
+		<class id="lnkK8sIngressAnnotationsToIngress" _delta="define">
+			<parent>cmdbAbstractObject</parent>
+			<properties>
+				<is_link>1</is_link>
+				<category>bizmodel</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>lnkk8singressannotationstoingress</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field/>
+				<naming>
+					<attributes>
+						<attribute id="k8singressannotations_id"/>
+						<attribute id="ingress_id"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon/>
+				<reconciliation>
+					<attributes>
+						<attribute id="k8singressannotations_id"/>
+						<attribute id="ingress_id"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="k8singressannotations_id" xsi:type="AttributeExternalKey">
+					<sql>k8singressannotations_id</sql>
+					<target_class>K8sIngressAnnotations</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+				</field>
+				<field id="k8singressannotations_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8singressannotations_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="k8singressannotations_note" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8singressannotations_id</extkey_attcode>
+					<target_attcode>note</target_attcode>
+				</field>
+				<field id="k8singressannotations_validate" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8singressannotations_id</extkey_attcode>
+					<target_attcode>validate</target_attcode>
+				</field>
+				<field id="k8singressannotations_description" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8singressannotations_id</extkey_attcode>
+					<target_attcode>description</target_attcode>
+				</field>
+				<field id="ingress_id" xsi:type="AttributeExternalKey">
+					<sql>ingress_id</sql>
+					<target_class>Ingress</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="ingress_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>ingress_id</extkey_attcode>
+					<target_attcode>friendlyname</target_attcode>
+				</field>
+				<field id="value" xsi:type="AttributeText">
+					<sql>value</sql>
+					<default_value></default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<width>200px</width>
+					<height>50px</height>
+				</field>
+			</fields>
+			<methods>
+				<method id="ReloadAndDisplayCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+					function ReloadAndDisplayCustom($oPage, $oObj, $sMessageId = '', $sMessage = '', $sSeverity = null)
+					{
+						$oAppContext = new ApplicationContext();
+						if ($sMessageId != '')
+						{
+							cmdbAbstractObject::SetSessionMessage(get_class($oObj), $oObj->GetKey(), $sMessageId, $sMessage, $sSeverity, 0, true /* must not exist */);
+						}
+
+						$oId = $oObj->getKey();
+						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
+					}
+					]]>
+					</code>
+				</method>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[  public function DoCheckToWrite(){
+			$aChanges = $this->ListChanges();
+			if($aChanges)
+			{
+				$friendlyname = $this->Get('k8singressannotations_id') . " " . $this->Get('ingress_id');
+				$allowmodify = array("value");
+				$allow = true;
+				foreach($aChanges as $key => $val) {
+					if(!in_array($key, $allowmodify)) {
+						$allow = false;
+					}
+				}
+
+				if(!$this->IsNew())
+				{
+					if(!$allow) {
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToIngress/Error:ModifyNotAllowed", $friendlyname);
+					} else {
+						// 校验value格式是否合法
+						$value = $this->Get('value');
+						$pattern = $this->Get('k8singressannotations_validate');
+						if($pattern && !preg_match($pattern, $value)) {
+							$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToIngress/Error:ValueNotValid", $friendlyname);
+						}
+					}
+				}else
+				{
+					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkK8sIngressAnnotationsToIngress WHERE friendlyname=:friendlyname");
+					$oSet = new DBObjectSet($oSearch, array(), array("friendlyname" => $friendlyname));
+
+					if ($oSet->Count() > 0)
+					{
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToIngress/Error:ThisLnkAlreadyExists", $friendlyname);
+					}
+				}
+			}
+		}]]>
+					</code>
+				</method>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   
+  	public function CheckToDelete(&$oDeletionPlan)
+  	{
+		$myContactId = UserRights::GetContactId();
+		$deploy = MetaModel::GetObject("Ingress", $this->Get('ingress_id'));
+		$contacts = $deploy->Get('person_list')->ToArrayOfValues();
+		$flag = false;
+		foreach($contacts as $k => $v) {
+			if($v['lnkPersonToKubernetes.person_id'] == $myContactId) {
+				$flag = true;
+				break;
+			}
+		}
+  		if (!$flag && !UserRights::IsAdministrator())
+		{
+			// 普通用户不允许删除非自己名下的lnkK8sIngressAnnotationsToIngress
+			$oDeletionPlan->AddToDelete($this, null);
+			$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下的关联'), true);
+			$oDeletionPlan->ComputeResults();
+			return false;
+		}
+		return parent::CheckToDelete($oDeletionPlan);
+  	} 
+					]]></code>
+				</method>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="value">
+							<rank>5</rank>
+						</item>
+						<item id="ingress_id">
+							<rank>10</rank>
+						</item>
+						<item id="k8singressannotations_id">
+							<rank>20</rank>
+						</item>
+						<item id="k8singressannotations_name">
+							<rank>25</rank>
+						</item>
+						<item id="k8singressannotations_note">
+							<rank>30</rank>
+						</item>
+						<item id="k8singressannotations_validate">
+							<rank>32</rank>
+						</item>
+						<item id="k8singressannotations_description">
+							<rank>35</rank>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="value">
+							<rank>5</rank>
+						</item>
+						<item id="ingress_id">
+							<rank>10</rank>
+						</item>
+						<item id="k8singressannotations_id">
+							<rank>20</rank>
+						</item>
+						<item id="k8singressannotations_name">
+							<rank>25</rank>
+						</item>
+						<item id="k8singressannotations_note">
+							<rank>30</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="value">
+							<rank>5</rank>
+						</item>
+						<item id="ingress_id">
+							<rank>10</rank>
+						</item>
+						<item id="k8singressannotations_id">
+							<rank>20</rank>
+						</item>
+						<item id="k8singressannotations_note">
+							<rank>35</rank>
+						</item>
+						<item id="k8singressannotations_validate">
+							<rank>40</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
 	</classes>
 	<menus>
 		<menu id="Kubernetes" xsi:type="MenuGroup" _delta="define">
@@ -3760,6 +4007,7 @@
 					<class id="lnkK8sAffinityToController"/>
 					<class id="lnkK8sVolumeToController"/>
 					<class id="lnkK8sIngressAnnotationsToDeployment"/>
+					<class id="lnkK8sIngressAnnotationsToIngress"/>
 				</classes>
 			</group>
 		</groups>
