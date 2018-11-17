@@ -215,6 +215,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress/Attribute:person_list+' => '链接到此负载均衡的所有联系人',
 	'Class:Ingress/Attribute:ingressannotations_list' => '自定义Nginx配置',
 	'Class:Ingress/Attribute:ingressannotations_list+' => '此负载均衡的所有自定义Nginx配置',
+	'Class:Ingress/Attribute:https' => 'HTTPS',
+	'Class:Ingress/Attribute:https/Value:on' => '开启',
+	'Class:Ingress/Attribute:https/Value:off' => '关闭',
 	
 	'Menu:Ingress' => '负载均衡',
 	'Menu:Ingress+' => '所有负载均衡',

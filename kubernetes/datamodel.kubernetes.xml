@@ -1502,6 +1502,16 @@
 					<default_value>/</default_value>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
+				<field id="https" xsi:type="AttributeEnum">
+					<values>
+						<value id="on">on</value>
+						<value id="off">off</value>
+					</values>
+					<sql>https</sql>
+					<default_value>on</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
 				<field id="serviceport" xsi:type="AttributeInteger">
 					<sql>serviceport</sql>
 					<default_value>80</default_value>
