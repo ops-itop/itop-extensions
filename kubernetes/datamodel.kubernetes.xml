@@ -12,6 +12,12 @@
 				<db_table>kubernetes</db_table>
 				<db_key_field>id</db_key_field>
 				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="k8snamespace_name"/>
+						<attribute id="applicationsolution_name"/>
+					</attributes>
+				</naming>
 				<display_template/>
 				<icon>images/kubernetes.png</icon>
 				<reconciliation>
@@ -357,7 +363,7 @@
 			<parent>Kubernetes</parent>
 			<properties>
 				<category>bizmodel,searchable</category>
-				<abstract>false</abstract>
+				<abstract>true</abstract>
 				<key_type>autoincrement</key_type>
 				<db_table>controller</db_table>
 				<db_key_field>id</db_key_field>
@@ -430,16 +436,16 @@
 					<is_null_allowed>false</is_null_allowed>
 				</field>
 				<field id="affinity_list" xsi:type="AttributeLinkedSetIndirect">
-					<linked_class>lnkK8sAffinityToDeployment</linked_class>
-					<ext_key_to_me>deployment_id</ext_key_to_me>
+					<linked_class>lnkK8sAffinityToController</linked_class>
+					<ext_key_to_me>controller_id</ext_key_to_me>
 					<count_min>0</count_min>
 					<count_max>0</count_max>
 					<ext_key_to_remote>k8saffinity_id</ext_key_to_remote>
 					<duplicates/>
 				</field>
 				<field id="volume_list" xsi:type="AttributeLinkedSetIndirect">
-					<linked_class>lnkK8sVolumeToDeployment</linked_class>
-					<ext_key_to_me>deployment_id</ext_key_to_me>
+					<linked_class>lnkK8sVolumeToController</linked_class>
+					<ext_key_to_me>controller_id</ext_key_to_me>
 					<count_min>0</count_min>
 					<count_max>0</count_max>
 					<ext_key_to_remote>k8svolume_id</ext_key_to_remote>
@@ -1518,7 +1524,7 @@
 							<attribute id="kubestatus">
 								<read_only/>
 							</attribute>
-							<attribute id="controller_id">
+							<attribute id="deployment_id">
 								<read_only/>
 							</attribute>
 							<attribute id="person_list">
@@ -1731,15 +1737,15 @@
 			<parent>Kubernetes</parent>
 			<properties>
 				<category>bizmodel,searchable</category>
-				<abstract>false</abstract>
+				<abstract>true</abstract>
 				<key_type>autoincrement</key_type>
 				<db_table>configuration</db_table>
 				<db_key_field>id</db_key_field>
 				<db_final_class_field>finalclass</db_final_class_field>
 				<naming>
 					<attributes>
-						<attribute id="k8snamespace_id"/>
-						<attribute id="applicationsolution_id"/>
+						<attribute id="k8snamespace_name"/>
+						<attribute id="applicationsolution_name"/>
 					</attributes>
 				</naming>
 				<display_template/>
@@ -2304,8 +2310,8 @@
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
-				<field id="deployment_list" xsi:type="AttributeLinkedSet">
-					<linked_class>Deployment</linked_class>
+				<field id="kubernetes_list" xsi:type="AttributeLinkedSet">
+					<linked_class>Kubernetes</linked_class>
 					<ext_key_to_me>k8snamespace_id</ext_key_to_me>
 					<edit_mode>add_only</edit_mode>
 					<count_min>0</count_min>
@@ -2335,7 +2341,7 @@
 						<item id="note">
 							<rank>15</rank>
 						</item>
-						<item id="deployment_list">
+						<item id="kubernetes_list">
 							<rank>40</rank>
 						</item>
 						<item id="ingress_list">
@@ -2465,12 +2471,12 @@
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
-				<field id="deployment_list" xsi:type="AttributeLinkedSetIndirect">
-					<linked_class>lnkK8sAffinityToDeployment</linked_class>
+				<field id="controller_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkK8sAffinityToController</linked_class>
 					<ext_key_to_me>k8saffinity_id</ext_key_to_me>
 					<count_min>0</count_min>
 					<count_max>0</count_max>
-					<ext_key_to_remote>deployment_id</ext_key_to_remote>
+					<ext_key_to_remote>controller_id</ext_key_to_remote>
 					<duplicates/>
 				</field>
 			</fields>
@@ -2524,7 +2530,7 @@
 						<item id="note">
 							<rank>40</rank>
 						</item>
-						<item id="deployment_list">
+						<item id="controller_list">
 							<rank>100</rank>
 						</item>
 					</items>
@@ -2624,12 +2630,12 @@
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
-				<field id="deployment_list" xsi:type="AttributeLinkedSetIndirect">
-					<linked_class>lnkK8sVolumeToDeployment</linked_class>
+				<field id="controller_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkK8sVolumeToController</linked_class>
 					<ext_key_to_me>k8svolume_id</ext_key_to_me>
 					<count_min>0</count_min>
 					<count_max>0</count_max>
-					<ext_key_to_remote>deployment_id</ext_key_to_remote>
+					<ext_key_to_remote>controller_id</ext_key_to_remote>
 					<duplicates/>
 				</field>
 			</fields>
@@ -2646,7 +2652,7 @@
 						<item id="note">
 							<rank>20</rank>
 						</item>
-						<item id="deployment_list">
+						<item id="controller_list">
 							<rank>100</rank>
 						</item>
 					</items>
