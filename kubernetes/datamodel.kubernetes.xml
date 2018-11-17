@@ -1604,7 +1604,7 @@
 					{
 						// 检查ingressannotations格式
 						$validate = $this->Get('ingressannotations_list')->ToArrayOfValues();
-						foreach($validate as $key => $val) {
+						foreach($validate as $val) {
 							$value = $val['lnkK8sIngressAnnotationsToIngress.value'];
 							$pattern = $val['lnkK8sIngressAnnotationsToIngress.k8singressannotations_validate'];
 							if(!$value) {
@@ -1613,6 +1613,13 @@
 							if($pattern && !preg_match($pattern, $value)) {
 								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToIngress/Error:ValueNotValid", $pattern);
 							}
+
+							// server-snippet只允许location为/时设置
+							$annotation = $val['lnkK8sIngressAnnotationsToIngress.k8singressannotations_name'];
+							if(preg_match('/.*server-snippet$/', $annotation) && $this->Get('location') != '/') {
+								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToIngress/Error:ServerSnippetCanOnlyConfigByRootLcation", $annotation);
+							}
+
 						}
 						parent::DoCheckToWrite();
 					}
