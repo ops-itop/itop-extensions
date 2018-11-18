@@ -25,6 +25,7 @@
 						<attribute id="org_id"/>
 						<attribute id="organization_name"/>
 						<attribute id="finalclass"/>
+						<attribute id="friendlyname"/>
 					</attributes>
 				</reconciliation>
 			</properties>
