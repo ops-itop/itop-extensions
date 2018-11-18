@@ -323,8 +323,8 @@
 					<code><![CDATA[	   
 					public function CheckToDelete(&$oDeletionPlan)
 					{
-						if($this->Get('status') == "production") {
-							// 不允许删除production状态的对象
+						if($this->Get('status') != "stock") {
+							// 不允许删除非下线状态的对象
 							$oDeletionPlan->AddToDelete($this, null);
 							$oDeletionPlan->SetDeletionIssues($this, array('在线状态的对象不允许直接删除'), true);
 							$oDeletionPlan->ComputeResults();
