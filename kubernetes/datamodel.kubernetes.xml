@@ -1682,6 +1682,9 @@
 						<item id="serviceport">
 							<rank>7</rank>
 						</item>
+						<item id="https">
+							<rank>10</rank>
+						</item>
 						<item id="status">
 							<rank>70</rank>
 						</item>
@@ -1738,6 +1741,9 @@
 						<item id="serviceport">
 							<rank>7</rank>
 						</item>
+						<item id="https">
+							<rank>10</rank>
+						</item>
 						<item id="status">
 							<rank>70</rank>
 						</item>
@@ -1771,6 +1777,9 @@
 						</item>
 						<item id="serviceport">
 							<rank>7</rank>
+						</item>
+						<item id="https">
+							<rank>10</rank>
 						</item>
 						<item id="status">
 							<rank>70</rank>
