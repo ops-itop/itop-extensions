@@ -26,7 +26,7 @@ ref: https://git.sudo-i.net/kk/itop/commit/f31deaf24cec5a6dd93a3145da4ae91d44a5f
 ## 打补丁
 ```
 cp *.patch ../../
-patch -p1 < *.patch
+patch -p1 --binary< *.patch
 ```
 某些补丁失败时可以尝试转换文档格式
 ```
