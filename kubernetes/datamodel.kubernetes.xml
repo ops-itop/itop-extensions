@@ -983,6 +983,7 @@
 					<attributes>
 						<attribute id="k8snamespace_id"/>
 						<attribute id="applicationsolution_id"/>
+						<attribute id="friendlyname"/>
 					</attributes>
 				</reconciliation>
 			</properties>
