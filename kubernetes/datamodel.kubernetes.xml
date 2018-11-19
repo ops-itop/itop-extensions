@@ -2403,7 +2403,7 @@
 						<item id="note">
 							<rank>15</rank>
 						</item>
-						<item id="kubernetes_list">
+						<item id="deployment_list">
 							<rank>40</rank>
 						</item>
 						<item id="ingress_list">
