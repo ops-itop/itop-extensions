@@ -25,9 +25,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 
 // Controller
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
-	'Class:Controller' => '控制器',
+	'Class:Controller' => '服务',
 	'Class:Controller/Name' => '%1$s.%2$s',
-	'Class:Controller+' => '所有控制器',
+	'Class:Controller+' => '所有服务',
 	
 	'Class:Controller/Attribute:k8snamespace_id' => 'K8S集群',
 	'Class:Controller/Attribute:applicationsolution_id' => 'APP',
@@ -56,8 +56,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Controller/Stimulus:ev_new' => '新建',
 	'Class:Controller/Stimulus:ev_online' => '上线',
 	'Class:Controller/Stimulus:ev_offline' => '下线',
-	'Class:Controller/Stimulus:ev_redeploy' => '重部',
-	'Class:Controller/Stimulus:ev_redeploy2' => '重部',
+	'Class:Controller/Stimulus:ev_redeploy' => '更新',
+	'Class:Controller/Stimulus:ev_redeploy2' => '更新',
 	
 	'Controller:baseinfo' => '基本信息',
 	'Controller:secret' => '配置（YAML格式）',
@@ -98,8 +98,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Stimulus:ev_new' => '新建',
 	'Class:Deployment/Stimulus:ev_online' => '上线',
 	'Class:Deployment/Stimulus:ev_offline' => '下线',
-	'Class:Deployment/Stimulus:ev_redeploy' => '重部',
-	'Class:Deployment/Stimulus:ev_redeploy2' => '重部',
+	'Class:Deployment/Stimulus:ev_redeploy' => '更新',
+	'Class:Deployment/Stimulus:ev_redeploy2' => '更新',
 	
 	'Deployment:baseinfo' => '基本信息',
 	'Deployment:secret' => 'APP配置项数据（YAML格式）',
@@ -246,8 +246,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Secret/Stimulus:ev_new' => '新建',
 	'Class:Secret/Stimulus:ev_online' => '上线',
 	'Class:Secret/Stimulus:ev_offline' => '下线',	
-	'Class:Secret/Stimulus:ev_redeploy' => '重部',
-	'Class:Secret/Stimulus:ev_redeploy2' => '重部',	
+	'Class:Secret/Stimulus:ev_redeploy' => '更新',
+	'Class:Secret/Stimulus:ev_redeploy2' => '更新',	
 	
 	'Secret:other' => '其他信息',
 ));
