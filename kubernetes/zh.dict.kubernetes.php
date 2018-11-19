@@ -8,7 +8,7 @@
 //Kubernetes
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Kubernetes/Attribute:applicationsolution_id' => 'APP',
-	'Class:Kubernetes/Attribute:k8snamespace_id' => 'K8S集群',
+	'Class:Kubernetes/Attribute:k8snamespace_id' => 'LB集群',
 	'Class:Kubernetes/Attribute:description' => '描述',
 	'Class:Kubernetes/Attribute:org_id' => '组织',
 	'Class:Kubernetes/Attribute:move2production' => '上线日期',
@@ -29,7 +29,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Controller/Name' => '%1$s.%2$s',
 	'Class:Controller+' => '所有服务',
 	
-	'Class:Controller/Attribute:k8snamespace_id' => 'K8S集群',
+	'Class:Controller/Attribute:k8snamespace_id' => 'LB集群',
 	'Class:Controller/Attribute:applicationsolution_id' => 'APP',
 	'Class:Controller/Attribute:repo' => '代码地址',
 	'Class:Controller/Attribute:image' => '镜像',
@@ -37,9 +37,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Controller/Attribute:containerport' => '容器端口',
 	'Class:Controller/Attribute:hostnetwork' => 'hostNetwork',
 	'Class:Controller/Attribute:replicas' => '副本数',
-	'Class:Controller/Attribute:cpu_request' => 'CPU请求（核）',
-	'Class:Controller/Attribute:cpu_limit' => 'CPU限制（核）',
-	'Class:Controller/Attribute:mem_request' => '内存限制（MB）',
+	'Class:Controller/Attribute:cpu_request' => 'CPU请求',
+	'Class:Controller/Attribute:cpu_limit' => 'CPU限制',
+	'Class:Controller/Attribute:mem_request' => '内存[MB]',
 	'Class:Controller/Attribute:secret' => '配置项',
 	'Class:Controller/Attribute:rolling_strategy' => '更新策略',
 	'Class:Controller/Attribute:hostaliases' => '自定义hosts',
@@ -205,7 +205,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress/Name' => '%1$s%2$s',
 	'Class:Ingress+' => '所有Ingress',
 	
-	'Class:Ingress/Attribute:k8snamespace_id' => 'K8S集群',
+	'Class:Ingress/Attribute:k8snamespace_id' => 'LB集群',
 	'Class:Ingress/Attribute:applicationsolution_id' => 'APP',
 	'Class:Ingress/Attribute:domain_id' => '域名',
 	'Class:Ingress/Attribute:location' => 'Location',
@@ -254,8 +254,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 
 //K8sNamespace
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
-	'Class:K8sNamespace' => 'K8S集群',
-	'Class:K8sNamespace+' => '所有K8S集群',
+	'Class:K8sNamespace' => 'LB集群',
+	'Class:K8sNamespace+' => '所有LB集群',
 	
 	'Class:K8sNamespace/Attribute:name' => '名称',
 	'Class:K8sNamespace/Attribute:domain' => '域名',
@@ -265,6 +265,6 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:K8sNamespace/Attribute:ingress_list' => 'Ingress',
 	'Class:K8sNamespace/Attribute:ingress_list+' => '此集群上的所有Ingress',
 	
-	'Menu:K8sNamespace' => 'K8S集群',	
-	'Menu:K8sNamespace+' => '所有K8S集群',
+	'Menu:K8sNamespace' => 'LB集群',
+	'Menu:K8sNamespace+' => '所有LB集群',
 ));

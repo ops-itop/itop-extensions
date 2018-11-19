@@ -149,7 +149,7 @@
 
 						// 设置kubestatus
 						if($this->IsNew()) {
-							$kubestatus = '<p><strong><span style="color:#ffffff"><span style="background-color:#778899"> UNKN </span></span></strong></p>';
+							$kubestatus = '<p><strong><span style="color:#ffffff"><span style="background-color:#778899"> UNK </span></span></strong></p>';
 							$this->Set('kubestatus', $kubestatus);
 						}
 						return parent::ComputeValues();
@@ -1762,9 +1762,6 @@
 					<items>
 						<item id="k8snamespace_id">
 							<rank>10</rank>
-						</item>
-						<item id="deployment_id">
-							<rank>16</rank>
 						</item>
 						<item id="applicationsolution_id">
 							<rank>15</rank>
