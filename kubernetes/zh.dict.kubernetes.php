@@ -87,8 +87,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Deployment/Attribute:https' => 'HTTPS',
 	'Class:Deployment/Attribute:https/Value:on' => '开启',
 	'Class:Deployment/Attribute:https/Value:off' => '关闭',
-	'Class:Deployment/Attribute:ingress_list' => 'Ingress',
-	'Class:Deployment/Attribute:ingress_list+' => '链接到此无状态服务的所有Ingress',
+	'Class:Deployment/Attribute:ingress_list' => '负载均衡',
+	'Class:Deployment/Attribute:ingress_list+' => '链接到此无状态服务的所有负载均衡',
 	'Class:Deployment/Attribute:ingressannotations_list' => 'Nginx',
 	'Class:Deployment/Attribute:ingressannotations_list+' => '自定义Nginx配置',
 
@@ -203,7 +203,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress' => '负载均衡',
 	'Class:Ingress/Name' => '%1$s%2$s',
-	'Class:Ingress+' => '所有Ingress',
+	'Class:Ingress+' => '所有负载均衡',
 	
 	'Class:Ingress/Attribute:k8snamespace_id' => 'LB集群',
 	'Class:Ingress/Attribute:applicationsolution_id' => 'APP',
@@ -262,8 +262,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:K8sNamespace/Attribute:note' => '注释',
 	'Class:K8sNamespace/Attribute:deployment_list' => '无状态服务',
 	'Class:K8sNamespace/Attribute:deployment_list+' => '此集群上的所有无状态服务',
-	'Class:K8sNamespace/Attribute:ingress_list' => 'Ingress',
-	'Class:K8sNamespace/Attribute:ingress_list+' => '此集群上的所有Ingress',
+	'Class:K8sNamespace/Attribute:ingress_list' => '负载均衡',
+	'Class:K8sNamespace/Attribute:ingress_list+' => '此集群上的所有负载均衡',
 	
 	'Menu:K8sNamespace' => 'LB集群',
 	'Menu:K8sNamespace+' => '所有LB集群',
