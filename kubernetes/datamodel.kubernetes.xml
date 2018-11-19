@@ -4127,11 +4127,14 @@
 			<group id="KubeController" _delta="define">
 				<classes>
 					<class id="Controller"/>
+					<class id="Deployment"/>
+					<class id="Ingress"/>
 				</classes>
 			</group>
 			<group id="KubeConfiguration" _delta="define">
 				<classes>
 					<class id="Configuration"/>
+					<class id="Secret"/>
 				</classes>
 			</group>
 			<group id="Kubelnk" _delta="define">
