@@ -1528,6 +1528,11 @@
 					<ext_key_to_remote>k8singressannotations_id</ext_key_to_remote>
 					<duplicates/>
 				</field>
+				<field id="url" xsi:type="AttributeURL">
+					<sql>url</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
 			</fields>
 			<lifecycle>
 				<attribute>status</attribute>
@@ -1602,6 +1607,14 @@
 						$fname = $namespace . "." . $app;
 						$deploy = MetaModel::GetObjectByColumn('Deployment', 'friendlyname', $fname, false);
 						if($deploy) $this->Set("deployment_id", $deploy->GetKey());
+
+						// 自动填充url字段
+						$protocol = "http://";
+						if($this->Get('https') == "on") {
+							$protocol = "https://";
+						}
+						$url = $protocol . $this->Get('domain_name') . $this->Get('location');
+						$this->Set('url', $url);
 
 						return parent::ComputeValues();
 					}
@@ -1699,6 +1712,9 @@
 						</item>
 						<item id="description">
 							<rank>90</rank>
+						</item>
+						<item id="url">
+							<rank>100</rank>
 						</item>
 						<item id="person_list">
 							<rank>60</rank>
