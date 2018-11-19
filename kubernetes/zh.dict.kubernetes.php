@@ -216,6 +216,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress/Attribute:ingressannotations_list' => '自定义Nginx配置',
 	'Class:Ingress/Attribute:ingressannotations_list+' => '此负载均衡的所有自定义Nginx配置',
 	'Class:Ingress/Attribute:https' => 'HTTPS',
+	'Class:Ingress/Attribute:url' => 'URL',
 	'Class:Ingress/Attribute:https/Value:on' => '开启',
 	'Class:Ingress/Attribute:https/Value:off' => '关闭',
 	
