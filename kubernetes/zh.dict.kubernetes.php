@@ -170,6 +170,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 // lnkK8sIngressAnnotationsToDeployment
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:value' => '配置值',
+	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:enable' => '启用',
+	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:enable/Value:yes' => '是',
+	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:enable/Value:no' => '否',
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:deployment_id' => '部署',
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_id' => '配置项',
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_id' => '配置项',
@@ -182,6 +185,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 // lnkK8sIngressAnnotationsToIngress
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:value' => '配置值',
+	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:enable' => '启用',
+	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:enable/Value:yes' => '是',
+	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:enable/Value:no' => '否',
 	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:ingress_id' => '负载均衡',
 	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:k8singressannotations_id' => '配置项',
 	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:k8singressannotations_id' => '配置项',

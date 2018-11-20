@@ -3623,6 +3623,16 @@
 					<extkey_attcode>k8singressannotations_id</extkey_attcode>
 					<target_attcode>name</target_attcode>
 				</field>
+				<field id="enable" xsi:type="AttributeEnum">
+					<sql>enable</sql>
+					<values>
+						<value id="yes">yes</value>
+						<value id="no">no</value>
+					</values>
+					<default_value>yes</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
 				<field id="k8singressannotations_note" xsi:type="AttributeExternalField">
 					<extkey_attcode>k8singressannotations_id</extkey_attcode>
 					<target_attcode>note</target_attcode>
@@ -3758,6 +3768,9 @@
 			<presentation>
 				<details>
 					<items>
+						<item id="enable">
+							<rank>3</rank>
+						</item>
 						<item id="value">
 							<rank>5</rank>
 						</item>
@@ -3786,6 +3799,9 @@
 				</details>
 				<search>
 					<items>
+						<item id="enable">
+							<rank>3</rank>
+						</item>
 						<item id="value">
 							<rank>5</rank>
 						</item>
@@ -3805,6 +3821,9 @@
 				</search>
 				<list>
 					<items>
+						<item id="enable">
+							<rank>3</rank>
+						</item>
 						<item id="value">
 							<rank>5</rank>
 						</item>
@@ -3862,6 +3881,16 @@
 				<field id="k8singressannotations_name" xsi:type="AttributeExternalField">
 					<extkey_attcode>k8singressannotations_id</extkey_attcode>
 					<target_attcode>name</target_attcode>
+				</field>
+				<field id="enable" xsi:type="AttributeEnum">
+					<sql>enable</sql>
+					<values>
+						<value id="yes">yes</value>
+						<value id="no">no</value>
+					</values>
+					<default_value>yes</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
 				</field>
 				<field id="k8singressannotations_note" xsi:type="AttributeExternalField">
 					<extkey_attcode>k8singressannotations_id</extkey_attcode>
@@ -3998,6 +4027,9 @@
 			<presentation>
 				<details>
 					<items>
+						<item id="enable">
+							<rank>2</rank>
+						</item>
 						<item id="value">
 							<rank>5</rank>
 						</item>
@@ -4026,6 +4058,9 @@
 				</details>
 				<search>
 					<items>
+						<item id="enable">
+							<rank>3</rank>
+						</item>
 						<item id="value">
 							<rank>5</rank>
 						</item>
@@ -4045,6 +4080,9 @@
 				</search>
 				<list>
 					<items>
+						<item id="enable">
+							<rank>3</rank>
+						</item>
 						<item id="value">
 							<rank>5</rank>
 						</item>
