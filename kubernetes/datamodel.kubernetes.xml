@@ -1188,9 +1188,12 @@
 						// 自动填充url字段
 						$k8snamespace = MetaModel::GetObject('K8sNamespace',$this->Get('k8snamespace_id'));
 						$domain = $k8snamespace->Get('domain');
-						$host = str_replace("_", "-", $this->Get('applicationsolution_name'));
-						$url = 'http://' . $host . $domain;
-						$this->Set('url', $url);
+						// 判断有无domain，某些集群可以没有默认域名
+						if($domain) {
+							$host = str_replace("_", "-", $this->Get('applicationsolution_name'));
+							$url = 'http://' . $host . $domain;
+							$this->Set('url', $url);
+						}
 
 						// 检查ingressannotations格式
 						$validate = $this->Get('ingressannotations_list')->ToArrayOfValues();
@@ -2381,7 +2384,7 @@
 				<field id="domain" xsi:type="AttributeString">
 					<sql>domain</sql>
 					<default_value/>
-					<is_null_allowed>false</is_null_allowed>
+					<is_null_allowed>true</is_null_allowed>
 				</field>
 				<field id="note" xsi:type="AttributeString">
 					<sql>note</sql>
