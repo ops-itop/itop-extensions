@@ -1193,6 +1193,8 @@
 							$host = str_replace("_", "-", $this->Get('applicationsolution_name'));
 							$url = 'http://' . $host . $domain;
 							$this->Set('url', $url);
+						} else {
+							$this->Set('url', '');
 						}
 
 						// 检查ingressannotations格式
