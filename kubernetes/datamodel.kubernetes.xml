@@ -3701,7 +3701,7 @@
 			if($aChanges)
 			{
 				$friendlyname = $this->Get('k8singressannotations_id') . " " . $this->Get('deployment_id');
-				$allowmodify = array("value");
+				$allowmodify = array("value","enable");
 				$allow = true;
 				foreach($aChanges as $key => $val) {
 					if(!in_array($key, $allowmodify)) {
@@ -3960,7 +3960,7 @@
 			if($aChanges)
 			{
 				$friendlyname = $this->Get('k8singressannotations_id') . " " . $this->Get('ingress_id');
-				$allowmodify = array("value");
+				$allowmodify = array("value","enable");
 				$allow = true;
 				foreach($aChanges as $key => $val) {
 					if(!in_array($key, $allowmodify)) {
