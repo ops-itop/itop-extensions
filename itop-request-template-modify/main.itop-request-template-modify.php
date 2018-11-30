@@ -176,7 +176,7 @@ class RequestTemplatePlugInModify extends RequestTemplatePlugIn
 		// server_list复制到functionalcis_list
 		$new_user_ips = array();		
 		$oSetFunc = array();
-		foreach($server_list->ToArrayOfValues() as $k => $v)
+		foreach($server_list->ToDBObjectSet()->ToArrayOfValues() as $k => $v)
 		{
 			$lnk = MetaModel::NewObject('lnkFunctionalCIToTicket');
 			$lnk->Set("functionalci_id", $v['lnkServerToTicket.server_id']);

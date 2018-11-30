@@ -387,6 +387,19 @@
 
 					</items>
 				</details>
+				<default_search _delta="redefine">
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="country">
+							<rank>20</rank>
+						</item>
+						<item id="isp_name">
+							<rank>30</rank>
+						</item>
+					</items>
+				</default_search>
 				<search>
 					<items>
 						<item id="isp_id">
