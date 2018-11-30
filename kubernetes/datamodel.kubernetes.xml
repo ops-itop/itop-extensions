@@ -1230,67 +1230,62 @@
 			<presentation>
 				<details>
 					<items>
-						<item id="fieldset:Deployment:baseinfo">
+						<item id="k8snamespace_id">
 							<rank>10</rank>
-							<items>
-								<item id="k8snamespace_id">
-									<rank>10</rank>
-								</item>
-								<item id="applicationsolution_id">
-									<rank>15</rank>
-								</item>
-								<item id="type">
-									<rank>20</rank>
-								</item>
-								<item id="https">
-									<rank>25</rank>
-								</item>
-								<item id="status">
-									<rank>30</rank>
-								</item>
-								<item id="kubestatus">
-									<rank>350</rank>
-								</item>
-								<item id="image">
-									<rank>40</rank>
-								</item>
-								<item id="image_tag">
-									<rank>42</rank>
-								</item>
-								<item id="repo">
-									<rank>45</rank>
-								</item>
-								<item id="replicas">
-									<rank>50</rank>
-								</item>
-								<item id="cpu_request">
-									<rank>52</rank>
-								</item>
-								<item id="cpu_limit">
-									<rank>54</rank>
-								</item>
-								<item id="mem_request">
-									<rank>56</rank>
-								</item>
-								<item id="containerport">
-									<rank>60</rank>
-								</item>
-								<item id="hostnetwork">
-									<rank>65</rank>
-								</item>
-								<item id="org_id">
-									<rank>70</rank>
-								</item>
-								<item id="move2production">
-									<rank>80</rank>
-								</item>
-								<item id="description">
-									<rank>900</rank>
-								</item>
-								<item id="url">
-									<rank>100</rank>
-								</item>
-							</items>
+						</item>
+						<item id="applicationsolution_id">
+							<rank>15</rank>
+						</item>
+						<item id="type">
+							<rank>20</rank>
+						</item>
+						<item id="https">
+							<rank>25</rank>
+						</item>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="kubestatus">
+							<rank>350</rank>
+						</item>
+						<item id="image">
+							<rank>40</rank>
+						</item>
+						<item id="image_tag">
+							<rank>42</rank>
+						</item>
+						<item id="repo">
+							<rank>45</rank>
+						</item>
+						<item id="replicas">
+							<rank>50</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="hostnetwork">
+							<rank>65</rank>
+						</item>
+						<item id="org_id">
+							<rank>70</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+						<item id="description">
+							<rank>900</rank>
+						</item>
+						<item id="url">
+							<rank>100</rank>
 						</item>
 						<item id="ingress_list">
 							<rank>110</rank>
