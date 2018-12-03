@@ -1,6 +1,6 @@
---- itop-2.3.3/web/application/applicationextension.inc.php	2016-12-22 17:35:38.000000000 +0800
-+++ web/application/applicationextension.inc.php	2017-12-08 14:38:47.751504701 +0800
-@@ -944,6 +944,10 @@
+--- itop-2.5.1/web/application/applicationextension.inc.php	2018-10-17 13:07:36.000000000 +0800
++++ web/application/applicationextension.inc.php	2018-12-03 17:44:30.107586019 +0800
+@@ -1160,6 +1160,10 @@ class RestUtils
  				}
  				$value = DBObjectSet::FromArray($sLnkClass, $aLinks);
  			}
@@ -11,9 +11,9 @@
  			else
  			{
  				$value = $oAttDef->FromJSONToValue($value);
---- itop-2.3.3/web/core/restservices.class.inc.php	2016-12-22 17:35:38.000000000 +0800
-+++ web/core/restservices.class.inc.php	2017-12-08 14:38:35.545462315 +0800
-@@ -102,6 +102,10 @@
+--- itop-2.5.1/web/core/restservices.class.inc.php	2018-10-17 13:07:46.000000000 +0800
++++ web/core/restservices.class.inc.php	2018-12-03 17:47:20.396272175 +0800
+@@ -102,6 +102,10 @@ class ObjectResult
  					$value[] = $aLnkValues;
  				}
  			}
