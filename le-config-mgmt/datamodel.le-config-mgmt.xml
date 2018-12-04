@@ -545,19 +545,7 @@
 					
 					$isChanges = false;
 					foreach($aChanges as $key=>$value)
-					{   
-						if(MetaModel::IsValidKeyAttCode($finalclass, $key))
-						{   
-							$extKeyFriends = MetaModel::GetExtKeyFriends($finalclass, $key);
-							foreach($extKeyFriends as $k=>$v)
-							{   
-								if(in_array($k, $sArg))
-								{   
-									$isChanges = true;
-								}
-							}
-						 
-						}
+					{
 						if(in_array($key, $sArg))
 						{   
 							$isChanges = true;
@@ -4329,19 +4317,7 @@
 					
 					$isChanges = false;
 					foreach($aChanges as $key=>$value)
-					{   
-						if(MetaModel::IsValidKeyAttCode($finalclass, $key))
-						{   
-							$extKeyFriends = MetaModel::GetExtKeyFriends($finalclass, $key);
-							foreach($extKeyFriends as $k=>$v)
-							{   
-								if(in_array($k, $sArg))
-								{   
-									$isChanges = true;
-								}
-							}
-						 
-						}
+					{
 						if(in_array($key, $sArg))
 						{   
 							$isChanges = true;

@@ -275,18 +275,6 @@
 					$isChanges = false;
 					foreach($aChanges as $key=>$value)
 					{   
-						if(MetaModel::IsValidKeyAttCode($finalclass, $key))
-						{   
-							$extKeyFriends = MetaModel::GetExtKeyFriends($finalclass, $key);
-							foreach($extKeyFriends as $k=>$v)
-							{   
-								if(in_array($k, $sArg))
-								{   
-									$isChanges = true;
-								}
-							}
-						 
-						}
 						if(in_array($key, $sArg))
 						{   
 							$isChanges = true;
@@ -297,11 +285,6 @@
 						array_push($oArg, $this->Get($value));
 					}
 					$sTypology = vsprintf("$sFormat", $oArg);
-					//print_r($this->Get('name') . "<br>");
-					//print_r($this->Get('brand_name') . "<br>");
-					//print_r($this->Get('friendlyname') . "<br>");
-					//print_r($oArg);
-					//print_r("<br>");
 
 					if($isChanges) {
 						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT $finalclass WHERE friendlyname=:friendlyname");

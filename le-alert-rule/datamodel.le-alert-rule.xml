@@ -91,15 +91,6 @@
 							
 							foreach($aChanges as $key => $val)
 							{
-								$extKeyFriends = MetaModel::GetExtKeyFriends($finalclass, $key);
-								foreach($extKeyFriends as $k=>$v)
-								{   
-									if(in_array($k, $sArg))
-									{   
-										$isChange = true;
-									}
-								}
-								 
 								if(in_array($key, $sArg))
 								{   
 									$isChange = true;
