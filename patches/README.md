@@ -14,6 +14,9 @@
 ## fix_zh_pdf_export.sh
 修复pdf导出时中文乱码
 
+## fix_expressioncache.patch
+修复`expressioncache`不支持多语言的问题. see https://github.com/annProg/itop-extensions/issues/73#issuecomment-444011695
+
 ## 打补丁
 ```
 cp *.patch ../../
