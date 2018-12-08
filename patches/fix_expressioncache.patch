@@ -1,53 +1,58 @@
-diff --git a/../code/web/core/expressioncache.class.inc.php b/core/expressioncache.class.inc.php
-index d15d477..421883f 100644
---- a/../code/web/core/expressioncache.class.inc.php
+diff --git a/core/expressioncache.class.inc.php b/core/expressioncache.class.inc.php
+index 1673139..4c7f3b5 100644
+--- a/core/expressioncache.class.inc.php
 +++ b/core/expressioncache.class.inc.php
-@@ -21,11 +21,22 @@ class ExpressionCache
+@@ -21,35 +21,46 @@ class ExpressionCache
  {
  	static private $aCache = array();
  
-+	protected function GetLanguge() {
++	protected function GetLanguage() {
 +		return str_replace(" ", "", Dict::GetUserLanguage());
 +	}
 +
 +	protected function GetCacheClass() {
-+		$lang = self::GetLanguge();
-+		return "ExpressionCacheData" . $lang;
++		$sLang = self::GetLanguage();
++		return "ExpressionCacheData" . $sLang;
 +	}
 +
  	static public function GetCachedExpression($sClass, $sAttCode)
  	{
  		// read current cache
  		@include_once (static::GetCacheFileName());
++		$sLang = self::GetLanguage();
++		$sClassName = self::GetCacheClass();
  
-+		$className = self::GetCacheClass();
-+
  		$oExpr = null;
  		$sKey = static::GetKey($sClass, $sAttCode);
- 		if (array_key_exists($sKey, static::$aCache))
-@@ -34,11 +45,11 @@ class ExpressionCache
+-		if (array_key_exists($sKey, static::$aCache))
++		if (array_key_exists($sLang, static::$aCache) && array_key_exists($sKey, static::$aCache[$sLang]))
+ 		{
+-			$oExpr =  static::$aCache[$sKey];
++			$oExpr =  static::$aCache[$sLang][$sKey];
  		}
  		else
  		{
 -			if (class_exists('ExpressionCacheData'))
-+			if (class_exists($className))
++			if (class_exists($sClassName))
  			{
 -				if (array_key_exists($sKey, ExpressionCacheData::$aCache))
-+				if (array_key_exists($sKey, $className::$aCache))
++				if (array_key_exists($sKey, $sClassName::$aCache))
  				{
 -					$sVal = ExpressionCacheData::$aCache[$sKey];
-+					$sVal = $className::$aCache[$sKey];
++					$sVal = $sClassName::$aCache[$sKey];
  					$oExpr = unserialize($sVal);
- 					static::$aCache[$sKey] = $oExpr;
+-					static::$aCache[$sKey] = $oExpr;
++					static::$aCache[$sLang][$sKey] = $oExpr;
  				}
-@@ -47,9 +58,9 @@ class ExpressionCache
+ 			}
+ 		}
  		return $oExpr;
  	}
  
 -
  	static public function Warmup()
  	{
-+		$className = self::GetCacheClass();
++		$sClassName = self::GetCacheClass();
  		$sFilePath = static::GetCacheFileName();
  
  		if (!is_file($sFilePath))
@@ -56,7 +61,7 @@ index d15d477..421883f 100644
  // Generated Expression Cache file
  
 -class ExpressionCacheData
-+class $className
++class $sClassName
  {
  	static \$aCache =  array(
  EOF;
@@ -65,27 +70,26 @@ index d15d477..421883f 100644
  	public static function GetCacheFileName()
  	{
 -		return utils::GetCachePath().'expressioncache.php';
-+		$lang = self::GetLanguge();
-+		return utils::GetCachePath().'expressioncache-' . $lang . '.php';
++		$sLang = self::GetLanguage();
++		return utils::GetCachePath().'expressioncache-' . $sLang . '.php';
  	}
  
  }
-diff --git a/../code/web/core/metamodel.class.php b/core/metamodel.class.php
-index aee4a75..18ff34d 100644
---- a/../code/web/core/metamodel.class.php
+diff --git a/core/metamodel.class.php b/core/metamodel.class.php
+index aee4a75..1338469 100644
+--- a/core/metamodel.class.php
 +++ b/core/metamodel.class.php
-@@ -5873,7 +5873,7 @@ abstract class MetaModel
+@@ -5873,7 +5873,6 @@ abstract class MetaModel
  //			self::static_var_dump();
  //		}
  
 -		ExpressionCache::Warmup();
-+		//ExpressionCache::Warmup();
  	}
  
  	/**
-diff --git a/../code/web/pages/UI.php b/pages/UI.php
+diff --git a/pages/UI.php b/pages/UI.php
 index a34a020..f9daaf1 100644
---- a/../code/web/pages/UI.php
+--- a/pages/UI.php
 +++ b/pages/UI.php
 @@ -357,6 +357,7 @@ try
  
