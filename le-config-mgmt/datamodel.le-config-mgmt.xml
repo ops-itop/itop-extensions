@@ -387,6 +387,19 @@
 
 					</items>
 				</details>
+				<default_search _delta="redefine">
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="country">
+							<rank>20</rank>
+						</item>
+						<item id="isp_name">
+							<rank>30</rank>
+						</item>
+					</items>
+				</default_search>
 				<search>
 					<items>
 						<item id="isp_id">
@@ -532,19 +545,7 @@
 					
 					$isChanges = false;
 					foreach($aChanges as $key=>$value)
-					{   
-						if(MetaModel::IsValidKeyAttCode($finalclass, $key))
-						{   
-							$extKeyFriends = MetaModel::GetExtKeyFriends($finalclass, $key);
-							foreach($extKeyFriends as $k=>$v)
-							{   
-								if(in_array($k, $sArg))
-								{   
-									$isChanges = true;
-								}
-							}
-						 
-						}
+					{
 						if(in_array($key, $sArg))
 						{   
 							$isChanges = true;
@@ -4316,19 +4317,7 @@
 					
 					$isChanges = false;
 					foreach($aChanges as $key=>$value)
-					{   
-						if(MetaModel::IsValidKeyAttCode($finalclass, $key))
-						{   
-							$extKeyFriends = MetaModel::GetExtKeyFriends($finalclass, $key);
-							foreach($extKeyFriends as $k=>$v)
-							{   
-								if(in_array($k, $sArg))
-								{   
-									$isChanges = true;
-								}
-							}
-						 
-						}
+					{
 						if(in_array($key, $sArg))
 						{   
 							$isChanges = true;

@@ -20,13 +20,15 @@ class UpdateKubernetesContacts implements iBackgroundProcess
 	}
 
 	private function Add($list, $kubernetes_id) {
-		$c = DBObjectSet::FromScratch('lnkPersonToKubernetes');;
-		foreach($list as $k => $v)
+		// ormLinkSet需要设置oOriginalSet
+		$oOriginalSet = DBObjectSet::FromScratch('lnkPersonToKubernetes');
+		$c = new ormLinkSet("Kubernetes", 'person_list', $oOriginalSet);
+		foreach($list as $v)
 		{
 			$p = new lnkPersonToKubernetes();
-			$p->Set('person_id', $v['lnkContactToApplicationSolution.contact_id']);
+			$p->Set('person_id', $v->Get('contact_id'));
 			$p->Set('kubernetes_id', $kubernetes_id);
-			$c->AddObject($p);
+			$c->AddItem($p);
 		}
 		return $c;
 	}
@@ -37,7 +39,7 @@ class UpdateKubernetesContacts implements iBackgroundProcess
 
 		// 根据关联的APP自动填充联系人字段
 		$app = MetaModel::GetObject('ApplicationSolution', $appid);
-		$list = $app->Get('contact_list_custom')->ToArrayOfValues();
+		$list = $app->Get('contact_list_custom');
 		
 		while($item = $deployment->Fetch()) {
 			$c = $this->Add($list, $item->GetKey());

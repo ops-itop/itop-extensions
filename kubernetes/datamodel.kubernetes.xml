@@ -132,14 +132,17 @@
 
 							// 根据关联的APP自动填充联系人字段
 							$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
-							$list = $app->Get('contact_list_custom')->ToArrayOfValues();
-							$c = DBObjectSet::FromScratch('lnkPersonToKubernetes');;
-							foreach($list as $k => $v)
+							$list = $app->Get('contact_list_custom');
+
+							// ormLinkSet需要设置oOriginalSet
+							$oOriginalSet = DBObjectSet::FromScratch('lnkPersonToKubernetes');
+							$c = new ormLinkSet('Kubernetes', 'person_list', $oOriginalSet);
+							foreach($list as $v)
 							{
 								$p = new lnkPersonToKubernetes();
-								$p->Set('person_id', $v['lnkContactToApplicationSolution.contact_id']);
+								$p->Set('person_id', $v->Get('contact_id'));
 								$p->Set('kubernetes_id', $this->GetKey());
-								$c->AddObject($p);
+								$c->AddItem($p);
 							}
 							$this->Set('person_list', $c);
 						} 
@@ -175,17 +178,17 @@
 							if($this->Get('finalclass') != "Secret")
 							{
 								$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
-								$person_list = $app->Get('contact_list_custom')->ToArrayOfValues();
-								$key = 'lnkContactToApplicationSolution.contact_id';
+								$person_list = $app->Get('contact_list_custom');
+								$key = 'contact_id';
 							}
 							else 
 							{
-								$person_list = $this->Get('person_list')->ToArrayOfValues();
-								$key = 'lnkPersonToKubernetes.person_id';
+								$person_list = $this->Get('person_list');
+								$key = 'person_id';
 							}
 							$contacts = array();
-							foreach($person_list as $k => $v) {
-								$contacts[] = $v[$key];
+							foreach($person_list as $v) {
+								$contacts[] = $v->Get($key);
 							}
 							if(!in_array($myContactId, $contacts) && !UserRights::IsAdministrator())
 							{
@@ -272,18 +275,6 @@
 					$isChanges = false;
 					foreach($aChanges as $key=>$value)
 					{   
-						if(MetaModel::IsValidKeyAttCode($finalclass, $key))
-						{   
-							$extKeyFriends = MetaModel::GetExtKeyFriends($finalclass, $key);
-							foreach($extKeyFriends as $k=>$v)
-							{   
-								if(in_array($k, $sArg))
-								{   
-									$isChanges = true;
-								}
-							}
-						 
-						}
 						if(in_array($key, $sArg))
 						{   
 							$isChanges = true;
@@ -294,11 +285,6 @@
 						array_push($oArg, $this->Get($value));
 					}
 					$sTypology = vsprintf("$sFormat", $oArg);
-					//print_r($this->Get('name') . "<br>");
-					//print_r($this->Get('brand_name') . "<br>");
-					//print_r($this->Get('friendlyname') . "<br>");
-					//print_r($oArg);
-					//print_r("<br>");
 
 					if($isChanges) {
 						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT $finalclass WHERE friendlyname=:friendlyname");
@@ -328,6 +314,14 @@
 							// 不允许删除非下线状态的对象
 							$oDeletionPlan->AddToDelete($this, null);
 							$oDeletionPlan->SetDeletionIssues($this, array('在线状态的对象不允许直接删除'), true);
+							$oDeletionPlan->ComputeResults();
+							return false;
+						}
+
+						if(!self::isAllowedModifyCustom()) {
+							// 普通用户不允许删除非自己名下的Kubernetes对象
+							$oDeletionPlan->AddToDelete($this, null);
+							$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下的对象'), true);
 							$oDeletionPlan->ComputeResults();
 							return false;
 						}
@@ -694,10 +688,10 @@
 						if(!$this->IsNew() && $sAttCode == 'secret') 
 						{
 							$myContactId = UserRights::GetContactId();
-							$person_list = $this->Get('person_list')->ToArrayOfValues();
+							$person_list = $this->Get('person_list');
 							$contacts = array();
-							foreach($person_list as $k => $v) {
-								$contacts[] = $v['lnkPersonToKubernetes.person_id'];
+							foreach($person_list as $v) {
+								$contacts[] = $v->Get('person_id');
 							}
 							if(!in_array($myContactId, $contacts) && !UserRights::IsAdministrator())
 							{
@@ -735,10 +729,10 @@
 						if(!$this->IsNew()) 
 						{
 							$myContactId = UserRights::GetContactId();
-							$person_list = $this->Get('person_list')->ToArrayOfValues();
+							$person_list = $this->Get('person_list');
 							$contacts = array();
-							foreach($person_list as $k => $v) {
-								$contacts[] = $v['lnkPersonToKubernetes.person_id'];
+							foreach($person_list as $v) {
+								$contacts[] = $v->Get('person_id');
 							}
 							if(!in_array($myContactId, $contacts) && !UserRights::IsAdministrator())
 							{
@@ -1198,12 +1192,13 @@
 						}
 
 						// 检查ingressannotations格式
-						$validate = $this->Get('ingressannotations_list')->ToArrayOfValues();
+						$validate = $this->Get('ingressannotations_list');
 						foreach($validate as $val) {
-							$value = $val['lnkK8sIngressAnnotationsToDeployment.value'];
-							$pattern = $val['lnkK8sIngressAnnotationsToDeployment.k8singressannotations_validate'];
+							$value = $val->Get('value');
+							$pattern = $val->Get('k8singressannotations_validate');
 							if(!$value) {
-								$value = $val['lnkK8sIngressAnnotationsToDeployment.k8singressannotations_default_value'];
+								$value = $val->Get('k8singressannotations_default_value');
+								$val->Set('value', $value);
 							}
 							if($pattern && !preg_match($pattern, $value)) {
 								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToDeployment/Error:ValueNotValid", $pattern);
@@ -1218,72 +1213,62 @@
 			<presentation>
 				<details>
 					<items>
-						<item id="col:col1">
+						<item id="k8snamespace_id">
 							<rank>10</rank>
-							<items>
-								<item id="fieldset:Deployment:baseinfo">
-									<rank>10</rank>
-									<items>
-										<item id="k8snamespace_id">
-											<rank>10</rank>
-										</item>
-										<item id="applicationsolution_id">
-											<rank>15</rank>
-										</item>
-										<item id="type">
-											<rank>20</rank>
-										</item>
-										<item id="https">
-											<rank>25</rank>
-										</item>
-										<item id="status">
-											<rank>30</rank>
-										</item>
-										<item id="kubestatus">
-											<rank>35</rank>
-										</item>
-										<item id="image">
-											<rank>40</rank>
-										</item>
-										<item id="image_tag">
-											<rank>42</rank>
-										</item>
-										<item id="repo">
-											<rank>45</rank>
-										</item>
-										<item id="replicas">
-											<rank>50</rank>
-										</item>
-										<item id="cpu_request">
-											<rank>52</rank>
-										</item>
-										<item id="cpu_limit">
-											<rank>54</rank>
-										</item>
-										<item id="mem_request">
-											<rank>56</rank>
-										</item>
-										<item id="containerport">
-											<rank>60</rank>
-										</item>
-										<item id="hostnetwork">
-											<rank>65</rank>
-										</item>
-										<item id="org_id">
-											<rank>70</rank>
-										</item>
-										<item id="move2production">
-											<rank>80</rank>
-										</item>
-										<item id="description">
-											<rank>90</rank>
-										</item>
-										<item id="url">
-											<rank>100</rank>
-										</item>
-									</items>
-								</item>
-							</items>
+						</item>
+						<item id="applicationsolution_id">
+							<rank>15</rank>
+						</item>
+						<item id="type">
+							<rank>20</rank>
+						</item>
+						<item id="https">
+							<rank>25</rank>
+						</item>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="kubestatus">
+							<rank>350</rank>
+						</item>
+						<item id="image">
+							<rank>40</rank>
+						</item>
+						<item id="image_tag">
+							<rank>42</rank>
+						</item>
+						<item id="repo">
+							<rank>45</rank>
+						</item>
+						<item id="replicas">
+							<rank>50</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="hostnetwork">
+							<rank>65</rank>
+						</item>
+						<item id="org_id">
+							<rank>70</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+						<item id="description">
+							<rank>900</rank>
+						</item>
+						<item id="url">
+							<rank>100</rank>
 						</item>
 						<item id="ingress_list">
 							<rank>110</rank>
@@ -1634,12 +1619,13 @@
 					public function DoCheckToWrite()
 					{
 						// 检查ingressannotations格式
-						$validate = $this->Get('ingressannotations_list')->ToArrayOfValues();
+						$validate = $this->Get('ingressannotations_list');
 						foreach($validate as $val) {
-							$value = $val['lnkK8sIngressAnnotationsToIngress.value'];
-							$pattern = $val['lnkK8sIngressAnnotationsToIngress.k8singressannotations_validate'];
+							$value = $val->Get('value');
+							$pattern = $val->Get('k8singressannotations_validate');
 							if(!$value) {
-								$value = $val['lnkK8sIngressAnnotationsToIngress.k8singressannotations_default_value'];
+								$value = $val->Get('k8singressannotations_default_value');
+								$val->Set('value', $value);
 							}
 							if($pattern && !preg_match($pattern, $value)) {
 								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToIngress/Error:ValueNotValid", $pattern);
@@ -1707,7 +1693,7 @@
 							<rank>70</rank>
 						</item>
 						<item id="kubestatus">
-							<rank>72</rank>
+							<rank>720</rank>
 						</item>
 						<item id="org_id">
 							<rank>75</rank>
@@ -1716,7 +1702,7 @@
 							<rank>80</rank>
 						</item>
 						<item id="description">
-							<rank>90</rank>
+							<rank>900</rank>
 						</item>
 						<item id="url">
 							<rank>100</rank>
@@ -2204,10 +2190,10 @@
 						if(!$this->IsNew() && $sAttCode != 'name') 
 						{
 							$myContactId = UserRights::GetContactId();
-							$person_list = $this->Get('person_list')->ToArrayOfValues();
+							$person_list = $this->Get('person_list');
 							$contacts = array();
-							foreach($person_list as $k => $v) {
-								$contacts[] = $v['lnkPersonToKubernetes.person_id'];
+							foreach($person_list as $v) {
+								$contacts[] = $v->Get('person_id');
 							}
 							if(!in_array($myContactId, $contacts) && !UserRights::IsAdministrator())
 							{
@@ -2239,10 +2225,10 @@
 						if(!$this->IsNew()) 
 						{
 							$myContactId = UserRights::GetContactId();
-							$person_list = $this->Get('person_list')->ToArrayOfValues();
+							$person_list = $this->Get('person_list');
 							$contacts = array();
-							foreach($person_list as $k => $v) {
-								$contacts[] = $v['lnkPersonToKubernetes.person_id'];
+							foreach($person_list as $v) {
+								$contacts[] = $v->Get('person_id');
 							}
 							if(!in_array($myContactId, $contacts) && !UserRights::IsAdministrator())
 							{
@@ -2274,10 +2260,10 @@
 							<rank>14</rank>
 						</item>
 						<item id="kubestatus">
-							<rank>20</rank>
+							<rank>200</rank>
 						</item>
 						<item id="description">
-							<rank>35</rank>
+							<rank>350</rank>
 						</item>
 						<item id="org_id">
 							<rank>40</rank>
@@ -3264,10 +3250,10 @@
   	{
 		$myContactId = UserRights::GetContactId();
 		$controller = MetaModel::GetObject("Controller", $this->Get('controller_id'));
-		$contacts = $controller->Get('person_list')->ToArrayOfValues();
+		$contacts = $controller->Get('person_list');
 		$flag = false;
 		foreach($contacts as $k => $v) {
-			if($v['lnkPersonToKubernetes.person_id'] == $myContactId) {
+			if($v->Get('person_id') == $myContactId) {
 				$flag = true;
 				break;
 			}
@@ -3504,10 +3490,10 @@
   	{
 		$myContactId = UserRights::GetContactId();
 		$deploy = MetaModel::GetObject("Controller", $this->Get('controller_id'));
-		$contacts = $deploy->Get('person_list')->ToArrayOfValues();
+		$contacts = $deploy->Get('person_list');
 		$flag = false;
-		foreach($contacts as $k => $v) {
-			if($v['lnkPersonToKubernetes.person_id'] == $myContactId) {
+		foreach($contacts as $v) {
+			if($v->Get('person_id') == $myContactId) {
 				$flag = true;
 				break;
 			}
@@ -3749,10 +3735,10 @@
   	{
 		$myContactId = UserRights::GetContactId();
 		$deploy = MetaModel::GetObject("Deployment", $this->Get('deployment_id'));
-		$contacts = $deploy->Get('person_list')->ToArrayOfValues();
+		$contacts = $deploy->Get('person_list');
 		$flag = false;
-		foreach($contacts as $k => $v) {
-			if($v['lnkPersonToKubernetes.person_id'] == $myContactId) {
+		foreach($contacts as $v) {
+			if($v->Get('person_id') == $myContactId) {
 				$flag = true;
 				break;
 			}
@@ -4008,10 +3994,10 @@
   	{
 		$myContactId = UserRights::GetContactId();
 		$deploy = MetaModel::GetObject("Ingress", $this->Get('ingress_id'));
-		$contacts = $deploy->Get('person_list')->ToArrayOfValues();
+		$contacts = $deploy->Get('person_list');
 		$flag = false;
-		foreach($contacts as $k => $v) {
-			if($v['lnkPersonToKubernetes.person_id'] == $myContactId) {
+		foreach($contacts as $v) {
+			if($v->Get('person_id') == $myContactId) {
 				$flag = true;
 				break;
 			}
