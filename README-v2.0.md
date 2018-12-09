@@ -2,8 +2,7 @@
 iTop扩展
 
 ## 版本
-- v3.x 基于2.5.1
-- v2.0 基于新版portal(2.3.3)
+- v2.0-beta 基于新版portal(2.3.3)
 - v1.0 基于legency portal
 
 ## 扩展列表
@@ -14,6 +13,7 @@ iTop扩展
 |add-user-action-menu |右上角新增编辑用户资料按钮 | |
 |api-client | iTop Rest/json api的客户端，方便在其他扩展里调用api | |
 |attribute-custom |添加AttributeClassCustom类型 | |
+|authent-ucenter | 未实现 | |
 |combodo-autoclose-ticket | 自动关闭工单 |iTop官方插件 |
 |custom-mod |修改工单生命周期（拒绝->关闭, 指派->拒绝） | |
 |custom-pages |批量查询页面，服务器账号管理页面 | |
@@ -26,6 +26,7 @@ iTop扩展
 |knowitop-trigger-on-update |触发器（对象更新时） |Fork from: [knowitop-trigger-on-update](https://github.com/vbkunin/knowitop-trigger-on-update) |
 |le-alert-rule |定义报警规则 | |
 |le-config-mgmt |自定义数据模型 | |
+|portal-announcement |在legency portal展示公告信息，修改插件支持富文本 |Fork from: [portal-announcement](https://github.com/itop-itsm-ru/portal-announcement) |
 |portal-custom |自定义新版portal样式 | |
 |precanned-replies |工单预定义回复 |iTop官方插件 |
 |precanned-replies-pro |工单预定义回复 |iTop官方插件 |
