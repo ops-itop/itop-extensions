@@ -6350,7 +6350,6 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'UI:CSVImport:DateAndTimeFormats' => 'Date and time format',
 	'UI:CSVImport:DefaultDateTimeFormat_Format_Example' => 'Default format: %1$s (e.g. %2$s)',
 	'UI:CSVImport:CustomDateTimeFormat' => 'Custom format: %1$s',
-	'UI:CSVImport:CustomDateTimeFormatTooltip' => 'Available placeholders:<table>
 	'UI:About:InstallationOptions' => 'Installation options',
 	'UI:About:ManualExtensionSource' => 'Extension',
 	'UI:About:Extension_Version' => 'Version: %1$s',
