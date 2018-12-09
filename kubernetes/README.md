@@ -9,15 +9,19 @@
 
 ## 预览
 Deployment列表
-![](doc/images/deployment-list.jpg)
+![](doc/images/deployment-list.png)
+
 Deployment详情页
-![](doc/images/deployment-detail.jpg)
+![](doc/images/deployment-details.png)
+
 Ingress列表
-![](doc/images/ingress-list.jpg)
-Ingress详情页
-![](doc/images/ingress-detail.jpg)
+![](doc/images/ingress-list.png)
+
 自定义nginx配置页
-![](doc/images/nginxannotation.jpg)
+![](doc/images/ingressannotation.png)
+
+嵌入dashboard
+![](doc/images/deployment-debug.png)
 
 ## 工作原理
 iTop对象创建或删除时触发动作执行脚本，脚本中调用Kubernetes API应用iTop中的更新
