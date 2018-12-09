@@ -1,6 +1,14 @@
 # itop-extensions
 iTop扩展
 
+## Features
+- 自定义数据模型，唯一性校验
+- 修改`request-template`，结合`action-shell-exec`实现工单自动指派，申请资源唯一性检查，资源自动入库
+- 独立的中文翻译扩展
+- [kubernetes](https://github.com/annProg/itop-extensions/tree/master/kubernetes) 工作流支持
+- 自定义页面实现批量查询功能
+- REST接口新增ext/get_related
+
 ## 版本
 - v3.x 基于2.5.1
 - v2.0 基于新版portal(2.3.3)
@@ -33,3 +41,6 @@ iTop扩展
 |trigger-on-delete |触发器（对象删除时） | |
 |zh-language |中文翻译 | |
 |kubernetes |Kubernetes工作流 | |
+
+## 补丁
+本扩展需要打补丁，参见 [README](https://github.com/annProg/itop-extensions/blob/master/patches/README.md)

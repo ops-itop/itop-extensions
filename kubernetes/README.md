@@ -1,14 +1,23 @@
-## kubernetes
+# kubernetes
+利用`iTop`完善的`CMDB`功能管理`Kubernetes`对象，相比于`yaml`定义`Kubernetes`对象，具有以下特点
+- 用户仅需具备基本的docker容器经验即可使用kubernetes，无需专门学习kubernetes
+- 资源唯一性校验，保证app名称，域名等不会冲突
+- 利用`iTop`的lnk类型，直观的实现nginx配置，volume挂载，affinity等功能，用户可以直接勾选
+- 利用`lifecycle`，实现业务更新、下线等操作。并且天然支持批量操作。适合于灾难恢复场景下快速批量上线大量业务
+- 权限控制，用户只能部署自己名下的`APP`相关资源，只能看到自己名下`APP`的`secret`内容
+- 嵌入kubernetes dashboard，供用户调试使用
 
-面向Kubernetes最终用户
-
-## 打补丁
-iTop 2.3.x中link set 类型中如果包含AttributeText，在新增item时会重复出现，经测试iTop 2.5中无此问题。以下patch是将2.5中的代码应用到2.3.3
-```
-cp ../patches/fix_attributetext_edit.patch ../../
-cd ../../
-patch -p1 --binary < fix_attributetext_edit.patch
-```
+## 预览
+Deployment列表
+![](doc/images/deployment-list.jpg)
+Deployment详情页
+![](doc/images/deployment-detail.jpg)
+Ingress列表
+![](doc/images/ingress-list.jpg)
+Ingress详情页
+![](doc/images/ingress-detail.jpg)
+自定义nginx配置页
+![](doc/images/nginxannotation.jpg)
 
 ## 工作原理
 iTop对象创建或删除时触发动作执行脚本，脚本中调用Kubernetes API应用iTop中的更新
