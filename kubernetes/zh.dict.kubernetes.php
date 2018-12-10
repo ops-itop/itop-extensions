@@ -17,8 +17,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Kubernetes/Attribute:change_log' => '变更日志',
 	'Class:Kubernetes/Attribute:status/Value:stock' => '已下线',
 	'Class:Kubernetes/Attribute:status/Value:production' => '在线',
-	'Class:Kubernetes/Attribute:status/Value:redeploy' => '在线',
-	'Class:Kubernetes/Attribute:status/Value:redeploy2' => '在线',
+	'Class:Kubernetes/Attribute:status/Value:new' => '未部署',
+	'Class:Kubernetes/Attribute:status/Value:error' => '部署错误',
 	'Class:Kubernetes/Error:CanOnlyUpdateK8SObjYourself' => '%1$s 不在您的名下，您没有编辑权限',
 	'Menu:KubernetesTypology' => 'Kubernetes类型配置',
 ));
@@ -52,12 +52,6 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 
 	'Menu:Controller' => '控制器',
 	'Menu:Controller+' => '所有控制器',
-	
-	'Class:Controller/Stimulus:ev_new' => '新建',
-	'Class:Controller/Stimulus:ev_online' => '上线',
-	'Class:Controller/Stimulus:ev_offline' => '下线',
-	'Class:Controller/Stimulus:ev_redeploy' => '更新',
-	'Class:Controller/Stimulus:ev_redeploy2' => '更新',
 	
 	'Controller:baseinfo' => '基本信息',
 	'Controller:secret' => '配置（YAML格式）',
@@ -95,11 +89,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Menu:Deployment' => '无状态服务',
 	'Menu:Deployment+' => '所有无状态服务',
 	
-	'Class:Deployment/Stimulus:ev_new' => '新建',
 	'Class:Deployment/Stimulus:ev_online' => '上线',
 	'Class:Deployment/Stimulus:ev_offline' => '下线',
-	'Class:Deployment/Stimulus:ev_redeploy' => '更新',
-	'Class:Deployment/Stimulus:ev_redeploy2' => '更新',
+	'Class:Deployment/Stimulus:ev_update' => '更新',
 	
 	'Deployment:baseinfo' => '基本信息',
 	'Deployment:secret' => 'APP配置项数据（YAML格式）',
@@ -229,7 +221,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Menu:Ingress' => '负载均衡',
 	'Menu:Ingress+' => '所有负载均衡',
 	
-	'Class:Ingress/Stimulus:ev_new' => '新建',
+	'Class:Ingress/Stimulus:ev_update' => '更新',
 	'Class:Ingress/Stimulus:ev_online' => '上线',
 	'Class:Ingress/Stimulus:ev_offline' => '下线',
 	
@@ -250,11 +242,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Menu:Secret' => 'APP配置项',		
 	'Menu:Secret+' => '所有APP配置项',	
 	
-	'Class:Secret/Stimulus:ev_new' => '新建',
 	'Class:Secret/Stimulus:ev_online' => '上线',
 	'Class:Secret/Stimulus:ev_offline' => '下线',	
-	'Class:Secret/Stimulus:ev_redeploy' => '更新',
-	'Class:Secret/Stimulus:ev_redeploy2' => '更新',	
+	'Class:Secret/Stimulus:ev_update' => '更新',
 	
 	'Secret:other' => '其他信息',
 ));
