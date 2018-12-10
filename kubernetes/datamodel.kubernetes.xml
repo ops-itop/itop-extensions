@@ -55,21 +55,15 @@
 				</field>
 				<field id="status" xsi:type="AttributeEnum">
 					<values>
+						<value id="new">new</value>
 						<value id="production">production</value>
-						<value id="redeploy">redeploy</value>
-						<value id="redeploy2">redeploy2</value>
+						<value id="error">error</value>
 						<value id="stock">stock</value>
 					</values>
 					<sql>status</sql>
-					<default_value>production</default_value>
-					<is_null_allowed>true</is_null_allowed>
+					<default_value>new</default_value>
+					<is_null_allowed>false</is_null_allowed>
 					<display_style>list</display_style>
-				</field>
-				<field id="kubestatus" xsi:type="AttributeHTML">
-					<sql>kubestatus</sql>
-					<default_value></default_value>
-					<is_null_allowed>true</is_null_allowed>
-					<tracking_level>none</tracking_level>
 				</field>
 				<field id="flag_kubestatus" xsi:type="AttributeString">
 					<sql>flag_kubestatus</sql>
@@ -150,11 +144,6 @@
 							$this->Set("org_id", UserRights::GetContactObject()->Get('org_id'));
 						}
 
-						// 设置kubestatus
-						if($this->IsNew()) {
-							$kubestatus = '<p><strong><span style="color:#ffffff"><span style="background-color:#778899"> UNK </span></span></strong></p>';
-							$this->Set('kubestatus', $kubestatus);
-						}
 						return parent::ComputeValues();
 					}
 					]]>
@@ -469,149 +458,6 @@
 					<is_null_allowed>true</is_null_allowed>
 				</field>
 			</fields>
-			<lifecycle>
-				<attribute>status</attribute>
-				<stimuli>
-					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
-					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
-					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
-					<stimulus id="ev_redeploy" xsi:type="StimulusUserAction"/>
-					<stimulus id="ev_redeploy2" xsi:type="StimulusUserAction"/>
-				</stimuli>
-				<states>
-					<state id="production">
-						<flags>
-							<attribute id="org_id">
-								<read_only/>
-							</attribute>
-							<attribute id="kubestatus">
-								<read_only/>
-							</attribute>
-							<attribute id="person_list">
-								<read_only/>
-							</attribute>
-							<attribute id="change_log">
-								<must_prompt/>
-							</attribute>
-							<attribute id="image_tag">
-								<must_prompt/>
-							</attribute>
-							<attribute id="replicas">
-								<must_prompt/>
-							</attribute>
-							<attribute id="cpu_request">
-								<must_prompt/>
-							</attribute>
-							<attribute id="cpu_limit">
-								<must_prompt/>
-							</attribute>
-							<attribute id="mem_request">
-								<must_prompt/>
-							</attribute>
-							<attribute id="secret">
-								<must_prompt/>
-							</attribute>
-						</flags>
-						<transitions>
-							<transition id="ev_offline">
-								<target>stock</target>
-								<actions/>
-							</transition>
-							<transition id="ev_redeploy">
-								<target>redeploy</target>
-								<actions/>
-							</transition>
-						</transitions>
-					</state>
-					<state id="redeploy">
-						<inherit_flags_from>production</inherit_flags_from>
-						<flags>
-							<attribute id="change_log">
-								<must_prompt/>
-							</attribute>
-							<attribute id="image_tag">
-								<must_prompt/>
-							</attribute>
-							<attribute id="replicas">
-								<must_prompt/>
-							</attribute>
-							<attribute id="cpu_request">
-								<must_prompt/>
-							</attribute>
-							<attribute id="cpu_limit">
-								<must_prompt/>
-							</attribute>
-							<attribute id="mem_request">
-								<must_prompt/>
-							</attribute>
-							<attribute id="secret">
-								<must_prompt/>
-							</attribute>
-						</flags>
-						<transitions>
-							<transition id="ev_offline">
-								<target>stock</target>
-								<actions/>
-							</transition>
-							<transition id="ev_redeploy2">
-								<target>redeploy2</target>
-								<actions/>
-							</transition>
-						</transitions>
-					</state>
-					<state id="redeploy2">
-						<inherit_flags_from>production</inherit_flags_from>
-						<flags>
-							<attribute id="change_log">
-								<must_prompt/>
-							</attribute>
-							<attribute id="image_tag">
-								<must_prompt/>
-							</attribute>
-							<attribute id="replicas">
-								<must_prompt/>
-							</attribute>
-							<attribute id="cpu_request">
-								<must_prompt/>
-							</attribute>
-							<attribute id="cpu_limit">
-								<must_prompt/>
-							</attribute>
-							<attribute id="mem_request">
-								<must_prompt/>
-							</attribute>
-							<attribute id="secret">
-								<must_prompt/>
-							</attribute>
-						</flags>
-						<transitions>
-							<transition id="ev_offline">
-								<target>stock</target>
-								<actions/>
-							</transition>
-							<transition id="ev_redeploy">
-								<target>redeploy</target>
-								<actions/>
-							</transition>
-						</transitions>
-					</state>
-					<state id="stock">
-						<inherit_flags_from>production</inherit_flags_from>
-						<flags>
-							<attribute id="change_log">
-								<must_prompt/>
-								<must_change/>
-							</attribute>
-						</flags>
-						<transitions>
-							<transition id="ev_online">
-								<target>production</target>
-								<actions/>
-							</transition>
-						</transitions>
-					</state>
-				</states>
-			</lifecycle>
 			<methods>
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
@@ -788,9 +634,6 @@
 										<item id="status">
 											<rank>30</rank>
 										</item>
-										<item id="kubestatus">
-											<rank>35</rank>
-										</item>
 										<item id="image">
 											<rank>40</rank>
 										</item>
@@ -885,9 +728,6 @@
 						<item id="status">
 							<rank>30</rank>
 						</item>
-						<item id="kubestatus">
-							<rank>35</rank>
-						</item>
 						<item id="image">
 							<rank>40</rank>
 						</item>
@@ -927,9 +767,6 @@
 						</item>
 						<item id="status">
 							<rank>30</rank>
-						</item>
-						<item id="kubestatus">
-							<rank>40</rank>
 						</item>
 						<item id="replicas">
 							<rank>50</rank>
@@ -1026,21 +863,32 @@
 				</field>
 			</fields>
 			<lifecycle>
+				<highlight_scale>
+					<item id="warning">
+						<rank>1</rank>
+						<color>HIGHLIGHT_CLASS_CRITICAL</color>
+						<icon>images/error.png</icon>
+					</item>
+					<item id="new">
+						<rank>2</rank>
+						<color>HIGHLIGHT_CLASS_WARNING</color>
+						<icon>images/new.png</icon>
+					</item>
+				</highlight_scale>
 				<attribute>status</attribute>
 				<stimuli>
-					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
+					<stimulus id="ev_error" xsi:type="StimulusInternal"/>
 					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
-					<stimulus id="ev_redeploy" xsi:type="StimulusUserAction"/>
-					<stimulus id="ev_redeploy2" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_update" xsi:type="StimulusUserAction"/>
 				</stimuli>
 				<states>
-					<state id="production">
+					<state id="new">
+						<highlight>
+							<code>new</code>
+						</highlight>
 						<flags>
 							<attribute id="org_id">
-								<read_only/>
-							</attribute>
-							<attribute id="kubestatus">
 								<read_only/>
 							</attribute>
 							<attribute id="url">
@@ -1072,18 +920,22 @@
 							</attribute>
 						</flags>
 						<transitions>
+							<transition id="ev_update">
+								<target>production</target>
+								<actions/>
+							</transition>
+							<transition id="ev_error">
+								<target>error</target>
+								<actions/>
+							</transition>
 							<transition id="ev_offline">
 								<target>stock</target>
 								<actions/>
 							</transition>
-							<transition id="ev_redeploy">
-								<target>redeploy</target>
-								<actions/>
-							</transition>
 						</transitions>
 					</state>
-					<state id="redeploy">
-						<inherit_flags_from>production</inherit_flags_from>
+					<state id="production">
+						<inherit_flags_from>new</inherit_flags_from>
 						<flags>
 							<attribute id="change_log">
 								<must_prompt/>
@@ -1112,14 +964,21 @@
 								<target>stock</target>
 								<actions/>
 							</transition>
-							<transition id="ev_redeploy2">
-								<target>redeploy2</target>
+							<transition id="ev_update">
+								<target>production</target>
+								<actions/>
+							</transition>
+							<transition id="ev_error">
+								<target>error</target>
 								<actions/>
 							</transition>
 						</transitions>
 					</state>
-					<state id="redeploy2">
-						<inherit_flags_from>production</inherit_flags_from>
+					<state id="error">
+						<highlight>
+							<code>warning</code>
+						</highlight>
+						<inherit_flags_from>new</inherit_flags_from>
 						<flags>
 							<attribute id="change_log">
 								<must_prompt/>
@@ -1148,14 +1007,18 @@
 								<target>stock</target>
 								<actions/>
 							</transition>
-							<transition id="ev_redeploy">
-								<target>redeploy</target>
+							<transition id="ev_update">
+								<target>production</target>
+								<actions/>
+							</transition>
+							<transition id="ev_error">
+								<target>error</target>
 								<actions/>
 							</transition>
 						</transitions>
 					</state>
 					<state id="stock">
-						<inherit_flags_from>production</inherit_flags_from>
+						<inherit_flags_from>new</inherit_flags_from>
 						<flags>
 							<attribute id="change_log">
 								<must_prompt/>
@@ -1227,9 +1090,6 @@
 						</item>
 						<item id="status">
 							<rank>30</rank>
-						</item>
-						<item id="kubestatus">
-							<rank>350</rank>
 						</item>
 						<item id="image">
 							<rank>40</rank>
@@ -1336,9 +1196,6 @@
 						<item id="status">
 							<rank>30</rank>
 						</item>
-						<item id="kubestatus">
-							<rank>35</rank>
-						</item>
 						<item id="image">
 							<rank>40</rank>
 						</item>
@@ -1387,9 +1244,6 @@
 						</item>
 						<item id="status">
 							<rank>30</rank>
-						</item>
-						<item id="kubestatus">
-							<rank>40</rank>
 						</item>
 						<item id="replicas">
 							<rank>50</rank>
@@ -1525,21 +1379,32 @@
 				</field>
 			</fields>
 			<lifecycle>
+				<highlight_scale>
+					<item id="warning">
+						<rank>1</rank>
+						<color>HIGHLIGHT_CLASS_CRITICAL</color>
+						<icon>images/error.png</icon>
+					</item>
+					<item id="new">
+						<rank>2</rank>
+						<color>HIGHLIGHT_CLASS_WARNING</color>
+						<icon>images/new.png</icon>
+					</item>
+				</highlight_scale>
 				<attribute>status</attribute>
 				<stimuli>
-					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
+					<stimulus id="ev_error" xsi:type="StimulusInternal"/>
 					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
-					<stimulus id="ev_redeploy" xsi:type="StimulusUserAction"/>
-					<stimulus id="ev_redeploy2" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_update" xsi:type="StimulusUserAction"/>
 				</stimuli>
 				<states>
-					<state id="production">
+					<state id="new">
+						<highlight>
+							<code>new</code>
+						</highlight>
 						<flags>
 							<attribute id="org_id">
-								<read_only/>
-							</attribute>
-							<attribute id="kubestatus">
 								<read_only/>
 							</attribute>
 							<attribute id="deployment_id">
@@ -1553,22 +1418,69 @@
 							</attribute>
 						</flags>
 						<transitions>
+							<transition id="ev_update">
+								<target>production</target>
+								<actions/>
+							</transition>
+							<transition id="ev_error">
+								<target>error</target>
+								<actions/>
+							</transition>
 							<transition id="ev_offline">
 								<target>stock</target>
 								<actions/>
 							</transition>
 						</transitions>
 					</state>
-					<state id="redeploy">
-						<flags></flags>
-						<transitions></transitions>
+					<state id="production">
+						<inherit_flags_from>new</inherit_flags_from>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+							<transition id="ev_update">
+								<target>production</target>
+								<actions/>
+							</transition>
+							<transition id="ev_error">
+								<target>error</target>
+								<actions/>
+							</transition>
+						</transitions>
 					</state>
-					<state id="redeploy2">
-						<flags></flags>
-						<transitions></transitions>
+					<state id="error">
+						<highlight>
+							<code>warning</code>
+						</highlight>
+						<inherit_flags_from>new</inherit_flags_from>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+							<transition id="ev_update">
+								<target>production</target>
+								<actions/>
+							</transition>
+							<transition id="ev_error">
+								<target>error</target>
+								<actions/>
+							</transition>
+						</transitions>
 					</state>
 					<state id="stock">
-						<inherit_flags_from>production</inherit_flags_from>
+						<inherit_flags_from>new</inherit_flags_from>
 						<flags>
 							<attribute id="change_log">
 								<must_prompt/>
@@ -1692,9 +1604,6 @@
 						<item id="status">
 							<rank>70</rank>
 						</item>
-						<item id="kubestatus">
-							<rank>720</rank>
-						</item>
 						<item id="org_id">
 							<rank>75</rank>
 						</item>
@@ -1754,9 +1663,6 @@
 						<item id="status">
 							<rank>70</rank>
 						</item>
-						<item id="kubestatus">
-							<rank>72</rank>
-						</item>
 						<item id="org_id">
 							<rank>75</rank>
 						</item>
@@ -1787,9 +1693,6 @@
 						</item>
 						<item id="status">
 							<rank>70</rank>
-						</item>
-						<item id="kubestatus">
-							<rank>72</rank>
 						</item>
 						<item id="org_id">
 							<rank>75</rank>
@@ -1839,66 +1742,6 @@
 					<target_attcode>friendlyname</target_attcode>
 				</field>
 			</fields>
-			<lifecycle>
-				<attribute>status</attribute>
-				<stimuli>
-					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
-					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
-					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
-					<stimulus id="ev_redeploy" xsi:type="StimulusUserAction"/>
-					<stimulus id="ev_redeploy2" xsi:type="StimulusUserAction"/>
-				</stimuli>
-				<states>
-					<state id="production">
-						<flags>
-							<attribute id="org_id">
-								<read_only/>
-							</attribute>
-							<attribute id="kubestatus">
-								<read_only/>
-							</attribute>
-							<attribute id="controller_id">
-								<read_only/>
-							</attribute>
-							<attribute id="person_list">
-								<read_only/>
-							</attribute>
-							<attribute id="change_log">
-								<must_prompt/>
-							</attribute>
-						</flags>
-						<transitions>
-							<transition id="ev_offline">
-								<target>stock</target>
-								<actions/>
-							</transition>
-						</transitions>
-					</state>
-					<state id="redeploy">
-						<flags></flags>
-						<transitions></transitions>
-					</state>
-					<state id="redeploy2">
-						<flags></flags>
-						<transitions></transitions>
-					</state>
-					<state id="stock">
-						<inherit_flags_from>production</inherit_flags_from>
-						<flags>
-							<attribute id="change_log">
-								<must_prompt/>
-								<must_change/>
-							</attribute>
-						</flags>
-						<transitions>
-							<transition id="ev_online">
-								<target>production</target>
-								<actions/>
-							</transition>
-						</transitions>
-					</state>
-				</states>
-			</lifecycle>
 			<methods>
 				<method id="ComputeValues" _delta="define">
 					<static>false</static>
@@ -1956,9 +1799,6 @@
 						<item id="status">
 							<rank>70</rank>
 						</item>
-						<item id="kubestatus">
-							<rank>72</rank>
-						</item>
 						<item id="org_id">
 							<rank>75</rank>
 						</item>
@@ -2000,9 +1840,6 @@
 						<item id="status">
 							<rank>70</rank>
 						</item>
-						<item id="kubestatus">
-							<rank>72</rank>
-						</item>
 						<item id="org_id">
 							<rank>75</rank>
 						</item>
@@ -2024,9 +1861,6 @@
 						</item>
 						<item id="status">
 							<rank>70</rank>
-						</item>
-						<item id="kubestatus">
-							<rank>72</rank>
 						</item>
 						<item id="org_id">
 							<rank>75</rank>
@@ -2078,24 +1912,38 @@
 				</field>
 			</fields>
 			<lifecycle>
+				<highlight_scale>
+					<item id="warning">
+						<rank>1</rank>
+						<color>HIGHLIGHT_CLASS_CRITICAL</color>
+						<icon>images/error.png</icon>
+					</item>
+					<item id="new">
+						<rank>2</rank>
+						<color>HIGHLIGHT_CLASS_WARNING</color>
+						<icon>images/new.png</icon>
+					</item>
+				</highlight_scale>
 				<attribute>status</attribute>
 				<stimuli>
-					<stimulus id="ev_new" xsi:type="StimulusInternal"/>
+					<stimulus id="ev_error" xsi:type="StimulusInternal"/>
 					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
-					<stimulus id="ev_redeploy" xsi:type="StimulusUserAction"/>
-					<stimulus id="ev_redeploy2" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_update" xsi:type="StimulusUserAction"/>
 				</stimuli>
 				<states>
-					<state id="production">
+					<state id="new">
+						<highlight>
+							<code>new</code>
+						</highlight>
 						<flags>
 							<attribute id="org_id">
 								<read_only/>
 							</attribute>
-							<attribute id="kubestatus">
-								<read_only/>
-							</attribute>
 							<attribute id="change_log">
+								<must_prompt/>
+							</attribute>
+							<attribute id="data">
 								<must_prompt/>
 							</attribute>
 						</flags>
@@ -2104,19 +1952,69 @@
 								<target>stock</target>
 								<actions/>
 							</transition>
+							<transition id="ev_error">
+								<target>error</target>
+								<actions/>
+							</transition>
+							<transition id="ev_update">
+								<target>production</target>
+								<actions/>
+							</transition>
 						</transitions>
 					</state>
-					<state id="redeploy">
-						<flags></flags>
-						<transitions></transitions>
+					<state id="production">
+						<inherit_flags_from>new</inherit_flags_from>
+						<flags>
+							<attribute id="data">
+								<must_prompt/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+							<transition id="ev_update">
+								<target>production</target>
+								<actions/>
+							</transition>
+							<transition id="ev_error">
+								<target>error</target>
+								<actions/>
+							</transition>
+						</transitions>
 					</state>
-					<state id="redeploy2">
-						<flags></flags>
-						<transitions></transitions>
+					<state id="error">
+						<highlight>
+							<code>warning</code>
+						</highlight>
+						<inherit_flags_from>new</inherit_flags_from>
+						<flags>
+							<attribute id="data">
+								<must_prompt/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_error">
+								<target>error</target>
+								<actions/>
+							</transition>
+							<transition id="ev_update">
+								<target>production</target>
+								<actions/>
+							</transition>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+						</transitions>
 					</state>
 					<state id="stock">
-						<inherit_flags_from>production</inherit_flags_from>
+						<inherit_flags_from>new</inherit_flags_from>
 						<flags>
+							<attribute id="data">
+								<must_prompt/>
+							</attribute>
 							<attribute id="change_log">
 								<must_prompt/>
 								<must_change/>
@@ -2259,9 +2157,6 @@
 						<item id="status">
 							<rank>14</rank>
 						</item>
-						<item id="kubestatus">
-							<rank>200</rank>
-						</item>
 						<item id="description">
 							<rank>350</rank>
 						</item>
@@ -2303,9 +2198,6 @@
 						<item id="status">
 							<rank>13</rank>
 						</item>
-						<item id="kubestatus">
-							<rank>20</rank>
-						</item>
 						<item id="description">
 							<rank>35</rank>
 						</item>
@@ -2327,9 +2219,6 @@
 						</item>
 						<item id="status">
 							<rank>12</rank>
-						</item>
-						<item id="kubestatus">
-							<rank>14</rank>
 						</item>
 						<item id="description">
 							<rank>15</rank>
@@ -4104,25 +3993,25 @@
 		<menu id="Controller" xsi:type="OQLMenuNode" _delta="define">
 			<rank>5</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT Controller AS c JOIN ApplicationSolution AS app ON c.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
+			<oql>SELECT Controller AS c JOIN ApplicationSolution AS app ON c.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE c.status!='stock' l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Deployment" xsi:type="OQLMenuNode" _delta="define">
 			<rank>10</rank>
 			<parent>Controller</parent>
-			<oql>SELECT Deployment AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
+			<oql>SELECT Deployment AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE d.status!='stock' l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Configuration" xsi:type="OQLMenuNode" _delta="define">
 			<rank>20</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT Configuration AS c JOIN ApplicationSolution AS app ON c.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
+			<oql>SELECT Configuration AS c JOIN ApplicationSolution AS app ON c.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE c.status!='stock' l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Ingress" xsi:type="OQLMenuNode" _delta="define">
 			<rank>25</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT Ingress AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
+			<oql>SELECT Ingress AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE d.status!='stock' l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Secret" xsi:type="OQLMenuNode" _delta="define">
