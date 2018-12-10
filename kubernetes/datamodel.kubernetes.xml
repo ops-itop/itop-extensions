@@ -287,7 +287,7 @@
 					// kubernetes action如果执行报错，将kubestatus设置为对应颜色代码，并设置 flag_kubestatus 为大于1的值
 					// 如果 kubestatus 和 flag_kubestatus 都没有被更新，说明是人工操作，那么将 flag_kubestatus 还原为 0
 					// flag_kubestatus 用来防止循环执行Kubernetes对象更新action，如果 flag_kubestatus 大于0，那么kubernetes action将直接退出
-					if(!array_key_exists("flag_kubestatus", $aChanges) and !array_key_exists("kubestatus", $aChanges)) {
+					if(!array_key_exists("flag_kubestatus", $aChanges)) {
 						$this->Set('flag_kubestatus', 'MANUAL');
 					}
 				}]]></code>
