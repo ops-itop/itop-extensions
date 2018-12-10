@@ -3993,25 +3993,25 @@
 		<menu id="Controller" xsi:type="OQLMenuNode" _delta="define">
 			<rank>5</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT Controller AS c JOIN ApplicationSolution AS app ON c.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE c.status!='stock' l.contact_id=:current_contact_id</oql>
+			<oql>SELECT Controller AS c JOIN ApplicationSolution AS app ON c.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE c.status!='stock' AND l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Deployment" xsi:type="OQLMenuNode" _delta="define">
 			<rank>10</rank>
 			<parent>Controller</parent>
-			<oql>SELECT Deployment AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE d.status!='stock' l.contact_id=:current_contact_id</oql>
+			<oql>SELECT Deployment AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE d.status!='stock' AND l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Configuration" xsi:type="OQLMenuNode" _delta="define">
 			<rank>20</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT Configuration AS c JOIN ApplicationSolution AS app ON c.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE c.status!='stock' l.contact_id=:current_contact_id</oql>
+			<oql>SELECT Configuration AS c JOIN ApplicationSolution AS app ON c.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE c.status!='stock' AND l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Ingress" xsi:type="OQLMenuNode" _delta="define">
 			<rank>25</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT Ingress AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE d.status!='stock' l.contact_id=:current_contact_id</oql>
+			<oql>SELECT Ingress AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE d.status!='stock' AND l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Secret" xsi:type="OQLMenuNode" _delta="define">
