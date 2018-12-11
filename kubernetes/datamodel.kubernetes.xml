@@ -53,6 +53,14 @@
 					<extkey_attcode>applicationsolution_id</extkey_attcode>
 					<target_attcode>name</target_attcode>
 				</field>
+				<field id="applicationsolution_contact" xsi:type="AttributeExternalField">
+					<extkey_attcode>applicationsolution_id</extkey_attcode>
+					<target_attcode>contacts</target_attcode>
+				</field>
+				<field id="applicationsolution_business" xsi:type="AttributeExternalField">
+					<extkey_attcode>applicationsolution_id</extkey_attcode>
+					<target_attcode>businessprocess_id</target_attcode>
+				</field>
 				<field id="status" xsi:type="AttributeEnum">
 					<values>
 						<value id="new">new</value>
@@ -617,6 +625,28 @@
 				</method>
 			</methods>
 			<presentation>
+				<default_search>
+					<items>
+						<item id="status">
+							<rank>1</rank>
+						</item>
+						<item id="k8snamespace_id">
+							<rank>5</rank>
+						</item>
+						<item id="applicationsolution_name">
+							<rank>10</rank>
+						</item>
+						<item id="applicationsolution_contact">
+							<rank>70</rank>
+						</item>
+						<item id="applicationsolution_business">
+							<rank>80</rank>
+						</item>
+						<item id="replicas">
+							<rank>60</rank>
+						</item>
+					</items>
+				</default_search>
 				<details>
 					<items>
 						<item id="col:col1">
@@ -1578,6 +1608,34 @@
 				</method>
 			</methods>
 			<presentation>
+				<default_search>
+					<items>
+						<item id="status">
+							<rank>1</rank>
+						</item>
+						<item id="domain_name">
+							<rank>5</rank>
+						</item>
+						<item id="location">
+							<rank>5</rank>
+						</item>
+						<item id="k8snamespace_id">
+							<rank>10</rank>
+						</item>
+						<item id="applicationsolution_name">
+							<rank>20</rank>
+						</item>
+						<item id="applicationsolution_contact">
+							<rank>70</rank>
+						</item>
+						<item id="applicationsolution_business">
+							<rank>80</rank>
+						</item>
+						<item id="https">
+							<rnak>30</rnak>
+						</item>
+					</items>
+				</default_search>
 				<details>
 					<items>
 						<item id="k8snamespace_id">
@@ -3993,25 +4051,25 @@
 		<menu id="Controller" xsi:type="OQLMenuNode" _delta="define">
 			<rank>5</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT Controller AS c JOIN ApplicationSolution AS app ON c.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE c.status!='stock' AND l.contact_id=:current_contact_id</oql>
+			<oql>SELECT Controller</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Deployment" xsi:type="OQLMenuNode" _delta="define">
 			<rank>10</rank>
 			<parent>Controller</parent>
-			<oql>SELECT Deployment AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE d.status!='stock' AND l.contact_id=:current_contact_id</oql>
+			<oql>SELECT Deployment AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE d.status!='stock' AND l.contact_id=:current_contact_id AND d.applicationsolution_name!='' AND d.applicationsolution_contact!='' AND d.friendlyname!=''</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Configuration" xsi:type="OQLMenuNode" _delta="define">
 			<rank>20</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT Configuration AS c JOIN ApplicationSolution AS app ON c.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE c.status!='stock' AND l.contact_id=:current_contact_id</oql>
+			<oql>SELECT Configuration</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Ingress" xsi:type="OQLMenuNode" _delta="define">
 			<rank>25</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT Ingress AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE d.status!='stock' AND l.contact_id=:current_contact_id</oql>
+			<oql>SELECT Ingress AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE d.status!='stock' AND d.domain_name!='' AND location!='' AND l.contact_id=:current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Secret" xsi:type="OQLMenuNode" _delta="define">

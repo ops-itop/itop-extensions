@@ -703,6 +703,22 @@
 				</field>				
 			</fields>
 			<presentation>
+				<default_search>
+					<items>
+						<item id="status">
+							<rank>1</rank>
+						</item>
+						<item id="businessprocess_id">
+							<rank>5</rank>
+						</item>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="contacts">
+							<rank>20</rank>
+						</item>
+					</items>
+				</default_search>
 				<details>
 					<items>
 						<item id="contacts_list" _delta="delete"></item>
@@ -1178,6 +1194,37 @@
 				</states>
 			</lifecycle>			
 			<presentation>
+				<default_search>
+					<items>
+						<item id="status">
+							<rank>1</rank>
+						</item>
+						<item id="all_ip">
+							<rank>10</rank>
+						</item>
+						<item id="cpu">
+							<rank>20</rank>
+						</item>
+						<item id="mem">
+							<rank>30</rank>
+						</item>
+						<item id="osversion_id">
+							<rank>40</rank>
+						</item>
+						<item id="model_id">
+							<rank>50</rank>
+						</item>
+						<item id="hostname">
+							<rank>60</rank>
+						</item>
+						<item id="location">
+							<rank>70</rank>
+						</item>
+						<item id="contacts">
+							<rank>80</rank>
+						</item>
+					</items>
+				</default_search>
 				<details>
 					<items>
 						<item id="providercontracts_list" _delta="delete"></item>
@@ -3836,6 +3883,25 @@
 				</states>
 			</lifecycle>
 			<presentation>
+				<default_search>
+					<items>
+						<item id="applicationsolution_name">
+							<rank>1</rank>
+						</item>
+						<item id="status">
+							<rank>5</rank>
+						</item>
+						<item id="url">
+							<rank>10</rank>
+						</item>
+						<item id="monitor_node">
+							<rank>20</rank>
+						</item>
+						<item id="method">
+							<rank>30</rank>
+						</item>
+					</items>
+				</default_search>
 				<details _delta="define">
 					<items>
 						<item id="col:col1">
@@ -5402,7 +5468,7 @@
 		<menu id="Server" xsi:type="OQLMenuNode" _delta="define">
 			<rank>7</rank>
 			<parent>SearchCIs</parent>
-			<oql>SELECT Server WHERE status!='obsolete'</oql>
+			<oql>SELECT Server</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Domain" xsi:type="OQLMenuNode" _delta="define">
@@ -5414,7 +5480,7 @@
 		<menu id="ApplicationSolution" xsi:type="OQLMenuNode" _delta="define">
 			<rank>20</rank>
 			<parent>SearchCIs</parent>
-			<oql>SELECT ApplicationSolution WHERE status!='obsolete'</oql>
+			<oql>SELECT ApplicationSolution</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="lnkContactToApplicationSolution" xsi:type="OQLMenuNode" _delta="define">
@@ -5427,7 +5493,7 @@
 		<menu id="Url" xsi:type="OQLMenuNode" _delta="define">
 			<rank>21</rank>
 			<parent>SearchCIs</parent>
-			<oql>SELECT Url AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id</oql>
+			<oql>SELECT Url AS d JOIN ApplicationSolution AS app ON d.applicationsolution_id=app.id JOIN lnkContactToApplicationSolution AS l ON l.applicationsolution_id=app.id WHERE l.contact_id=:current_contact_id AND d.applicationsolution_name!='' AND url!=''</oql>
 			<do_search>1</do_search>
 		</menu>
 

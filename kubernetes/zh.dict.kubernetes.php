@@ -44,14 +44,14 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Controller/Attribute:rolling_strategy' => '更新策略',
 	'Class:Controller/Attribute:hostaliases' => '自定义hosts',
 	'Class:Controller/Attribute:person_list' => '联系人',
-	'Class:Controller/Attribute:person_list+' => '链接到此控制器的所有联系人',
+	'Class:Controller/Attribute:person_list+' => '链接到此服务的所有联系人',
 	'Class:Controller/Attribute:affinity_list' => '约束条件',
-	'Class:Controller/Attribute:affinity_list+' => '链接到此控制器的所有约束条件',
+	'Class:Controller/Attribute:affinity_list+' => '链接到此服务的所有约束条件',
 	'Class:Controller/Attribute:volume_list' => 'Volumes',
-	'Class:Controller/Attribute:volume_list+' => '链接到此控制器的所有Volumes',
+	'Class:Controller/Attribute:volume_list+' => '链接到此服务的所有Volumes',
 
-	'Menu:Controller' => '控制器',
-	'Menu:Controller+' => '所有控制器',
+	'Menu:Controller' => '服务',
+	'Menu:Controller+' => '所有服务',
 	
 	'Controller:baseinfo' => '基本信息',
 	'Controller:secret' => '配置（YAML格式）',
@@ -100,8 +100,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 
 // ApplicationSolution
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
-	'Class:ApplicationSolution/Attribute:deployment_list' => 'Kubernetes服务',
-	'Class:ApplicationSolution/Attribute:deployment_list+' => '此APP的所有Kubernetes服务',
+	'Class:ApplicationSolution/Attribute:controller_list' => 'Kubernetes服务',
+	'Class:ApplicationSolution/Attribute:controller_list+' => '此APP的所有Kubernetes服务',
 ));
 
 // K8sAffinity
@@ -121,8 +121,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sAffinityToController/Attribute:k8saffinity_id' => 'K8sAffinity',
 	'Class:lnkK8sAffinityToController/Attribute:k8saffinity_name' => 'K8sAffinity名称',
-	'Class:lnkK8sAffinityToController/Attribute:controller_id' => 'K8S控制器',
-	'Class:lnkK8sAffinityToController/Attribute:controller_name' => 'K8S控制器名称',
+	'Class:lnkK8sAffinityToController/Attribute:controller_id' => 'K8S服务',
+	'Class:lnkK8sAffinityToController/Attribute:controller_name' => 'K8S服务名称',
 	'Class:lnkK8sAffinityToController/Attribute:group' => '分组',
 	'Class:lnkK8sAffinityToController/Attribute:values' => '表达式VALUES',
 ));
@@ -138,7 +138,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 // lnkK8sVolumeToController
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sVolumeToController/Attribute:k8svolume_type' => 'Volume类型',
-	'Class:lnkK8sVolumeToController/Attribute:controller_id' => 'K8S控制器',
+	'Class:lnkK8sVolumeToController/Attribute:controller_id' => 'K8S服务',
 	'Class:lnkK8sVolumeToController/Attribute:k8svolume_note' => '注释',
 	'Class:lnkK8sVolumeToController/Attribute:mountpath' => '挂载路径',
 	'Class:lnkK8sVolumeToController/Attribute:k8svolume_id' => 'Volume',
