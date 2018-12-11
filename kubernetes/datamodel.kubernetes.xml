@@ -1349,10 +1349,26 @@
 				</reconciliation>
 			</properties>
 			<fields>
+				<field id="type" xsi:type="AttributeEnum">
+					<values>
+						<value id="internal">internal</value>
+						<value id="external">external</value>
+					</values>
+					<sql>type</sql>
+					<default_value>internal</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
+				<field id="endpoints" xsi:type="AttributeText">
+					<sql>endpoints</sql>
+					<is_null_allowed>true</is_null_allowed>
+					<default_value/>
+					<tracking_level>all</tracking_level>
+				</field>
 				<field id="deployment_id" xsi:type="AttributeExternalKey">
 					<sql>deployment_id</sql>
 					<target_class>Deployment</target_class>
-					<is_null_allowed>false</is_null_allowed>
+					<is_null_allowed>true</is_null_allowed>
 					<on_target_delete>DEL_AUTO</on_target_delete>
 					<allow_target_creation>false</allow_target_creation>
 				</field>
@@ -1468,6 +1484,12 @@
 							<attribute id="change_log">
 								<must_prompt/>
 							</attribute>
+							<attribute id="type">
+								<read_only/>
+							</attribute>
+							<attribute id="endpoints">
+								<must_prompt/>
+							</attribute>
 						</flags>
 						<transitions>
 							<transition id="ev_offline">
@@ -1493,6 +1515,12 @@
 							<attribute id="change_log">
 								<must_prompt/>
 							</attribute>
+							<attribute id="type">
+								<read_only/>
+							</attribute>
+							<attribute id="endpoints">
+								<must_prompt/>
+							</attribute>
 						</flags>
 						<transitions>
 							<transition id="ev_offline">
@@ -1515,6 +1543,9 @@
 							<attribute id="change_log">
 								<must_prompt/>
 								<must_change/>
+							</attribute>
+							<attribute id="endpoints">
+								<must_prompt/>
 							</attribute>
 						</flags>
 						<transitions>
@@ -1580,6 +1611,22 @@
 							}
 
 						}
+
+						// 检查deployment id
+						if($this->Get('type') == 'internal' && !$this->Get('deployment_id')) {
+							$this->m_aCheckIssues[] = Dict::Format("Class:Ingress/Error:InternalServiceMustHaveDeployment", $this->Get('type'));
+						}
+
+						// 检查endpoints格式
+						$endpoints = $this->Get('endpoints');
+						if($endpoints) {
+							$ips = explode("\n", $endpoints);
+							foreach($ips as $ip) {
+								if(!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+									$this->m_aCheckIssues[] = Dict::Format("Class:Ingress/Error:InvalidIPAddress", $ip);
+								}
+							}
+						}
 						parent::DoCheckToWrite();
 					}
 					]]>
@@ -1634,6 +1681,9 @@
 						<item id="https">
 							<rnak>30</rnak>
 						</item>
+						<item id="type">
+							<rank>40</rank>
+						</item>
 					</items>
 				</default_search>
 				<details>
@@ -1656,11 +1706,14 @@
 						<item id="serviceport">
 							<rank>7</rank>
 						</item>
+						<item id="type">
+							<rank>9</rank>
+						</item>
 						<item id="https">
 							<rank>10</rank>
 						</item>
 						<item id="status">
-							<rank>70</rank>
+							<rank>5</rank>
 						</item>
 						<item id="org_id">
 							<rank>75</rank>
@@ -1686,6 +1739,9 @@
 								<item id="fieldset:Ingress:other">
 									<rank>310</rank>
 									<items>
+										<item id="endpoints">
+											<rank>300</rank>
+										</item>
 										<item id="change_log">
 											<rank>320</rank>
 										</item>
@@ -1697,6 +1753,9 @@
 				</details>
 				<search>
 					<items>
+						<item id="type">
+							<rank>1</rank>
+						</item>
 						<item id="k8snamespace_id">
 							<rank>10</rank>
 						</item>
@@ -1748,6 +1807,9 @@
 						</item>
 						<item id="https">
 							<rank>10</rank>
+						</item>
+						<item id="type">
+							<rank>50</rank>
 						</item>
 						<item id="status">
 							<rank>70</rank>
