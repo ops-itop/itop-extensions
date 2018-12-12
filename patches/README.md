@@ -5,8 +5,8 @@
 ## fix_css.patch
 - 表格内容过多时自动换行
 
-## date_zh_bug.patch
-修复中文日期bug
+## fix_jquery_i18n.patch
+修复jquery timepicker regional中文日期bug
 
 ## fix_restapi_customfields.patch
 修复restapi中不能返回customfields内容问题

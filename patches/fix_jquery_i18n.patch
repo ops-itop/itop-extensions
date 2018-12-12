@@ -1,0 +1,45 @@
+diff --git a/../code/web/application/itopwebpage.class.inc.php b/application/itopwebpage.class.inc.php
+index bd76351..44ca6c8 100644
+--- a/../code/web/application/itopwebpage.class.inc.php
++++ b/application/itopwebpage.class.inc.php
+@@ -191,7 +191,13 @@ EOF;
+             Dict::S('Month-07-Short'), Dict::S('Month-08-Short'), Dict::S('Month-09-Short'), Dict::S('Month-10-Short'), Dict::S('Month-11-Short'), Dict::S('Month-12-Short'));
+         $sTimeFormat = AttributeDateTime::GetFormat()->ToTimeFormat();
+         $oTimeFormat = new DateTimeFormat($sTimeFormat);
+-        $sJSLangShort = json_encode(strtolower(substr(Dict::GetUserLanguage(), 0, 2)));
++        $aI18nMap = MetaModel::GetConfig()->Get('jquery_i18n_map');
++        $sUserLang = Dict::GetUserLanguage();
++        if(array_key_exists($sUserLang, $aI18nMap)) {
++            $sJSLangShort = json_encode($aI18nMap[$sUserLang]);
++        } else {
++            $sJSLangShort = json_encode(strtolower(substr($sUserLang, 0, 2)));
++        }
+ 
+         // Date picker options
+         $aPickerOptions = array(
+diff --git a/../code/web/core/config.class.inc.php b/core/config.class.inc.php
+index 798ab3e..37e9801 100644
+--- a/../code/web/core/config.class.inc.php
++++ b/core/config.class.inc.php
+@@ -1125,6 +1125,21 @@ class Config
+ 			'source_of_value' => '',
+ 			'show_in_conf_sample' => true,
+ 		),
++		'jquery_i18n_map' => array(
++			'type' => 'array',
++			'description' => 'Special case for jQuery timepicker regional code.Associative array of sLanguageCode => jQuery timepicker regional code',
++			// examples... not used
++			'default' => array(
++				'ZH CN' => 'zh-CN',
++				'ZH TW' => 'zh-TW',
++				'PT BR' => 'pt-BR',
++				'SR RS' => 'sr-RS',
++				'SR YU' => 'sr-YU',
++			),
++			'value' => array(),
++			'source_of_value' => '',
++			'show_in_conf_sample' => true,
++		),
+ 	);
+ 
+ 	public function IsProperty($sPropCode)
