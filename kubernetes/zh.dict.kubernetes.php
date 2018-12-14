@@ -234,9 +234,12 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress/Stimulus:ev_offline' => '下线',
 	
 	'Ingress:other' => '其他信息',
-	'Class:Ingress/Warning:typeChange' => '警告！你修改了负载均衡类型，请确保完全理解修改该选项的意义及后果。如不理解，请取消该操作！详情请参考文档: %1$s',
+	'Class:Ingress/Warning:typeChange' => '警告！你修改了负载均衡类型，请确保完全理解修改该选项的意义及后果。如不理解，请放弃该操作！详情请参考文档: %1$s',
 	'Class:Ingress/Error:ExternalLoadbalancerMustProvideEndpoints' => '外部服务负载均衡必须配置端点',
 	'Class:Ingress/Error:InvalidIPAddress' => '端点包含非法IP地址 %1$s',
+	'Class:Ingress/Warning:buttonCancel' => '放弃操作',
+	'Class:Ingress/Warning:buttonOk' => '我已了解风险，继续执行',
+	'Class:Ingress/Warning:title' => '危险操作！',
 ));
 
 // Secret

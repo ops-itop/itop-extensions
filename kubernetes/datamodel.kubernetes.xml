@@ -1575,7 +1575,14 @@
 						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
 						{
 							$sDocLink = MetaModel::GetModuleSetting('kubernetes', 'ingress_doc_url', "http://localhost/");
+							$sDocLink = '<a href="' . $sDocLink . '" target="_blank">' . $sDocLink . '</a>';
 							$sOnTypeChage = Dict::Format('Class:Ingress/Warning:typeChange', $sDocLink);
+							$sButtonOk = Dict::S('Class:Ingress/Warning:buttonOk');
+							$sButtonCancel = Dict::S('Class:Ingress/Warning:buttonCancel');
+							$sWarningTitle = Dict::S('Class:Ingress/Warning:title');
+							$sConformTheme = MetaModel::GetModuleSetting('kubernetes', 'confirm-theme', 'modern');
+							$sConformIcon = MetaModel::GetModuleSetting('kubernetes', 'confirm-icon', '');
+							$sConformWidth = MetaModel::GetModuleSetting('kubernetes', 'confirm-width', '30%');
 
 							$sAppRoot = utils::GetAbsoluteUrlAppRoot();
 							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/jquery-confirm.min.js');
@@ -1590,7 +1597,7 @@
                                 "if(cType != sType) {".
                                     "orgButton.attr('type', 'button');orgButton.on('click', IngressWarningShow);" .
                             "}}" .
-                            "function IngressWarningShow(e) {\$.confirm({title:'Warning',onClose:function(){\$('button[class=action]').attr('type','submit');},type:'red',icon: 'fa fa-warning',useBootstrap:false,boxWidth:'50%',content:'$sOnTypeChage',buttons:{ok:{btnClass:'btn btn-red',action:function(){\$(e.currentTarget).parent().submit();}},cancel:{btnClass:'btn-green',action:function(){\$('button.cancel').click();}}}})}" .
+                            "function IngressWarningShow(e) {\$.confirm({theme:'$sConformTheme',icon:'$sConformIcon',title:'$sWarningTitle',onClose:function(){\$('button[class=action]').attr('type','submit');},type:'red',useBootstrap:false,boxWidth:'$sConformWidth',content:'$sOnTypeChage',buttons:{ok:{btnClass:'btn btn-red',text:'$sButtonOk',action:function(){\$(e.currentTarget).parent().submit();}},cancel:{btnClass:'btn-green',text:'$sButtonCancel',action:function(){\$('button.cancel').click();}}}})}" .
                             "var sType = $('[name=attr_type]').val();" .
                             "$('[name=attr_type]').on('change', IngressWarningBind);");
 

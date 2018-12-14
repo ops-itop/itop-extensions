@@ -46,10 +46,14 @@ SetupWebPage::AddModule(
 		//
 		'settings' => array(
 			// Module specific settings go here, if any
-			'ca_crt_path' => '/etc/k8s/ca.pem',
-			'ca_key_path' => '/etc/k8s/ca-key.pem',
 			'cron_updatecontacts_interval' => 180,
 			'reserve' => array('default-http-backend'),
+			'kubernetes_dashboard_url' => 'http://localhost/',
+			'iframe_height' => ' 600px',
+			'ingress_doc_url' => 'http://localhost/',
+			'confirm-theme' => 'modern',
+			'confirm-icon' => '',
+			'confirm-widt' => '30%',
 		),
 	)
 );
