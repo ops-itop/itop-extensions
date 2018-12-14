@@ -1365,6 +1365,17 @@
 					<default_value/>
 					<tracking_level>all</tracking_level>
 				</field>
+				<field id="manage_svc" xsi:type="AttributeEnum">
+					<values>
+						<value id="yes">yes</value>
+						<value id="clean">clean</value>
+						<value id="no">no</value>
+					</values>
+					<sql>manage_svc</sql>
+					<default_value>no</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
 				<field id="deployment_id" xsi:type="AttributeExternalKey">
 					<sql>deployment_id</sql>
 					<target_class>Deployment</target_class>
@@ -1382,6 +1393,7 @@
 					<is_null_allowed>false</is_null_allowed>
 					<filter>SELECT Domain AS d JOIN lnkApplicationSolutionToFunctionalCI AS l ON l.functionalci_id=d.id WHERE d.status='production' AND l.applicationsolution_id = :this->applicationsolution_id</filter>
 					<on_target_delete>DEL_MANUAL</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>
 					<dependencies>
 						<attribute id="applicationsolution_id"/>
 					</dependencies>
@@ -1459,6 +1471,9 @@
 							<attribute id="person_list">
 								<read_only/>
 							</attribute>
+							<attribute id="manage_svc">
+								<read_only/>
+							</attribute>
 							<attribute id="change_log">
 								<must_prompt/>
 							</attribute>
@@ -1483,9 +1498,6 @@
 						<flags>
 							<attribute id="change_log">
 								<must_prompt/>
-							</attribute>
-							<attribute id="type">
-								<read_only/>
 							</attribute>
 							<attribute id="endpoints">
 								<must_prompt/>
@@ -1514,9 +1526,6 @@
 						<flags>
 							<attribute id="change_log">
 								<must_prompt/>
-							</attribute>
-							<attribute id="type">
-								<read_only/>
 							</attribute>
 							<attribute id="endpoints">
 								<must_prompt/>
@@ -1558,6 +1567,38 @@
 				</states>
 			</lifecycle>
 			<methods>
+				<method id="DisplayModifyForm">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[
+						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
+						{
+							$sDocLink = MetaModel::GetModuleSetting('kubernetes', 'ingress_doc_url', "http://localhost/");
+							$sOnTypeChage = Dict::Format('Class:Ingress/Warning:typeChange', $sDocLink);
+
+							$sAppRoot = utils::GetAbsoluteUrlAppRoot();
+							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/jquery-confirm.min.js');
+							$oPage->add_linked_stylesheet($sAppRoot . 'env-production/kubernetes/css/jquery-confirm.min.css');
+
+							// 给submit类型的button添加click事件，由于form有onsubmit事件，导致click弹出确认框后立即继续
+							// 执行onsubmit，所以检测到type变更之后，将submit类型的button都改为button类型，完事之后在给
+							// 改回去
+                            $oPage->add_ready_script("function IngressWarningBind() {" .
+                                "var cType = $('[name=attr_type]').val();".
+                                "$('[type=submit]').off('click', IngressWarningShow);var orgButton=$('button[class=action]');orgButton.attr('type','submit');".
+                                "if(cType != sType) {".
+                                    "orgButton.attr('type', 'button');orgButton.on('click', IngressWarningShow);" .
+                            "}}" .
+                            "function IngressWarningShow(e) {\$.confirm({title:'Warning',onClose:function(){\$('button[class=action]').attr('type','submit');},type:'red',icon: 'fa fa-warning',useBootstrap:false,boxWidth:'50%',content:'$sOnTypeChage',buttons:{ok:{btnClass:'btn btn-red',action:function(){\$(e.currentTarget).parent().submit();}},cancel:{btnClass:'btn-green',action:function(){\$('button.cancel').click();}}}})}" .
+                            "var sType = $('[name=attr_type]').val();" .
+                            "$('[name=attr_type]').on('change', IngressWarningBind);");
+
+							parent::DisplayModifyForm($oPage, $aExtraParams);
+						}
+					]]>
+					</code>
+				</method>
 				<method id="ComputeValues" _delta="define">
 					<static>false</static>
 					<access>public</access>
@@ -1571,6 +1612,14 @@
 						$deploy = MetaModel::GetObjectByColumn('Deployment', 'friendlyname', $fname, false);
 						if($deploy) $this->Set("deployment_id", $deploy->GetKey());
 
+						// internal类型必须有deployment
+						if($this->Get('type') == 'internal' && !$deploy) {
+							$this->m_aCheckIssues[] = Dict::Format("Class:Ingress/Error:InternalServiceMustHaveDeployment", $fname);
+						}
+
+						if($this->Get('type') == 'external') {
+							$this->Set('manage_svc', 'yes');
+						}
 						// 自动填充url字段
 						$protocol = "http://";
 						if($this->Get('https') == "on") {
@@ -1612,19 +1661,32 @@
 
 						}
 
-						// 检查deployment id
-						if($this->Get('type') == 'internal' && !$this->Get('deployment_id')) {
-							$this->m_aCheckIssues[] = Dict::Format("Class:Ingress/Error:InternalServiceMustHaveDeployment", $this->Get('type'));
-						}
-
 						// 检查endpoints格式
 						$endpoints = $this->Get('endpoints');
 						if($endpoints) {
+							$endpoints = str_replace("\r\n", "\n", $endpoints);
 							$ips = explode("\n", $endpoints);
 							foreach($ips as $ip) {
 								if(!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-									$this->m_aCheckIssues[] = Dict::Format("Class:Ingress/Error:InvalidIPAddress", $ip);
+									$this->m_aCheckIssues[] = Dict::Format("Class:Ingress/Error:InvalidIPAddress", trim($ip));
 								}
+							}
+						}
+						// external类型时必须有endpoint
+						if(!$endpoints && $this->Get('type') == "external") {
+							$this->m_aCheckIssues[] = Dict::Format("Class:Ingress/Error:ExternalLoadbalancerMustProvideEndpoints");
+						}
+
+						// 当ingress type变更为internal时，监听到此变化，设置manage_svc为clean，
+						//清理-ingress-for-external后缀的Service，当ingress 再次更新时，aChange
+						//不包含type切type为internal，manage_svc改为 no，放弃管理Service
+						$aChanges = $this->ListChanges();
+						$sType = $this->Get('type');
+						if($sType == "internal") {
+							if(array_key_exists("type", $aChanges)) {
+								$this->Set('manage_svc', 'clean');
+							} else {
+								$this->Set('manage_svc', 'no');
 							}
 						}
 						parent::DoCheckToWrite();
@@ -1741,6 +1803,9 @@
 									<items>
 										<item id="endpoints">
 											<rank>300</rank>
+										</item>
+										<item id="manage_svc">
+											<rank>310</rank>
 										</item>
 										<item id="change_log">
 											<rank>320</rank>

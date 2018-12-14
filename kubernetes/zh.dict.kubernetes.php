@@ -217,6 +217,14 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress/Attribute:url' => 'URL',
 	'Class:Ingress/Attribute:https/Value:on' => '开启',
 	'Class:Ingress/Attribute:https/Value:off' => '关闭',
+	'Class:Ingress/Attribute:type' => '类型',
+	'Class:Ingress/Attribute:type/Value:internal' => '内部服务',
+	'Class:Ingress/Attribute:type/Value:external' => '外部服务',
+	'Class:Ingress/Attribute:endpoints' => '端点[仅外部服务有效]',
+	'Class:Ingress/Attribute:manage_svc' => '是否管理Service',
+	'Class:Ingress/Attribute:manage_svc/Value:yes' => '是',
+	'Class:Ingress/Attribute:manage_svc/Value:no' => '否',
+	'Class:Ingress/Attribute:manage_svc/Value:clean' => '清理',
 	
 	'Menu:Ingress' => '负载均衡',
 	'Menu:Ingress+' => '所有负载均衡',
@@ -226,6 +234,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress/Stimulus:ev_offline' => '下线',
 	
 	'Ingress:other' => '其他信息',
+	'Class:Ingress/Warning:typeChange' => '警告！你修改了负载均衡类型，请确保完全理解修改该选项的意义及后果。如不理解，请取消该操作！详情请参考文档: %1$s',
+	'Class:Ingress/Error:ExternalLoadbalancerMustProvideEndpoints' => '外部服务负载均衡必须配置端点',
+	'Class:Ingress/Error:InvalidIPAddress' => '端点包含非法IP地址 %1$s',
 ));
 
 // Secret
