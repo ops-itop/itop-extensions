@@ -1586,21 +1586,13 @@
 
 							$sAppRoot = utils::GetAbsoluteUrlAppRoot();
 							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/jquery-confirm.min.js');
+							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/functions.js');
 							$oPage->add_linked_stylesheet($sAppRoot . 'env-production/kubernetes/css/jquery-confirm.min.css');
 
-							// 给submit类型的button添加click事件，由于form有onsubmit事件，导致click弹出确认框后立即继续
-							// 执行onsubmit，所以检测到type变更之后，将submit类型的button都改为button类型，完事之后在给
-							// 改回去
-                            $oPage->add_ready_script("function IngressWarningBind() {" .
-                                "var cType = $('[name=attr_type]').val();".
-                                "$('[type=submit]').off('click', IngressWarningShow);var orgButton=$('button[class=action]');orgButton.attr('type','submit');".
-                                "if(cType != sType) {".
-                                    "orgButton.attr('type', 'button');orgButton.on('click', IngressWarningShow);" .
-                            "}}" .
-                            "function IngressWarningShow(e) {\$.confirm({theme:'$sConformTheme',icon:'$sConformIcon',title:'$sWarningTitle',onClose:function(){\$('button[class=action]').attr('type','submit');},type:'red',useBootstrap:false,boxWidth:'$sConformWidth',content:'$sOnTypeChage',buttons:{ok:{btnClass:'btn btn-red',text:'$sButtonOk',action:function(){\$(e.currentTarget).parent().submit();}},cancel:{btnClass:'btn-green',text:'$sButtonCancel',action:function(){\$('button.cancel').click();}}}})}" .
-                            "var sType = $('[name=attr_type]').val();" .
-                            "$('[name=attr_type]').on('change', IngressWarningBind);");
-
+							// 给submit类型的button添加click事件，由于form有onsubmit事件，导致click弹出确认框后立即继续执行onsubmit，
+							// 所以检测到type变更之后，将submit类型的button都改为button类型，完事之后在给改回去
+							// Kubernetes_IngressWarning(title, content, ok='OK', cancel='Cancel', theme='modern', icon='', width='30%')
+							$oPage->add_ready_script("Kubernetes_IngressWarning('$sWarningTitle', '$sOnTypeChage', '$sButtonOk', '$sButtonCancel', '$sConformTheme', '$sConformIcon', '$sConformWidth');");
 							parent::DisplayModifyForm($oPage, $aExtraParams);
 						}
 					]]>
