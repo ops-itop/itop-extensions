@@ -1205,7 +1205,7 @@
 						<item id="cpu">
 							<rank>20</rank>
 						</item>
-						<item id="mem">
+						<item id="ram">
 							<rank>30</rank>
 						</item>
 						<item id="osversion_id">
@@ -1217,7 +1217,7 @@
 						<item id="hostname">
 							<rank>60</rank>
 						</item>
-						<item id="location">
+						<item id="location_id">
 							<rank>70</rank>
 						</item>
 						<item id="contacts">
