@@ -1499,9 +1499,6 @@
 							<attribute id="change_log">
 								<must_prompt/>
 							</attribute>
-							<attribute id="endpoints">
-								<must_prompt/>
-							</attribute>
 						</flags>
 						<transitions>
 							<transition id="ev_offline">
@@ -1527,9 +1524,6 @@
 							<attribute id="change_log">
 								<must_prompt/>
 							</attribute>
-							<attribute id="endpoints">
-								<must_prompt/>
-							</attribute>
 						</flags>
 						<transitions>
 							<transition id="ev_offline">
@@ -1552,9 +1546,6 @@
 							<attribute id="change_log">
 								<must_prompt/>
 								<must_change/>
-							</attribute>
-							<attribute id="endpoints">
-								<must_prompt/>
 							</attribute>
 						</flags>
 						<transitions>
