@@ -499,8 +499,7 @@
 								$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:hostaliasesShouldBeYamlFormat", $this->Get('hostaliases'));
 							} else {
 								// k8s hostaliases域名校验正则为：[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*
-								$ips = array_keys($parsed);
-								foreach($parsed as $ip => $domain) {
+								foreach($parsed as $domain => $ip) {
 									if(!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
 										$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:IpIsInvalid", $ip);
 									}
