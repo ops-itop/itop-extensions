@@ -17,10 +17,18 @@
 ## fix_expressioncache.patch
 修复`expressioncache`不支持多语言的问题. see https://github.com/annProg/itop-extensions/issues/73#issuecomment-444011695
 
+## improve_alert.patch
+使用jquery-confirm 增强alert显示效果
+需要执行 
+```
+cp -ru js ../../
+cp -ru css ../../
+```
+
 ## 打补丁
 ```
 cp *.patch ../../
-patch -p1 --binary< *.patch
+patch -p1 --binary -l -N < *.patch
 ```
 某些补丁失败时可以尝试转换文档格式
 ```

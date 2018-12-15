@@ -1,0 +1,84 @@
+diff --git a/application/itopwebpage.class.inc.php b/application/itopwebpage.class.inc.php
+index bd76351..ea4c9ca 100644
+--- a/application/itopwebpage.class.inc.php
++++ b/application/itopwebpage.class.inc.php
+@@ -78,6 +78,7 @@ class iTopWebPage extends NiceWebPage implements iTabbedPage
+         $this->add_linked_stylesheet("../css/magnific-popup.css");
+         $this->add_linked_stylesheet("../css/c3.min.css");
+         $this->add_linked_stylesheet("../css/font-awesome/css/font-awesome.min.css");
++        $this->add_linked_stylesheet("../css/jquery-confirm.min.css");
+ 
+         $this->add_linked_script('../js/jquery.layout.min.js');
+         $this->add_linked_script('../js/jquery.ba-bbq.min.js');
+@@ -104,6 +105,8 @@ class iTopWebPage extends NiceWebPage implements iTabbedPage
+         $this->add_linked_script('../js/jquery.magnific-popup.min.js');
+         $this->add_linked_script('../js/breadcrumb.js');
+         $this->add_linked_script('../js/moment.min.js');
++        $this->add_linked_script('../js/jquery-confirm.min.js');
++        $this->add_linked_script('../js/jquery-confirm-function.js');
+ 
+ 
+         $sSearchAny = addslashes(Dict::S('UI:SearchValue:Any'));
+diff --git a/js/forms-json-utils.js b/js/forms-json-utils.js
+index b7d1f5b..b842b99 100644
+--- a/js/forms-json-utils.js
++++ b/js/forms-json-utils.js
+@@ -154,7 +154,7 @@ function CheckFields(sFormId, bDisplayAlert)
+ 	{
+ 		if (bDisplayAlert)
+ 		{
+-			alert(Dict.S('UI:FillAllMandatoryFields'));
++			jQueryAlert(Dict.S('UI:FillAllMandatoryFields'),'',Dict.S('UI:Button:Ok'),'modern');
+ 		}
+ 		$('#'+sFormId+' :submit').attr('disable', '');
+ 		$('#'+sFormId+' :button[type=submit]').attr('disable', '');
+diff --git a/pages/UI.php b/pages/UI.php
+index f89262a..2f887f9 100644
+--- a/pages/UI.php
++++ b/pages/UI.php
+@@ -949,8 +949,10 @@ EOF
+ 						// Found issues, explain and give the user a second chance
+ 						//
+ 						$oObj->DisplayModifyForm($oP, array('wizard_container' => true)); // wizard_container: display the wizard border and the title
+-						$sIssueDesc = Dict::Format('UI:ObjectCouldNotBeWritten', implode(', ', $aIssues));
+-						$oP->add_ready_script("alert('".addslashes($sIssueDesc)."');");
++						$sIssueTitle = addslashes(Dict::Format('UI:ObjectCouldNotBeWritten', ''));
++						$sIssueDesc = addslashes(Dict::Format(implode(', ', $aIssues)));
++						$sButtonOK = addslashes(Dict::S('UI:Button:Ok'));
++						$oP->add_ready_script("jQueryAlert('$sIssueTitle','$sIssueDesc','$sButtonOK');");
+ 					}
+ 				}
+ 			}
+@@ -1132,8 +1134,10 @@ EOF
+ 				$oP->add("<div class=\"wizContainer\">\n");
+ 				cmdbAbstractObject::DisplayCreationForm($oP, $sClass, $oObj);
+ 				$oP->add("</div>\n");
+-				$sIssueDesc = Dict::Format('UI:ObjectCouldNotBeWritten', implode(', ', $aIssues));
+-				$oP->add_ready_script("alert('".addslashes($sIssueDesc)."');");
++				$sIssueTitle = addslashes(Dict::Format('UI:ObjectCouldNotBeWritten', ''));
++				$sIssueDesc = addslashes(Dict::Format(implode(', ', $aIssues)));
++				$sButtonOK = addslashes(Dict::S('UI:Button:Ok'));
++				$oP->add_ready_script("jQueryAlert('$sIssueTitle','$sIssueDesc','$sButtonOK');");
+ 			}
+ 		}
+ 		break;
+@@ -1591,8 +1595,10 @@ EOF
+ 						// Found issues, explain and give the user a second chance
+ 						//
+ 						$oObj->DisplayStimulusForm($oP, $sStimulus);
+-						$sIssueDesc = Dict::Format('UI:ObjectCouldNotBeWritten',$sIssues);
+-						$oP->add_ready_script("alert('".addslashes($sIssueDesc)."');");
++						$sIssueTitle = addslashes(Dict::Format('UI:ObjectCouldNotBeWritten', ''));
++						$sIssueDesc = addslashes(Dict::Format(implode(', ', $aIssues)));
++						$sButtonOK = addslashes(Dict::S('UI:Button:Ok'));
++						$oP->add_ready_script("jQueryAlert('$sIssueTitle','$sIssueDesc','$sButtonOK');");
+ 					}
+ 					else
+ 					{
+@@ -1824,4 +1830,4 @@ catch(Exception $e)
+ 
+ 		IssueLog::Error($e->getMessage());
+ 	}
+-}
+\ No newline at end of file
++}
