@@ -37,3 +37,11 @@ function KubernetesAceInit(height, theme) {
 		aceEditor.resize();
 	});
 }
+
+function KubernetesHighlight() {
+	hljs.configure({useBR: true});
+	var secret = $("div[data-attcode=secret]");
+	if(secret.length>0) {
+		hljs.highlightBlock(secret.find('.field_value').find('div')[0]);
+	}
+}

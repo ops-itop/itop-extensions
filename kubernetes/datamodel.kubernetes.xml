@@ -220,6 +220,23 @@
 					</code>
 				</method>
 
+				<method id="DisplayDetails" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[
+						public function DisplayDetails(WebPage $oPage, $bEditMode = false) {
+							$sAppRoot = utils::GetAbsoluteUrlAppRoot();
+
+							$sHighlightTheme = MetaModel::GetModuleSetting('kubernetes', 'highlight_theme', 'vs2015');
+							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/ace.js');
+							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/highlightjs/highlight.pack.js');
+							$oPage->add_linked_stylesheet($sAppRoot . 'env-production/kubernetes/js/highlightjs/styles/' . $sHighlightTheme . '.css');
+							$oPage->add_ready_script("KubernetesHighlight();");
+							parent::DisplayDetails($oPage, $bEditMode);
+						}
+					]]></code>
+				</method>
 				<method id="DisplayModifyForm" _delta="define">
 					<static>false</static>
 					<access>public</access>
