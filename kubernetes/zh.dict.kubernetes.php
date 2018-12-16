@@ -21,6 +21,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Kubernetes/Attribute:status/Value:error' => '部署错误',
 	'Class:Kubernetes/Error:CanOnlyUpdateK8SObjYourself' => '%1$s 不在您的名下，您没有编辑权限',
 	'Menu:KubernetesTypology' => 'Kubernetes类型配置',
+
+	'Class:Kubernetes/Error:MustBeUnique' => '此 %2$s 对象 %1$s 已存在',
 ));
 
 // Controller
@@ -125,6 +127,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sAffinityToController/Attribute:controller_name' => 'K8S服务名称',
 	'Class:lnkK8sAffinityToController/Attribute:group' => '分组',
 	'Class:lnkK8sAffinityToController/Attribute:values' => '表达式VALUES',
+	'Class:lnkK8sAffinityToController/Error:ModifyNotAllowed' => '不允许修改 %1$s',
+	'Class:lnkK8sAffinityToController/Error:ThisLnkAlreadyExists' => '%1$s 已存在',
 ));
 
 // K8sVolume
@@ -240,6 +244,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress/Warning:buttonCancel' => '放弃操作',
 	'Class:Ingress/Warning:buttonOk' => '我已了解风险，继续执行',
 	'Class:Ingress/Warning:title' => '危险操作！',
+	'Class:Ingress/Error:ReservedDomainPattern' => '预留的域名格式 %1$s 不允许创建负载均衡',
+	'Class:Ingress/Error:IngressMustBeUnique' => '此负载均衡对象 %1$s 已存在',
+	'Class:Ingress/Error:InternalServiceMustHaveDeployment' => 'APP %2$s 没有创建 无状态服务 %1$s，不能添加 内部服务 类型的负载均衡',
 ));
 
 // Secret

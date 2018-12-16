@@ -288,7 +288,7 @@
 						$oSet = new DBObjectSet($oSearch, array(), array('friendlyname' => $sTypology));
 						if ($oSet->Count() > 0)
 						{
-							$this->m_aCheckIssues[] = Dict::Format("Class:".$finalclass."/Error:".$finalclass."MustBeUnique", $sTypology);
+							$this->m_aCheckIssues[] = Dict::Format("Class:Kubernetes/Error:MustBeUnique", $sTypology, Dict::S("Class:$finalclass"));
 						}
 					}
 
@@ -1603,7 +1603,7 @@
 
 						// internal类型必须有deployment
 						if($this->Get('type') == 'internal' && !$deploy) {
-							$this->m_aCheckIssues[] = Dict::Format("Class:Ingress/Error:InternalServiceMustHaveDeployment", $fname);
+							$this->m_aCheckIssues[] = Dict::Format("Class:Ingress/Error:InternalServiceMustHaveDeployment", $fname, $app);
 						}
 
 						if($this->Get('type') == 'external') {
@@ -1678,6 +1678,17 @@
 								$this->Set('manage_svc', 'no');
 							}
 						}
+
+						// k8snamespace里配置的域名后缀不允许添加ingress，防止和Deployment管理的ingress冲突
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT K8sNamespace WHERE domain!=''");
+						$oSet = new DBObjectSet($oSearch, array(), array("secret_id" => $this->GetKey()));
+						foreach($oSet->ToArrayOfValues() as $val) {
+							$pattern = "/" . str_replace(".", "\.", $val['K8sNamespace.domain']) . "$/";
+							if(preg_match($pattern, $this->Get('domain_name'))) {
+								$this->m_aCheckIssues[] = Dict::Format("Class:Ingress/Error:ReservedDomainPattern", $pattern);
+							}
+						}
+
 						parent::DoCheckToWrite();
 					}
 					]]>
