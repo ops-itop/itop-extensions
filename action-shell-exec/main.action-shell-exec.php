@@ -50,7 +50,9 @@ class ActionShellExec extends Action
       $oLog->Set('object_id', $aContextArgs['this->object()']->GetKey());
       // Must be inserted now so that it gets a valid id that will make the link
       // between an eventual asynchronous task (queued) and the log
-      $oLog->DBInsertNoReload();
+      // 这里是为了使用cron异步执行，邮件通知实现了异步通知，但是EventNotificationShellExec并没有实现异步
+      // 因此这里不是必须的
+      //$oLog->DBInsertNoReload();
     }
     else
     {
@@ -60,6 +62,10 @@ class ActionShellExec extends Action
     {
       $sRes = $this->_DoExecute($oTrigger, $aContextArgs, $oLog);
 
+      if (preg_match('/Script.*successfully started./', $sRes)) {
+          $oLog = null;
+          return true;  // 执行成功就不写通知了，防止通知量过大
+      }
       if ($this->IsBeingTested())
       {
         $sPrefix = 'TEST ('.$this->Get('script_path').') - ';
@@ -79,7 +85,7 @@ class ActionShellExec extends Action
     }
     if ($oLog)
     {
-      $oLog->DBUpdate();
+      $oLog->DBInsertNoReload();
     }
   }
 
