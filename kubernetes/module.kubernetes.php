@@ -54,6 +54,8 @@ SetupWebPage::AddModule(
 			'confirm-theme' => 'modern',
 			'confirm-icon' => '',
 			'confirm-widt' => '30%',
+			'ace_editor_theme' => 'xcode',
+			'ace_editor_minHeight' => '300px',
 		),
 	)
 );

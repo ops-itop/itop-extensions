@@ -227,6 +227,16 @@
 					<code><![CDATA[
 						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
 						{
+							$sAppRoot = utils::GetAbsoluteUrlAppRoot();
+							$sAceMinHeight = MetaModel::GetModuleSetting('kubernetes', 'ace_editor_minHeight', '300px');
+							$sAceTheme = MetaModel::GetModuleSetting('kubernetes', 'ace_editor_theme', 'xcode');
+
+							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/ace/ace.js');
+							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/ace/mode-yaml.js');
+							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/ace/theme-' . $sAceTheme . '.js');
+							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/ace.js');
+							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/jquery.fullscreen-min.js');
+
 							if(!self::isAllowedModifyCustom())
 							{
 								$sMesg = Dict::Format("Class:Kubernetes/Error:CanOnlyUpdateK8SObjYourself", $this->Get('friendlyname'));
@@ -236,6 +246,9 @@
 							{
 								parent::DisplayModifyForm($oPage, $aExtraParams);
 							}
+
+							// 需在parent::DisplayModifyForm之后执行，否则无法取消原fullscreen事件
+							$oPage->add_ready_script("KubernetesAceInit('$sAceMinHeight','$sAceTheme');");
 						}
 					]]>
 					</code>
@@ -485,7 +498,7 @@
 						// 检查secret是否是yaml格式
 						$yaml = $this->Get('secret');
 						if($yaml) {
-							$parsed = yaml_parse($yaml);
+							$parsed = @yaml_parse($yaml);
 							if(!is_array($parsed)) {
 								$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:SecretShouldBeYamlFormat", $this->Get('applicationsolution_name'));
 							}
@@ -494,7 +507,7 @@
 						// 检查hostaliases
 						$hosts = $this->Get('hostaliases');
 						if($hosts) {
-							$parsed = yaml_parse($hosts);
+							$parsed = @yaml_parse($hosts);
 							if(!is_array($parsed)) {
 								$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:hostaliasesShouldBeYamlFormat", $this->Get('hostaliases'));
 							} else {
@@ -2634,7 +2647,7 @@
 						// 检查expression是否是yaml格式
 						$yaml = $this->Get('expressions');
 						if($yaml) {
-							$parsed = yaml_parse($yaml);
+							$parsed = @yaml_parse($yaml);
 							if(!is_array($parsed)) {
 								$this->m_aCheckIssues[] = Dict::Format("Class:K8sAffinity/Error:ExpressionsShouldBeYamlFormat", $this->Get('name'));
 							}
