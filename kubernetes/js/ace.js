@@ -47,6 +47,6 @@ function KubernetesHighlight() {
 	if(secret.length>0) {
 		var block = secret.find('.field_value').find('div');
 		block.html('<pre>' + block.html() + '</pre>');
-		hljs.highlightBlock(block.html().find('pre')[0]);
+		hljs.highlightBlock(block.find('pre')[0]);
 	}
 }
