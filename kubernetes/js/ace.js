@@ -42,11 +42,14 @@ function KubernetesAceInit(height, theme) {
 }
 
 function KubernetesHighlight() {
-	hljs.configure({useBR: true});
+	hljs.configure({useBR: true, languages: ["yaml"]});
 	var secret = $("div[data-attcode=secret]");
 	if(secret.length>0) {
 		var block = secret.find('.field_value').find('div');
+		var width = block.width();
 		block.html('<pre>' + block.html() + '</pre>');
-		hljs.highlightBlock(block.find('pre')[0]);
+		var code = block.find('pre');
+		code.width(width);
+		hljs.highlightBlock(code[0]);
 	}
 }
