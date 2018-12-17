@@ -1,5 +1,8 @@
 function KubernetesAceInit(height, theme) {
 	var editor = $('textarea[id$=secret]');
+	if(editor.length<=0) {
+		return 1;
+	}
 	var fullscreen_button = editor.parent().find("span.fullscreen_button");
 	fullscreen_button.off('click');
 
@@ -42,6 +45,8 @@ function KubernetesHighlight() {
 	hljs.configure({useBR: true});
 	var secret = $("div[data-attcode=secret]");
 	if(secret.length>0) {
-		hljs.highlightBlock(secret.find('.field_value').find('div')[0]);
+		var block = secret.find('.field_value').find('div');
+		block.html('<pre>' + block.html() + '</pre>');
+		hljs.highlightBlock(block.html().find('pre')[0]);
 	}
 }
