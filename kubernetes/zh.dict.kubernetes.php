@@ -13,7 +13,6 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Kubernetes/Attribute:org_id' => '组织',
 	'Class:Kubernetes/Attribute:move2production' => '上线日期',
 	'Class:Kubernetes/Attribute:status' => '状态',
-	'Class:Kubernetes/Attribute:kubestatus' => 'S',
 	'Class:Kubernetes/Attribute:change_log' => '变更日志',
 	'Class:Kubernetes/Attribute:status/Value:stock' => '已下线',
 	'Class:Kubernetes/Attribute:status/Value:production' => '在线',

@@ -229,10 +229,12 @@
 							$sAppRoot = utils::GetAbsoluteUrlAppRoot();
 
 							$sHighlightTheme = MetaModel::GetModuleSetting('kubernetes', 'highlight_theme', 'vs2015');
-							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/ace.js');
+							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/functions.js');
 							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/highlightjs/highlight.pack.js');
 							$oPage->add_linked_stylesheet($sAppRoot . 'env-production/kubernetes/js/highlightjs/styles/' . $sHighlightTheme . '.css');
 							$oPage->add_ready_script("KubernetesHighlight();");
+							$sStatus = Dict::S("Class:Kubernetes/Attribute:status/Value:production");
+							$oPage->add_ready_script("KubernetesStatusHighlight('$sStatus');");
 							parent::DisplayDetails($oPage, $bEditMode);
 						}
 					]]></code>
@@ -251,7 +253,7 @@
 							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/ace/ace.js');
 							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/ace/mode-yaml.js');
 							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/ace/theme-' . $sAceTheme . '.js');
-							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/ace.js');
+							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/functions.js');
 							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/jquery.fullscreen-min.js');
 
 							if(!self::isAllowedModifyCustom())
