@@ -31,7 +31,7 @@ function Kubernetes_IngressWarning(title, content, ok='OK', cancel='Cancel', the
 }
 
 function KubernetesAceInit(height, theme) {
-	var editor = $('textarea[id$=secret]');
+	var editor = $('textarea[name=attr_secret]');
 	if(editor.length<=0) {
 		return 1;
 	}
