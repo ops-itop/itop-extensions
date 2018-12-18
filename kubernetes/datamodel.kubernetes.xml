@@ -239,13 +239,12 @@
 						}
 					]]></code>
 				</method>
-				<method id="DisplayModifyForm" _delta="define">
+				<method id="AceEditor" _delta="define">
 					<static>false</static>
 					<access>public</access>
-					<type>Overload-cmdbAbstractObject</type>
+					<type>Custom</type>
 					<code><![CDATA[
-						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
-						{
+						public function AceEditor($oPage) {
 							$sAppRoot = utils::GetAbsoluteUrlAppRoot();
 							$sAceMinHeight = MetaModel::GetModuleSetting('kubernetes', 'ace_editor_minHeight', '300px');
 							$sAceTheme = MetaModel::GetModuleSetting('kubernetes', 'ace_editor_theme', 'xcode');
@@ -255,6 +254,20 @@
 							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/ace/theme-' . $sAceTheme . '.js');
 							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/functions.js');
 							$oPage->add_linked_script($sAppRoot . 'env-production/kubernetes/js/jquery.fullscreen-min.js');
+
+							// 需在parent::DisplayModifyForm之后执行，否则无法取消原fullscreen事件
+							$oPage->add_ready_script("KubernetesAceInit('$sAceMinHeight','$sAceTheme');");
+						}
+					]]>
+					</code>
+				</method>
+				<method id="DisplayModifyForm" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[
+						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
+						{
 
 							if(!self::isAllowedModifyCustom())
 							{
@@ -266,13 +279,24 @@
 								parent::DisplayModifyForm($oPage, $aExtraParams);
 							}
 
-							// 需在parent::DisplayModifyForm之后执行，否则无法取消原fullscreen事件
-							$oPage->add_ready_script("KubernetesAceInit('$sAceMinHeight','$sAceTheme');");
+							self::AceEditor($oPage);
 						}
 					]]>
 					</code>
 				</method>
-
+				<method id="DisplayStimulusForm" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[
+						public function DisplayStimulusForm(WebPage $oPage, $sStimulus, $aPrefillFormParam = null)
+						{
+							parent::DisplayStimulusForm($oPage, $sStimulus, $aPrefillFormParam);
+							self::AceEditor($oPage);
+						}
+					]]>
+					</code>
+				</method>
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
 					<access>protected</access>

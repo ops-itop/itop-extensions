@@ -88,7 +88,6 @@ function KubernetesHighlight() {
 
 function KubernetesStatusHighlight(state) {
 	var block = $("div[data-attcode=status]").find('.field_value');
-	console.log(block.text());
 	if(block.text() != state) {
 		block.css("background-color", "red");
 		block.css("color", "white");
