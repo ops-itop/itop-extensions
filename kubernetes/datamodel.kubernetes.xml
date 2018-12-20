@@ -1022,6 +1022,9 @@
 					<state id="production">
 						<inherit_flags_from>new</inherit_flags_from>
 						<flags>
+							<attribute id="type">
+								<read_only/>
+							</attribute>
 							<attribute id="change_log">
 								<must_prompt/>
 							</attribute>
@@ -1065,6 +1068,9 @@
 						</highlight>
 						<inherit_flags_from>new</inherit_flags_from>
 						<flags>
+							<attribute id="type">
+								<read_only/>
+							</attribute>
 							<attribute id="change_log">
 								<must_prompt/>
 							</attribute>
