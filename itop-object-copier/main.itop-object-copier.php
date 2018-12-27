@@ -1,6 +1,5 @@
 <?php
-
-// Copyright (C) 2014 Combodo SARL
+// Copyright (C) 2014-2018 Combodo SARL
 //
 //   This file is part of iTop.
 //
@@ -29,6 +28,9 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 {
 	/**
 	 * Helper to log errors
+	 *
+	 * @param int $iRule
+	 * @param string $sMessage
 	 */
 	static public function LogError($iRule, $sMessage)
 	{
@@ -37,6 +39,11 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 
 	/**
 	 * Checks the structure and logs errors if issues have been encountered
+	 *
+	 * @param integer $iRule
+	 * @param string[] $aRuleData
+	 *
+	 * @return bool
 	 */
 	public static function IsRuleValid($iRule, $aRuleData)
 	{
@@ -118,7 +125,14 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 			{
 				if (self::IsRuleValid($iRule, $aRuleData))
 				{
-					$bAllowed = false;
+                    // Checking if user can write target class (DM rights, Archive mode on, Access mode restricted, ...)
+                    $sTargetClass = ($aRuleData['dest_class'] === '') ? get_class($oObject) : $aRuleData['dest_class'];
+                    if(!UserRights::IsActionAllowed($sTargetClass, UR_ACTION_CREATE))
+                    {
+                        continue;
+                    }
+
+                    $bAllowed = false;
 					if (!isset($aRuleData['allowed_profiles']) || ($aRuleData['allowed_profiles'] == ''))
 					{
 						$bAllowed = true;
@@ -136,7 +150,7 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 							}
 						}
 					}
-	
+
 					if ($bAllowed)
 					{
 						try
@@ -150,9 +164,8 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 								if ($oCheckSet->Count() > 0)
 								{
 									$oAppContext = new ApplicationContext();
-					       		//$sContextForURL = $oAppContext->GetForLink();
-					       		$aParams = $oAppContext->GetAsHash();
-					
+									$aParams = $oAppContext->GetAsHash();
+
 									$aParams['operation'] = 'new';
 									$aParams['rule'] = $iRule;
 									$aParams['source_id'] = $oObject->GetKey();
@@ -179,15 +192,28 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 
 	/**
 	 * Prepare the destination object for user configuration (not saved yet!)
-	 */	 	
-	public static function PrepareObject($aRuleData, $oDestObject, $oSourceObject)
+	 *
+	 * @param string[string[]] $aRuleData
+	 * @param \DBObject $oDestObject
+	 * @param \DBObject $oSourceObject
+	 * @param bool $bOnFormSubmit
+	 *
+	 * @throws \Exception
+	 */
+	public static function PrepareObject($aRuleData, $oDestObject, $oSourceObject, $bOnFormSubmit = false)
 	{
-		self::ExecActions($aRuleData['preset'], $oSourceObject, $oDestObject);
+		self::ExecActions($aRuleData['preset'], $oSourceObject, $oDestObject, $bOnFormSubmit);
 	}
 
 	/**
 	 * Retrofit some information on the source object
-	 */	 	
+	 *
+	 * @param string[string[]] $aRuleData
+	 * @param \DBObject $oSavedObject
+	 * @param \DBObject $oSourceObject
+	 *
+	 * @throws \Exception
+	 */
 	public static function RetrofitOnSourceObject($aRuleData, $oSavedObject, $oSourceObject)
 	{
 		self::ExecActions($aRuleData['retrofit'], $oSavedObject, $oSourceObject);
@@ -201,9 +227,16 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 	}
 
 	/**
-	 * Preset the object to create or retrofit some values...	
-	 */	
-	public static function ExecActions($aActions, $oObjectToRead, $oObjectToWrite)
+	 * Preset the object to create or retrofit some values...
+	 *
+	 * @param string[] $aActions
+	 * @param \DBObject $oObjectToRead
+	 * @param \DBObject $oObjectToWrite
+	 * @param bool $bOnFormSubmit
+	 *
+	 * @throws \Exception
+	 */
+	public static function ExecActions($aActions, $oObjectToRead, $oObjectToWrite, $bOnFormSubmit = false)
 	{
 		static $aVerbToProvider = array();
 		if (count($aVerbToProvider) == 0)
@@ -211,7 +244,6 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 			foreach(get_declared_classes() as $sPHPClass)
 			{
 				$oRefClass = new ReflectionClass($sPHPClass);
-				$oExtensionInstance = null;
 				if ($oRefClass->implementsInterface('iObjectCopierActionProvider'))
 				{
 					$oActionProvider = new $sPHPClass;
@@ -231,7 +263,7 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 				{
 					$sVerb = trim($aMatches[1]);
 					$sParams = $aMatches[2];
-		
+
 					// the coma is the separator for the parameters
 					// comas can be escaped: \,
 					$sParams = str_replace(array("\\\\", "\\,"), array("__backslash__", "__coma__"), $sParams);
@@ -241,13 +273,13 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 					{
 						$sParam = str_replace(array("__backslash__", "__coma__"), array("\\", ","), $sParam);
 					}
-		
+
 					if (!array_key_exists($sVerb, $aVerbToProvider))
 					{
 						throw new Exception("Unknown verb '$sVerb'");
 					}
 					$oActionProvider = $aVerbToProvider[$sVerb];
-					$oActionProvider->ExecAction($sVerb, $aParams, $oObjectToRead, $oObjectToWrite);
+					$oActionProvider->ExecAction($sVerb, $aParams, $oObjectToRead, $oObjectToWrite, $bOnFormSubmit);
 				}
 				else
 				{
@@ -263,12 +295,30 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 
 	public function EnumVerbs()
 	{
-		return array('clone', 'clone_scalars', 'copy', 'reset', 'nullify', 'set', 'append', 'add_to_list', 'apply_stimulus', 'call_method');
+		return array(
+			'clone',
+			'clone_scalars',
+			'copy',
+			'copy_head',
+			'reset',
+			'nullify',
+			'set',
+			'append',
+			'add_to_list',
+			'apply_stimulus',
+			'call_method'
+		);
 	}
 
 	/**
 	 * Helper to check the attribute code before attempting to use it, thus generating the most relevant error message
-	 */	 	
+	 *
+	 * @param \DBObject $oObject
+	 * @param string $sAttCode
+	 *
+	 * @return mixed attribute value
+	 * @throws \Exception
+	 */
 	protected function GetAtt($oObject, $sAttCode)
 	{
 		if ($sAttCode == 'id')
@@ -288,7 +338,13 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 
 	/**
 	 * Helper to check the attribute code before attempting to use it, thus generating the most relevant error message
-	 */	 	
+	 *
+	 * @param \DBObject $oObject
+	 * @param string $sAttCode
+	 * @param mixed $value
+	 *
+	 * @throws \Exception
+	 */
 	protected function SetAtt($oObject, $sAttCode, $value)
 	{
 		if (!MetaModel::IsValidAttCode(get_class($oObject), $sAttCode))
@@ -301,6 +357,11 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 	/**
 	 * Clone an object in memory (not the same as DBObject::Clone!)
 	 * It will be used to clone link sets
+	 *
+	 * @param \DBObject $oSourceObject
+	 *
+	 * @return \DBObject
+	 * @throws \Exception
 	 */
 	public function CloneObject($oSourceObject)
 	{
@@ -309,17 +370,25 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 		foreach(MetaModel::ListAttributeDefs($sClass) as $sAttCode => $oAttDef)
 		{
 			// As of now, ignore other attribute (do not attempt to recurse!)
-			if ($oAttDef->IsScalar())
+            // Note: Condition should match those from DBObject::Set(), otherwise we might encounter an exception.
+            if ($oAttDef->IsScalar() && $oAttDef->IsWritable())
 			{
 				$this->SetAtt($oClone, $sAttCode, $this->GetAtt($oSourceObject, $sAttCode));
 			}
 		}
 		return $oClone;
-	}	
+	}
 
 	/**
 	 * Helper to copy an attribute between two objects (in memory)
-	 * Used for several verbs like clone() and copy()	 	
+	 * Used for several verbs like clone() and copy()
+	 *
+	 * @param \DBObject $oSourceObject
+	 * @param string $sSourceAttCode
+	 * @param \DBObject $oDestObject
+	 * @param string $sDestAttCode
+	 *
+	 * @throws \Exception
 	 */
 	public function CopyAttribute($oSourceObject, $sSourceAttCode, $oDestObject, $sDestAttCode)
 	{
@@ -331,6 +400,7 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 		{
 			$oSourceAttDef = MetaModel::GetAttributeDef(get_class($oSourceObject), $sSourceAttCode);
 		}
+
 		if (is_object($oSourceAttDef) && $oSourceAttDef->IsLinkSet())
 		{
 			// The copy requires that we create a new object set (the semantic of DBObject::Set is unclear about link sets)
@@ -340,147 +410,204 @@ class iTopObjectCopier implements iPopupMenuExtension, iObjectCopierActionProvid
 			while ($oSourceLink = $oSourceSet->Fetch())
 			{
 				$oDestLink = $this->CloneObject($oSourceLink);
-				// Not necessary
-				// $oDestLink->Set($oSourceAttDef->GetExtKeyToMe(), 0);
 				$oDestSet->AddObject($oDestLink);
 			}
 			$this->SetAtt($oDestObject, $sDestAttCode, $oDestSet);
 		}
-		else
+		// Note: Condition should match those from DBObject::Set(), otherwise we might encounter an exception.
+		elseif(!is_object($oSourceAttDef) || $oSourceAttDef->IsWritable())
 		{
-			$this->SetAtt($oDestObject, $sDestAttCode, $this->GetAtt($oSourceObject, $sSourceAttCode));
+		    $this->SetAtt($oDestObject, $sDestAttCode, $this->GetAtt($oSourceObject, $sSourceAttCode));
 		}
 	}
 
 	/**
-	 * Handles the various actions (see the interface iObjectCopierActionProvider)	
-	 */	
-	public function ExecAction($sVerb, $aParams, $oObjectToRead, $oObjectToWrite)
+	 * @param DBObject $oSourceObject
+	 * @param string $sSourceAttCode
+	 * @param DBObject $oDestObject
+	 * @param string $sDestAttCode
+	 *
+	 * @uses \ormCaseLog::GetLatestEntry()
+	 *
+	 * @throws \CoreException when getting source attribute value
+	 * @throws \CoreUnexpectedValue if source attribute is not a CaseLog
+	 * @throws \Exception when setting dest attribute
+	 */
+	public function CopyLastCaseLogEntry($oSourceObject, $sSourceAttCode, $oDestObject, $sDestAttCode)
 	{
+		$oSourceCaseLog = $oSourceObject->Get($sSourceAttCode);
+
+		if (!is_a($oSourceCaseLog, 'ormCaseLog'))
+		{
+			throw new CoreUnexpectedValue("tried to use copy_head verb with '$sSourceAttCode' source attribute, which is not a CaseLog field");
+		}
+
+		$sSourceLastCaseLogEntry = $oSourceCaseLog->GetLatestEntry('html');
+		$this->SetAtt($oDestObject, $sDestAttCode, $sSourceLastCaseLogEntry);
+	}
+
+	/**
+	 * Handles the various actions (see the interface iObjectCopierActionProvider)
+	 *
+	 * @param string $sVerb
+	 * @param array $aParams
+	 * @param \DBObject $oObjectToRead
+	 * @param \DBObject $oObjectToWrite
+	 * @param bool $bOnFormSubmit
+	 *
+	 * @throws \CoreUnexpectedValue
+	 * @throws \Exception
+	 */
+	public function ExecAction($sVerb, $aParams, $oObjectToRead, $oObjectToWrite, $bOnFormSubmit = false)
+	{
+		IssueLog::Info("entrée dans ExecAction");
 		switch($sVerb)
 		{
-		case 'clone':
-			foreach($aParams as $sAttCode)
-			{
-				$sAttCode = trim($sAttCode);
-				$this->CopyAttribute($oObjectToRead, $sAttCode, $oObjectToWrite, $sAttCode);
-			}
-			break;
-
-		case 'clone_scalars':
-			foreach(MetaModel::ListAttributeDefs(get_class($oObjectToWrite)) as $sAttCode => $oAttDef)
-			{
-				if ($oAttDef->IsScalar())
+			case 'clone':
+				foreach ($aParams as $sAttCode)
 				{
+					$sAttCode = trim($sAttCode);
 					$this->CopyAttribute($oObjectToRead, $sAttCode, $oObjectToWrite, $sAttCode);
 				}
-			}
-			break;
+				break;
 
-		case 'copy':
-			$sSourceAttCode = trim($aParams[0]);
-			$sDestAttCode = trim($aParams[1]);
-			$this->CopyAttribute($oObjectToRead, $sSourceAttCode, $oObjectToWrite, $sDestAttCode);
-			break;
-
-		case 'reset':
-			$sAttCode = trim($aParams[0]);
-			if (!MetaModel::IsValidAttCode(get_class($oObjectToWrite), $sAttCode))
-			{
-				throw new Exception("Unknown attribute ".get_class($oObjectToWrite)."::".$sAttCode);
-			}
-			$oAttDef = MetaModel::GetAttributeDef(get_class($oObjectToWrite), $sAttCode);
-			$this->SetAtt($oObjectToWrite, $sAttCode, $oAttDef->GetDefaultValue());
-			break;
-
-		case 'nullify':
-			$sAttCode = trim($aParams[0]);
-			if (!MetaModel::IsValidAttCode(get_class($oObjectToWrite), $sAttCode))
-			{
-				throw new Exception("Unknown attribute ".get_class($oObjectToWrite)."::".$sAttCode);
-			}
-			$oAttDef = MetaModel::GetAttributeDef(get_class($oObjectToWrite), $sAttCode);
-			$this->SetAtt($oObjectToWrite, $sAttCode, $oAttDef->GetNullValue());
-			break;
-
-		case 'set':
-			$sAttCode = trim($aParams[0]);
-			$sRawValue = trim($aParams[1]);
-			$aContext = $oObjectToRead->ToArgs('this');
-			foreach (self::$aContextObjects as $sAlias => $oObject)
-			{
-				$aContext = array_merge($aContext, $oObject->ToArgs($sAlias));
-			}
-			$aContext['current_contact_id'] = UserRights::GetContactId();
-			$aContext['current_contact_friendlyname'] = UserRights::GetUserFriendlyName();
-			$aContext['current_date'] = date('Y-m-d');
-			$aContext['current_time'] = date('H:i:s');
-			$sValue = MetaModel::ApplyParams($sRawValue, $aContext);
-			$this->SetAtt($oObjectToWrite, $sAttCode, $sValue);
-			break;
-
-		case 'append':
-			$sAttCode = trim($aParams[0]);
-			$sRawAddendum = $aParams[1];
-			$aContext = $oObjectToRead->ToArgs('this');
-			$aContext['current_contact_id'] = UserRights::GetContactId();
-			$aContext['current_contact_friendlyname'] = UserRights::GetUserFriendlyName();
-			$sAddendum = MetaModel::ApplyParams($sRawAddendum, $aContext);
-			$this->SetAtt($oObjectToWrite, $sAttCode, $this->GetAtt($oObjectToWrite, $sAttCode).$sAddendum);
-			break;
-		
-		case 'add_to_list':
-			$sSourceKeyAttCode = trim($aParams[0]);
-			$sTargetListAttCode = trim($aParams[1]); // indirect !!!
-			if (isset($aParams[2]) && isset($aParams[3]))
-			{
-				$sRoleAttCode = trim($aParams[2]);
-				$sRoleValue = $aParams[3];
-			}
-
-			$iObjKey = $this->GetAtt($oObjectToRead, $sSourceKeyAttCode);
-			if ($iObjKey > 0)
-			{
-				$oLinkSet = $oObjectToWrite->Get($sTargetListAttCode);
-
-				$oListAttDef = MetaModel::GetAttributeDef(get_class($oObjectToWrite), $sTargetListAttCode);
-				$oLnk = MetaModel::NewObject($oListAttDef->GetLinkedClass());
-				$oLnk->Set($oListAttDef->GetExtKeyToRemote(), $iObjKey);
-				if (isset($sRoleAttCode))
+			case 'clone_scalars':
+				foreach (MetaModel::ListAttributeDefs(get_class($oObjectToWrite)) as $sAttCode => $oAttDef)
 				{
-					$this->SetAtt($oLnk, $sRoleAttCode, $sRoleValue);
+					// Note: Condition should match those from DBObject::Set(), otherwise we might encounter an exception.
+					if ($oAttDef->IsScalar() && $oAttDef->IsWritable())
+					{
+						$this->CopyAttribute($oObjectToRead, $sAttCode, $oObjectToWrite, $sAttCode);
+					}
 				}
-				$oLinkSet->AddObject($oLnk);
-				$this->SetAtt($oObjectToWrite, $sTargetListAttCode, $oLinkSet);
-			}
-			break;
-		
-		case 'apply_stimulus':
-			$sStimulus = trim($aParams[0]);
-			$oObjectToWrite->ApplyStimulus($sStimulus);
-			break;
+				break;
 
-		case 'call_method':
-			$sMethod = trim($aParams[0]);
-			$aCallSpec = array($oObjectToWrite, $sMethod);
-			if (!is_callable($aCallSpec))
-			{
-				throw new Exception("Unknown method ".get_class($oObjectToWrite)."::".$sMethod.'()');
-			}
-			call_user_func($aCallSpec, $oObjectToRead);
-			break;
+			case 'copy':
+				$sSourceAttCode = trim($aParams[0]);
+				$sDestAttCode = trim($aParams[1]);
+				$this->CopyAttribute($oObjectToRead, $sSourceAttCode, $oObjectToWrite, $sDestAttCode);
+				break;
 
-		default:
-			throw new Exception("Invalid verb");
+			case 'copy_head':
+				$sSourceAttCode = trim($aParams[0]);
+				$sDestAttCode = trim($aParams[1]);
+				$this->CopyLastCaseLogEntry($oObjectToRead, $sSourceAttCode, $oObjectToWrite, $sDestAttCode);
+				break;
+
+			case 'reset':
+				$sAttCode = trim($aParams[0]);
+				if (!MetaModel::IsValidAttCode(get_class($oObjectToWrite), $sAttCode))
+				{
+					throw new Exception("Unknown attribute ".get_class($oObjectToWrite)."::".$sAttCode);
+				}
+				$oAttDef = MetaModel::GetAttributeDef(get_class($oObjectToWrite), $sAttCode);
+				$this->SetAtt($oObjectToWrite, $sAttCode, $oAttDef->GetDefaultValue());
+				break;
+
+			case 'nullify':
+				$sAttCode = trim($aParams[0]);
+				if (!MetaModel::IsValidAttCode(get_class($oObjectToWrite), $sAttCode))
+				{
+					throw new Exception("Unknown attribute ".get_class($oObjectToWrite)."::".$sAttCode);
+				}
+				$oAttDef = MetaModel::GetAttributeDef(get_class($oObjectToWrite), $sAttCode);
+				$this->SetAtt($oObjectToWrite, $sAttCode, $oAttDef->GetNullValue());
+				break;
+
+			case 'set':
+				$sAttCode = trim($aParams[0]);
+				$sRawValue = trim($aParams[1]);
+
+				// Do not preset caselog value during form submission
+				$iFlags = $oObjectToWrite->GetAttributeFlags($sAttCode);
+				$bUpdate = true;
+				if ($bOnFormSubmit)
+				{
+					// In this case, write only hidden case logs
+					$bUpdate = ($iFlags & OPT_ATT_READONLY) || ($iFlags & OPT_ATT_HIDDEN);
+				}
+				if ($bUpdate)
+				{
+					$aContext = $oObjectToRead->ToArgs('this');
+					foreach (self::$aContextObjects as $sAlias => $oObject)
+					{
+						$aContext = array_merge($aContext, $oObject->ToArgs($sAlias));
+					}
+					$aContext['current_contact_id'] = UserRights::GetContactId();
+					$aContext['current_contact_friendlyname'] = UserRights::GetUserFriendlyName();
+					$aContext['current_date'] = date('Y-m-d');
+					$aContext['current_time'] = date('H:i:s');
+					$sValue = MetaModel::ApplyParams($sRawValue, $aContext);
+					$this->SetAtt($oObjectToWrite, $sAttCode, $sValue);
+				}
+				break;
+
+			case 'append':
+				$sAttCode = trim($aParams[0]);
+				$sRawAddendum = $aParams[1];
+				$aContext = $oObjectToRead->ToArgs('this');
+				$aContext['current_contact_id'] = UserRights::GetContactId();
+				$aContext['current_contact_friendlyname'] = UserRights::GetUserFriendlyName();
+				$sAddendum = MetaModel::ApplyParams($sRawAddendum, $aContext);
+				$this->SetAtt($oObjectToWrite, $sAttCode, $this->GetAtt($oObjectToWrite, $sAttCode).$sAddendum);
+				break;
+
+			case 'add_to_list':
+				$sSourceKeyAttCode = trim($aParams[0]);
+				$sTargetListAttCode = trim($aParams[1]); // indirect !!!
+				if (isset($aParams[2]) && isset($aParams[3]))
+				{
+					$sRoleAttCode = trim($aParams[2]);
+					$sRoleValue = $aParams[3];
+				}
+
+				$iObjKey = $this->GetAtt($oObjectToRead, $sSourceKeyAttCode);
+				if ($iObjKey > 0)
+				{
+					$oLinkSet = $oObjectToWrite->Get($sTargetListAttCode);
+
+					$oListAttDef = MetaModel::GetAttributeDef(get_class($oObjectToWrite), $sTargetListAttCode);
+					$oLnk = MetaModel::NewObject($oListAttDef->GetLinkedClass());
+					$oLnk->Set($oListAttDef->GetExtKeyToRemote(), $iObjKey);
+					if (isset($sRoleAttCode))
+					{
+						$this->SetAtt($oLnk, $sRoleAttCode, $sRoleValue);
+					}
+					$oLinkSet->AddObject($oLnk);
+					$this->SetAtt($oObjectToWrite, $sTargetListAttCode, $oLinkSet);
+				}
+				break;
+
+			case 'apply_stimulus':
+				$sStimulus = trim($aParams[0]);
+				$oObjectToWrite->ApplyStimulus($sStimulus);
+				break;
+
+			case 'call_method':
+				$sMethod = trim($aParams[0]);
+				$aCallSpec = array($oObjectToWrite, $sMethod);
+				if (!is_callable($aCallSpec))
+				{
+					throw new Exception("Unknown method ".get_class($oObjectToWrite)."::".$sMethod.'()');
+				}
+				call_user_func($aCallSpec, $oObjectToRead);
+				break;
+
+			default:
+				throw new Exception("Invalid verb");
 		}
 	}
 
 	/**
 	 * Format the labels depending on the rule settings, and defaulting to dictionary entries
-	 * @param aRuleData Rule settings
-	 * @param sMsgCode The code in the rule settings and default dictionary (e.g. menu_label, defaulting to object-copier:menu_label:default)
-	 * @param oSourceObject Optional: the source object	 	 	 
-	 */	 	
+	 *
+	 * @param array aRuleData Rule settings
+	 * @param string sMsgCode The code in the rule settings and default dictionary (e.g. menu_label, defaulting to
+	 *     object-copier:menu_label:default)
+	 * @param \DBObject oSourceObject Optional: the source object
+	 *
+	 * @throws \DictExceptionMissingString
+	 */
 	public static function FormatMessage($aRuleData, $sMsgCode, $oSourceObject = null)
 	{
 		$sLangCode = Dict::GetUserLanguage();

@@ -5,7 +5,7 @@
 
 SetupWebPage::AddModule(
 	__FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-	'itop-object-copier/1.1.4',
+	'itop-object-copier/1.2.1',
 	array(
 		// Identification
 		//
@@ -15,7 +15,7 @@ SetupWebPage::AddModule(
 		// Setup
 		//
 		'dependencies' => array(
-			
+
 		),
 		'mandatory' => false,
 		'visible' => true,
@@ -26,7 +26,7 @@ SetupWebPage::AddModule(
 			'main.itop-object-copier.php'
 		),
 		'webservice' => array(
-			
+
 		),
 		'data.struct' => array(
 			// add your 'structure' definition XML files here,
@@ -34,14 +34,16 @@ SetupWebPage::AddModule(
 		'data.sample' => array(
 			// add your sample data XML files here,
 		),
-		
+
 		// Documentation
 		//
 		'doc.manual_setup' => '', // hyperlink to manual setup documentation, if any
-		'doc.more_information' => '', // hyperlink to more information, if any 
+		'doc.more_information' => '', // hyperlink to more information, if any
 
 		// Default settings
 		//
+		// This should be defined in XML to allow overrides (see https://wiki.openitop.org/doku.php?id=2_4_0:customization:xml_reference&s[]=xml&s[]=data&s[]=model&s[]=reference#modules_parameters)
+		// But we can't because of label keys that contains also the locale ("/" and " " characters)
 		'settings' => array(
 			'rules' => array(
 				array(
@@ -123,10 +125,26 @@ SetupWebPage::AddModule(
 					'retrofit' => array( // Series of actions to retrofit some information from the created object to the source object
 					),
 				),
+				array(
+					'source_scope' => 'SELECT UserRequest WHERE status IN (\'closed\')',
+					'allowed_profiles' => 'Support Agent,Administrator',
+					'menu_label' => 'Create ticket with last log...',
+					'menu_label/FR FR' => 'Créer une demande depuis le journal...',
+					'form_label' => 'Create new request from %1$s',
+					'form_label/FR FR' => 'Nouvelle demande depuis %1$s',
+					'report_label' => 'Created from %1$s',
+					'report_label/FR FR' => 'Créée depuis %1$s',
+					'dest_class' => 'UserRequest',
+					'preset' =>
+						array(
+							0 => 'clone(caller_id,org_id,contacts_list,functionalcis_list)',
+							1 => 'copy(id,parent_request_id)',
+							2 => 'copy_head(public_log,description)',
+						),
+					'retrofit' =>
+						array(),
+				),
 			)
 		),
 	)
 );
-
-
-?>

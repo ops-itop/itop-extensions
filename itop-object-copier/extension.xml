@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension format="1.0">
+	<extension_code>combodo-user-actions-configurator</extension_code>
+	<company>Combodo SARL</company>
+	<author><![CDATA[Pierre]]></author>
+	<label><![CDATA[User actions configurator]]></label>
+	<description><![CDATA[Configure  user actions to simplify and automate processes. Eg create an incident from a CI.]]></description>
+	<version>1.2.1</version>
+	<release_date>2018-06-26</release_date>
+	<version_description><![CDATA[ES translation]]></version_description>
+	<itop_version_min></itop_version_min>
+	<status>stable</status>
+	<mandatory>false</mandatory>
+	<more_info_url></more_info_url>
+</extension>
