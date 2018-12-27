@@ -459,6 +459,16 @@
 					<default_value>3</default_value>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
+				<field id="fix_replicas" xsi:type="AttributeEnum">
+					<values>
+						<value id="true">true</value>
+						<value id="false">false</value>
+					</values>
+					<sql>fix_replicas</sql>
+					<default_value>false</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
 				<field id="secret" xsi:type="AttributeText">
 					<sql>secret</sql>
 					<is_null_allowed>true</is_null_allowed>
@@ -1263,6 +1273,9 @@
 										</item>
 										<item id="hostaliases">
 											<rank>340</rank>
+										</item>
+										<item id="fix_replicas">
+											<rank>350</rank>
 										</item>
 									</items>
 								</item>

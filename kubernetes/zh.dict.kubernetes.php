@@ -38,6 +38,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Controller/Attribute:containerport' => '容器端口',
 	'Class:Controller/Attribute:hostnetwork' => 'hostNetwork',
 	'Class:Controller/Attribute:replicas' => '副本数',
+	'Class:Controller/Attribute:replicas' => '固定副本数',
 	'Class:Controller/Attribute:cpu_request' => 'CPU请求',
 	'Class:Controller/Attribute:cpu_limit' => 'CPU限制',
 	'Class:Controller/Attribute:mem_request' => '内存[MB]',
