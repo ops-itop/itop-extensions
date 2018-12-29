@@ -696,6 +696,7 @@
 						}
 						$oPage->add_ready_script('$("code.diff").each(function(i,block){hljs.configure({useBR: false, languages: ["diff"]});hljs.highlightBlock(block);});');
 						parent::DisplayBareHistory($oPage, $bEditMode, $iLimitCount, $iLimitStart);
+						$oPage->add_ready_script("$('.history_truncated_toggler').click()");
 					}
 					]]>
 					</code>
