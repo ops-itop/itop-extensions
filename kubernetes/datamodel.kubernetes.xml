@@ -533,6 +533,42 @@
 				</field>
 			</fields>
 			<methods>
+				<method id="RecordAttChange" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+					protected function RecordAttChange($sAttCode, $original, $value) {
+						if($sAttCode == "secret") {
+							require_once dirname(__FILE__) . "/composer/vendor/autoload.php";
+							$differ = new SebastianBergmann\Diff\Differ;
+
+							$oAttDef = MetaModel::GetAttributeDef(get_class($this), $sAttCode);
+							if ($oAttDef->IsExternalField()) return;
+							if ($oAttDef->IsLinkSet()) return;
+							if ($oAttDef->GetTrackingLevel() == ATTRIBUTE_TRACKING_NONE) return;
+
+							$oMyChangeOp = MetaModel::NewObject("CMDBChangeOpSetAttributeHTML");
+							$oMyChangeOp->Set("objclass", get_class($this));
+							$oMyChangeOp->Set("objkey", $this->GetKey());
+							$oMyChangeOp->Set("attcode", $sAttCode);
+
+							if (!is_null($original) && ($original instanceof ormCaseLog))
+							{
+								$original = $original->GetText();
+							}
+
+							$prevdata = $differ->diff($original, $value);
+							$prevdata = '<pre><code class="diff">' . $prevdata . '</code></pre>';
+							$oMyChangeOp->Set("prevdata", $prevdata);
+							$iId = $oMyChangeOp->DBInsertNoReload();
+						} else {
+							parent::RecordAttChange($sAttCode, $original, $value);
+						}
+					}
+					]]>
+					</code>
+				</method>
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
 					<access>protected</access>
@@ -658,7 +694,8 @@
 								return "";
 							}
 						}
-						return parent::DisplayBareHistory($oPage, $bEditMode, $iLimitCount, $iLimitStart);
+						$oPage->add_ready_script('$("code.diff").each(function(i,block){hljs.configure({useBR: false, languages: ["diff"]});hljs.highlightBlock(block);});');
+						parent::DisplayBareHistory($oPage, $bEditMode, $iLimitCount, $iLimitStart);
 					}
 					]]>
 					</code>
