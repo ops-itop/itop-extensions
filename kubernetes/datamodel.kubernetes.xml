@@ -1784,7 +1784,7 @@
 						//不包含type切type为internal，manage_svc改为 no，放弃管理Service
 						$aChanges = $this->ListChanges();
 						$sType = $this->Get('type');
-						if($sType == "internal") {
+						if($sType == "internal" && !$this->IsNew()) {
 							if(array_key_exists("type", $aChanges)) {
 								$this->Set('manage_svc', 'clean');
 							} else {
