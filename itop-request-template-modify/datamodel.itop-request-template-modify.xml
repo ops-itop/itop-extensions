@@ -1,54 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.3">
-  <constants>
-  </constants>
-  <classes>
-	<class id="RequestTemplate">
-		<fields>
-			<!--模板关联的类，关联的类将在新建或者更新对象时使用-->
-			<field id="relatedclass" xsi:type="AttributeClassCustom" _delta="define">
-				<sql>relatedclass</sql>
-				<default_value>bizmodel</default_value>
-				<is_null_allowed>false</is_null_allowed>
-			</field>
-			
-			<!--模板涉及操作的类型（新增或者变更）-->
-			<field id="type" xsi:type="AttributeEnum" _delta="define">
-				<sql>type</sql>
-				<values>
-					<value id="new">new</value>
-					<value id="change">change</value>
-					<value id="incident">incident</value>
-					<value id="server">server</value>
-				</values>
-				<default_value></default_value>
-				<is_null_allowed>false</is_null_allowed>
-				<display_style>list</display_style>
-			</field>
-		</fields>
-		<presentation>
-			<details>
-				<items>
-					<item id="relatedclass" _delta="define">
-						<rank>30</rank>
-					</item>
-					<item id="type" _delta="define">
-						<rank>31</rank>
-					</item>					
-				</items>
-			</details>
-			<list>
-				<items>
-					<item id="relatedclass" _delta="define">
-						<rank>30</rank>
-					</item>
-					<item id="type" _delta="define">
-						<rank>31</rank>
-					</item>					
-				</items>
-			</list>
-		</presentation>
-	</class>
+	<constants>
+	</constants>
+	<classes>
+		<class id="RequestTemplate">
+			<fields>
+				<!--模板关联的类，关联的类将在新建或者更新对象时使用-->
+				<field id="relatedclass" xsi:type="AttributeClassCustom" _delta="define">
+					<sql>relatedclass</sql>
+					<default_value>bizmodel</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+
+				<!--模板涉及操作的类型（新增或者变更）-->
+				<field id="type" xsi:type="AttributeEnum" _delta="define">
+					<sql>type</sql>
+					<values>
+						<value id="new">new</value>
+						<value id="change">change</value>
+						<value id="incident">incident</value>
+						<value id="server">server</value>
+					</values>
+					<default_value></default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
+			</fields>
+			<presentation>
+				<details>
+					<items>
+						<item id="relatedclass" _delta="define">
+							<rank>30</rank>
+						</item>
+						<item id="type" _delta="define">
+							<rank>31</rank>
+						</item>
+					</items>
+				</details>
+				<list>
+					<items>
+						<item id="relatedclass" _delta="define">
+							<rank>30</rank>
+						</item>
+						<item id="type" _delta="define">
+							<rank>31</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
 		<class id="lnkServerToTicket" _delta="define">
 			<parent>cmdbAbstractObject</parent>
 			<properties>
@@ -182,7 +182,7 @@
 						</item>
 						<item id="server_status">
 							<rank>90</rank>
-						</item>						
+						</item>
 					</items>
 				</details>
 				<search>
@@ -225,7 +225,7 @@
 						</item>
 						<item id="server_status">
 							<rank>90</rank>
-						</item>	
+						</item>
 					</items>
 				</search>
 				<list>
@@ -268,7 +268,7 @@
 						</item>
 						<item id="server_status">
 							<rank>90</rank>
-						</item>	
+						</item>
 					</items>
 				</list>
 			</presentation>
@@ -281,7 +281,7 @@
 					<count_min>0</count_min>
 					<count_max>0</count_max>
 					<ext_key_to_remote>server_id</ext_key_to_remote>
-					<duplicates/>					
+					<duplicates/>
 				</field>
 			</fields>
 			<presentation>
@@ -323,7 +323,7 @@
 								return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
 							}
 						}
-						
+
 					]]></code>
 				</method>
 			</methods>
@@ -348,208 +348,208 @@
 								return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
 							}
 						}
-						
+
 					]]></code>
 				</method>
-			</methods>		
+			</methods>
 		</class>
-  </classes>
-  <menus>
-  </menus>
-  <user_rights>
-    <groups>
-		<group id="lnkServerToTicket" _delta="define">
-			<classes>
-				<class id="lnkServerToTicket"></class>
-			</classes>
-		</group>
-    </groups>
-    <profiles>
-		<profile id="102">
-			<groups>
-				<group id="lnkServerToTicket" _delta="define">
-					<actions>
-						<action id="action:write">allow</action>
-					</actions>
-				</group>
-			</groups>
-		</profile>
-		<profile id="103">
-			<groups>
-				<group id="lnkServerToTicket" _delta="define">
-					<actions>
-						<action id="action:write">allow</action>
-					</actions>
-				</group>
-			</groups>
-		</profile>
-		<profile id="104">
-			<groups>
-				<group id="lnkServerToTicket" _delta="define">
-					<actions>
-						<action id="action:write">allow</action>
-					</actions>
-				</group>
-			</groups>
-		</profile>		
-    </profiles>
-  </user_rights>
+	</classes>
+	<menus>
+	</menus>
+	<user_rights>
+		<groups>
+			<group id="lnkServerToTicket" _delta="define">
+				<classes>
+					<class id="lnkServerToTicket"></class>
+				</classes>
+			</group>
+		</groups>
+		<profiles>
+			<profile id="102">
+				<groups>
+					<group id="lnkServerToTicket" _delta="define">
+						<actions>
+							<action id="action:write">allow</action>
+						</actions>
+					</group>
+				</groups>
+			</profile>
+			<profile id="103">
+				<groups>
+					<group id="lnkServerToTicket" _delta="define">
+						<actions>
+							<action id="action:write">allow</action>
+						</actions>
+					</group>
+				</groups>
+			</profile>
+			<profile id="104">
+				<groups>
+					<group id="lnkServerToTicket" _delta="define">
+						<actions>
+							<action id="action:write">allow</action>
+						</actions>
+					</group>
+				</groups>
+			</profile>
+		</profiles>
+	</user_rights>
 	<module_designs>
-	  <module_design id="itop-portal" xsi:type="portal">
-		<properties>
-			<!-- 修改模板加入自定义js-->
-			<templates>
-				<template id="layout" _delta="define">itop-request-template-modify/layout.html.twig</template>
-			</templates>
-		</properties>
-		<forms>
-			<form id="ticket-create">
-				<properties _delta="define">
-					<always_show_submit>true</always_show_submit>
-				</properties>
-				<twig _delta="redefine">
-					<div class="row">
-						<div class="col-sm-6">
-							<div class="form_field" data-field-id="service_id" data-field-flags="mandatory">
+		<module_design id="itop-portal" xsi:type="portal">
+			<properties>
+				<!-- 修改模板加入自定义js-->
+				<templates>
+					<template id="layout" _delta="define">itop-request-template-modify/layout.html.twig</template>
+				</templates>
+			</properties>
+			<forms>
+				<form id="ticket-create">
+					<properties _delta="define">
+						<always_show_submit>true</always_show_submit>
+					</properties>
+					<twig _delta="redefine">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form_field" data-field-id="service_id" data-field-flags="mandatory">
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form_field" data-field-id="servicesubcategory_id" data-field-flags="mandatory">
+								</div>
 							</div>
 						</div>
-						<div class="col-sm-6">
-							<div class="form_field" data-field-id="servicesubcategory_id" data-field-flags="mandatory">
-							</div>
-						</div>
-					</div>
-					<!--
+						<!--
 						服务器类工单同时支持列表勾选和直接输入IP，在display_control.js里提供2个按钮，响应用户点击，
 						设置列表和文本框的可见性, 例如：
 						<div class="btn-group"><button class="btn btn-primary form_btn_transition" type="button" name="le_server_list" onclick="displayList()"><span class="glyphicon glyphicon-list"></span>  &nbsp;&nbsp;从列表勾选机器</button><button class="btn btn-info form_btn_transition" type="button" name="le_server_textarea" onclick="displayTextarea()"><span class="glyphicon glyphicon-text-height"></span>  &nbsp;&nbsp;直接输入IP地址</button></div>
 						onclick响应函数也放在display_control.js里，通过修改layout.html.twig模板引入
 					>-->
-					
-					<div id="service_details_placeholder">
-					</div>
-					<div id="le_server_accounts_request" style="display:none">
-						<div class="form_field" data-field-id="server_list">
+
+						<div id="service_details_placeholder">
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-6">
-							<div class="form_field" data-field-id="impact">
+						<div id="le_server_accounts_request" style="display:none">
+							<div class="form_field" data-field-id="server_list">
 							</div>
 						</div>
-						<div class="col-sm-6">
-							<div class="form_field" data-field-id="urgency">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form_field" data-field-id="impact">
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form_field" data-field-id="urgency">
+								</div>
 							</div>
 						</div>
-					</div>
-					<div>
-						<div class="form_field" data-field-id="title">
+						<div>
+							<div class="form_field" data-field-id="title">
+							</div>
+							<div class="form_field" data-field-id="description">
+							</div>
+							<div class="form_field" data-field-id="contacts_list">
+							</div>
 						</div>
-						<div class="form_field" data-field-id="description">
+					</twig>
+				</form>
+				<form id="ticket-edit">
+					<properties _delta="redefine">
+						<always_show_submit>true</always_show_submit>
+					</properties>
+					<twig _delta="redefine">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form_field" data-field-id="caller_id" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="title" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="description" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="service_details" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="solution" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="user_satisfaction" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="user_comment" data-field-flags="read_only">
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form_field" data-field-id="status" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="service_id" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="servicesubcategory_id" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="impact" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="urgency" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="priority" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="start_date" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="last_update" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="resolution_date" data-field-flags="read_only">
+								</div>
+								<div class="form_field" data-field-id="agent_id" data-field-flags="read_only">
+								</div>
+							</div>
 						</div>
-						<div class="form_field" data-field-id="contacts_list">
+						<div>
+							<div class="form_field" data-field-id="contacts_list">
+							</div>
+							<div class="form_field" data-field-id="public_log">
+							</div>
 						</div>
-					</div>
-				</twig>
-			</form>
-			<form id="ticket-edit">
-				<properties _delta="redefine">
-					<always_show_submit>true</always_show_submit>
-				</properties>
-			  <twig _delta="redefine">
-				<div class="row">
-				  <div class="col-sm-6">
-					<div class="form_field" data-field-id="caller_id" data-field-flags="read_only">
-										</div>
-					<div class="form_field" data-field-id="title" data-field-flags="read_only">
-										</div>
-					<div class="form_field" data-field-id="description" data-field-flags="read_only">
-										</div>
-					<div class="form_field" data-field-id="service_details" data-field-flags="read_only">
-										</div>					
-					<div class="form_field" data-field-id="solution" data-field-flags="read_only">
-										</div>
-					<div class="form_field" data-field-id="user_satisfaction" data-field-flags="read_only">
-										</div>
-					<div class="form_field" data-field-id="user_comment" data-field-flags="read_only">
-										</div>
-				  </div>
-				  <div class="col-sm-6">
-					<div class="form_field" data-field-id="status" data-field-flags="read_only">
-										</div>
-					<div class="form_field" data-field-id="service_id" data-field-flags="read_only">
-										</div>
-					<div class="form_field" data-field-id="servicesubcategory_id" data-field-flags="read_only">
-										</div>										
-					<div class="form_field" data-field-id="impact" data-field-flags="read_only">
-										</div>
-					<div class="form_field" data-field-id="urgency" data-field-flags="read_only">
-										</div>
-					<div class="form_field" data-field-id="priority" data-field-flags="read_only">
-										</div>
-					<div class="form_field" data-field-id="start_date" data-field-flags="read_only">
-										</div>
-					<div class="form_field" data-field-id="last_update" data-field-flags="read_only">
-										</div>
-					<div class="form_field" data-field-id="resolution_date" data-field-flags="read_only">
-										</div>
-					<div class="form_field" data-field-id="agent_id" data-field-flags="read_only">
-										</div>
-				  </div>
-				</div>
-				<div>
-				  <div class="form_field" data-field-id="contacts_list">
-									</div>
-				  <div class="form_field" data-field-id="public_log">
-									</div>
-				</div>
-			  </twig>
-			</form>			
-			<form id="ticket-apply-stimulus">
-			  <twig _delta="redefine">
-				<div>
-				  <div class="form_field" data-field-id="team_id" data-field-flags="">
-									</div>
-				  <div class="form_field" data-field-id="agent_id" data-field-flags="">
-									</div>
-				</div>
-			  </twig>
-			</form>
-		</forms>
-		<classes>
-			<class id="Ticket">
-				<scopes>
-					<scope id="all" _delta="redefine">
-						<oql_view><![CDATA[SELECT Ticket AS T WHERE (T.caller_id = :current_contact_id OR T.agent_id = :current_contact_id) AND T.finalclass IN ('UserRequest', 'Incident')]]></oql_view>
-						<oql_edit><![CDATA[SELECT Ticket AS T]]></oql_edit>					
-					</scope>
-					<scope id="admin" _delta="define">
-					  <oql_view><![CDATA[SELECT Ticket AS T WHERE T.finalclass IN ('UserRequest', 'Incident')]]></oql_view>
-					  <oql_edit><![CDATA[SELECT Ticket AS T]]></oql_edit>
-					  <allowed_profiles>
-						<allowed_profile id="Administrator"/>
-					  </allowed_profiles>
-					</scope>
-					
-				</scopes>
-			</class>
-			<class id="FunctionalCI" _delta="define">
-			  <scopes>
-				<scope id="all">
-				  <oql_view><![CDATA[SELECT FunctionalCI WHERE finalclass="Server"]]></oql_view>
-				</scope>
-			  </scopes>
-			</class>
-			<class id="Organization">
-				<scopes>
-					<scope id="admin" _delta="define">
-						<oql_view><![CDATA[SELECT Organization]]></oql_view>
-						<allowed_profiles>
-							<allowed_profile id="Administrator"/>
-						</allowed_profiles>
-					</scope>
-				</scopes>
-			</class>
-		</classes>
-	  </module_design>
+					</twig>
+				</form>
+				<form id="ticket-apply-stimulus">
+					<twig _delta="redefine">
+						<div>
+							<div class="form_field" data-field-id="team_id" data-field-flags="">
+							</div>
+							<div class="form_field" data-field-id="agent_id" data-field-flags="">
+							</div>
+						</div>
+					</twig>
+				</form>
+			</forms>
+			<classes>
+				<class id="Ticket">
+					<scopes>
+						<scope id="all" _delta="redefine">
+							<oql_view><![CDATA[SELECT Ticket AS T WHERE (T.caller_id = :current_contact_id OR T.agent_id = :current_contact_id) AND T.finalclass IN ('UserRequest', 'Incident')]]></oql_view>
+							<oql_edit><![CDATA[SELECT Ticket AS T]]></oql_edit>
+						</scope>
+						<scope id="admin" _delta="define">
+							<oql_view><![CDATA[SELECT Ticket AS T WHERE T.finalclass IN ('UserRequest', 'Incident')]]></oql_view>
+							<oql_edit><![CDATA[SELECT Ticket AS T]]></oql_edit>
+							<allowed_profiles>
+								<allowed_profile id="Administrator"/>
+							</allowed_profiles>
+						</scope>
+
+					</scopes>
+				</class>
+				<class id="FunctionalCI" _delta="define">
+					<scopes>
+						<scope id="all">
+							<oql_view><![CDATA[SELECT FunctionalCI WHERE finalclass="Server"]]></oql_view>
+						</scope>
+					</scopes>
+				</class>
+				<class id="Organization">
+					<scopes>
+						<scope id="admin" _delta="define">
+							<oql_view><![CDATA[SELECT Organization]]></oql_view>
+							<allowed_profiles>
+								<allowed_profile id="Administrator"/>
+							</allowed_profiles>
+						</scope>
+					</scopes>
+				</class>
+			</classes>
+		</module_design>
 	</module_designs>	  
 </itop_design>
