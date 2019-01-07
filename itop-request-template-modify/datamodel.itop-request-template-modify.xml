@@ -457,50 +457,52 @@
 					</properties>
 					<twig _delta="redefine">
 						<div class="row">
-							<div class="col-sm-6">
-								<div class="form_field" data-field-id="caller_id" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="title" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="description" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="service_details" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="solution" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="user_satisfaction" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="user_comment" data-field-flags="read_only">
-								</div>
+							<div class="col-sm-7">
+								<fieldset>
+									<legend>{{'Ticket:baseinfo'|dict_s}}</legend>
+									<div class="col-sm-6">
+										<div class="form_field" data-field-id="title" data-field-flags="read_only"></div>
+										<div class="form_field" data-field-id="service_id" data-field-flags="read_only"></div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form_field" data-field-id="caller_id" data-field-flags="read_only"></div>
+										<div class="form_field" data-field-id="servicesubcategory_id" data-field-flags="read_only"></div>
+									</div>
+									<div class="col-sm-12">
+										<div class="form_field" data-field-id="description" data-field-flags="read_only"></div>
+										<!-- 2.5 版本 service_details 放这里更新工单时会报错，因此注释掉。。-->
+										<!--<div class="form_field" data-field-id="service_details" data-field-flags="read_only"></div>-->
+										<div class="form_field" data-field-id="solution" data-field-flags="read_only"></div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form_field" data-field-id="user_satisfaction" data-field-flags="read_only"></div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form_field" data-field-id="user_comment" data-field-flags="read_only"></div>
+									</div>
+								</fieldset>
 							</div>
-							<div class="col-sm-6">
-								<div class="form_field" data-field-id="status" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="service_id" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="servicesubcategory_id" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="impact" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="urgency" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="priority" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="start_date" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="last_update" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="resolution_date" data-field-flags="read_only">
-								</div>
-								<div class="form_field" data-field-id="agent_id" data-field-flags="read_only">
-								</div>
+							<div class="col-sm-5">
+								<fieldset>
+									<legend>{{'Ticket:Type'|dict_s}} &amp; {{'Ticket:date'|dict_s}}</legend>
+									<div class="col-sm-6">
+										<div class="form_field" data-field-id="status" data-field-flags="read_only"></div>
+										<div class="form_field" data-field-id="impact" data-field-flags="read_only"></div>
+										<div class="form_field" data-field-id="urgency" data-field-flags="read_only"></div>
+										<div class="form_field" data-field-id="priority" data-field-flags="read_only"></div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form_field" data-field-id="start_date" data-field-flags="read_only"></div>
+										<div class="form_field" data-field-id="last_update" data-field-flags="read_only"></div>
+										<div class="form_field" data-field-id="resolution_date" data-field-flags="read_only"></div>
+										<div class="form_field" data-field-id="agent_id" data-field-flags="read_only"></div>
+									</div>
+								</fieldset>
 							</div>
 						</div>
 						<div>
-							<div class="form_field" data-field-id="contacts_list">
-							</div>
-							<div class="form_field" data-field-id="public_log">
-							</div>
+							<div class="form_field" data-field-id="contacts_list"></div>
+							<div class="form_field" data-field-id="public_log"></div>
 						</div>
 					</twig>
 				</form>
