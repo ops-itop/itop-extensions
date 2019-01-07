@@ -404,9 +404,6 @@
 		</properties>
 		<forms>
 			<form id="ticket-create">
-				<properties>
-					<always_show_submit>true</always_show_submit>
-				</properties>
 				<twig _delta="redefine">
 					<div class="row">
 						<div class="col-sm-6">
@@ -452,7 +449,7 @@
 				</twig>
 			</form>
 			<form id="ticket-edit">
-				<properties>
+				<properties _delta="redefine">
 					<always_show_submit>true</always_show_submit>
 				</properties>
 			  <twig _delta="redefine">
