@@ -531,6 +531,16 @@
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
+				<field id="command" xsi:type="AttributeString">
+					<sql>command</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="args" xsi:type="AttributeString">
+					<sql>args</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
 			</fields>
 			<methods>
 				<method id="RecordAttChange" _delta="define">
@@ -590,6 +600,19 @@
 							$parsed = @yaml_parse($yaml);
 							if(!is_array($parsed)) {
 								$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:SecretShouldBeYamlFormat", $this->Get('applicationsolution_name'));
+							}
+						}
+
+						// 检查command args格式
+						if($this->Get('command')) {
+							if(!is_array(json_decode($this->Get('command'), true))) {
+								$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:CommandAndArgsShouldBeArray", 'e.g ["command", "-c", "config.ini"]');
+							}
+						}
+
+						if($this->Get('args')) {
+							if(!is_array(json_decode($this->Get('args'), true))) {
+								$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:CommandAndArgsShouldBeArray", 'e.g ["command", "-c", "config.ini"]');
 							}
 						}
 
@@ -1314,6 +1337,12 @@
 										</item>
 										<item id="fix_replicas">
 											<rank>350</rank>
+										</item>
+										<item id="command">
+											<rank>360</rank>
+										</item>
+										<item id="args">
+											<rank>370</rank>
 										</item>
 									</items>
 								</item>

@@ -66,6 +66,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Controller/Error:hostaliasesShouldBeYamlFormat' => '自定义hosts须为YAML格式',
 	'Class:Controller/Error:IpIsInvalid' => '自定义hosts包含非法IP: %1$s',
 	'Class:Controller/Error:DomainIsInvalid' => '自定义hosts包含非法域名: %1$s',
+	'Class:Controller/Error:CommandAndArgsShouldBeArray' => 'command和args应是PHP数组. %1$s',
 
 	'Class:Controller/Tab:Debug' => '调试',
 ));
