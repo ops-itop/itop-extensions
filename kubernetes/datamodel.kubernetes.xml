@@ -510,6 +510,14 @@
 					<ext_key_to_remote>k8svolume_id</ext_key_to_remote>
 					<duplicates/>
 				</field>
+				<field id="probe_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkK8sProbeToController</linked_class>
+					<ext_key_to_me>controller_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>k8sprobe_id</ext_key_to_remote>
+					<duplicates/>
+				</field>
 				<field id="hostnetwork" xsi:type="AttributeEnum">
 					<values>
 						<value id="true">true</value>
@@ -1303,6 +1311,9 @@
 						</item>
 						<item id="volume_list">
 							<rank>130</rank>
+						</item>
+						<item id="probe_list">
+							<rank>135</rank>
 						</item>
 						<item id="ingressannotations_list">
 							<rank>140</rank>
@@ -3059,6 +3070,7 @@
 					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotations/Error:DefaultValueNotValid", $this->Get('name'));
 				}
 			}
+			parent::DoCheckToWrite();
 		}]]>
 					</code>
 				</method>
@@ -3127,6 +3139,91 @@
 						</item>
 						<item id="default_value">
 							<rank>50</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+
+		<class id="K8sProbe" _delta="define">
+			<parent>Typology</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>k8sprobe</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<reconciliation>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="description" xsi:type="AttributeText">
+					<sql>description</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="controller_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkK8sIngressAnnotationsToDeployment</linked_class>
+					<ext_key_to_me>k8singressannotations_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>deployment_id</ext_key_to_remote>
+					<duplicates/>
+				</field>
+			</fields>
+			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[  public function DoCheckToWrite(){
+			$validName = ["livenessProbe","readinessProbe"];
+			if(!in_array($this->Get('name'), $validName)) {
+				$this->m_aCheckIssues[] = Dict::Format("Class:K8sProbe/Error:NameNotValid", $this->Get('name'));
+			}
+			parent::DoCheckToWrite();
+		}]]>
+					</code>
+				</method>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="controller_list">
+							<rank>100</rank>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="description">
+							<rank>40</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="name">
+							<rank>20</rank>
+						</item>
+						<item id="description">
+							<rank>40</rank>
 						</item>
 					</items>
 				</list>
@@ -4310,6 +4407,409 @@
 						</item>
 						<item id="k8singressannotations_default_value">
 							<rank>50</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+
+		<class id="lnkK8sProbeToController" _delta="define">
+			<parent>cmdbAbstractObject</parent>
+			<properties>
+				<is_link>1</is_link>
+				<category>bizmodel</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>lnkk8sprobetocontroller</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field/>
+				<naming>
+					<attributes>
+						<attribute id="k8sprobe_id"/>
+						<attribute id="controller_id"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon/>
+				<reconciliation>
+					<attributes>
+						<attribute id="k8sprobe_id"/>
+						<attribute id="controller_id"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="k8sprobe_id" xsi:type="AttributeExternalKey">
+					<sql>k8sprobe_id</sql>
+					<target_class>K8sProbe</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+				</field>
+				<field id="k8sprobe_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8sprobe_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="enable" xsi:type="AttributeEnum">
+					<sql>enable</sql>
+					<values>
+						<value id="yes">yes</value>
+						<value id="no">no</value>
+					</values>
+					<default_value>yes</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
+				<field id="type" xsi:type="AttributeEnum">
+					<sql>type</sql>
+					<values>
+						<value id="exec">exec</value>
+						<value id="tcpSocket">tcpSocket</value>
+						<value id="httpGet">httpGet</value>
+					</values>
+					<default_value>yes</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
+				<field id="k8sprobe_description" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8sprobe_id</extkey_attcode>
+					<target_attcode>description</target_attcode>
+				</field>
+				<field id="controller_id" xsi:type="AttributeExternalKey">
+					<sql>controller_id</sql>
+					<target_class>Controller</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="controller_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>controller_id</extkey_attcode>
+					<target_attcode>friendlyname</target_attcode>
+				</field>
+				<field id="initialDelaySeconds" xsi:type="AttributeInteger">
+					<sql>initialdelayseconds</sql>
+					<default_value>5</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+				<field id="periodSeconds" xsi:type="AttributeInteger">
+					<sql>periodseconds</sql>
+					<default_value>10</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+				<field id="timeoutSeconds" xsi:type="AttributeInteger">
+					<sql>timeoutseconds</sql>
+					<default_value>1</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+				<field id="successThreshold" xsi:type="AttributeInteger">
+					<sql>successthreshold</sql>
+					<default_value>1</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+				<field id="failureThreshold" xsi:type="AttributeInteger">
+					<sql>failurethreshold</sql>
+					<default_value>3</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+				<field id="httpGet_host" xsi:type="AttributeString">
+					<sql>httpGet_host</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="httpGet_scheme" xsi:type="AttributeString">
+					<sql>httpGet_scheme</sql>
+					<values>
+						<value id="http">http</value>
+						<value id="https">https</value>
+					</values>
+					<default_value>http</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
+				<field id="httpGet_path" xsi:type="AttributeString">
+					<sql>httpGet_path</sql>
+					<default_value>/healthz</default_value>
+					<validation_pattern>^/[a-z1-9A-Z-_]+$</validation_pattern>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="httpGet_httpHeaders" xsi:type="AttributeString">
+					<sql>httpGet_httpHeaders</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="httpGet_port" xsi:type="AttributeInteger">
+					<sql>httpGet_port</sql>
+					<default_value>80</default_value>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="exec_command" xsi:type="AttributeString">
+					<sql>exec_command</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="tcpSocket_port" xsi:type="AttributeString">
+					<sql>tcpSocket_port</sql>
+					<default_value>80</default_value>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+			</fields>
+			<methods>
+				<method id="ReloadAndDisplayCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+					function ReloadAndDisplayCustom($oPage, $oObj, $sMessageId = '', $sMessage = '', $sSeverity = null)
+					{
+						$oAppContext = new ApplicationContext();
+						if ($sMessageId != '')
+						{
+							cmdbAbstractObject::SetSessionMessage(get_class($oObj), $oObj->GetKey(), $sMessageId, $sMessage, $sSeverity, 0, true /* must not exist */);
+						}
+
+						$oId = $oObj->getKey();
+						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
+					}
+					]]>
+					</code>
+				</method>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[  public function DoCheckToWrite(){
+			//  Minimum value is 1. https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
+			$min = ['periodSeconds', 'timeoutSeconds', 'successThreshold', 'failureThreshold'];
+			foreach($min as $val) {
+				if($this->Get($min) < 1) {
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValueMinValueShouldBeOne", $min);
+				}
+			}
+
+			if($this->Get('k8sprobe_name') == "livenessProbe" && $this->Get('successThreshold') != 1) {
+				$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValueMustEqOne", "successThreshold");
+			}
+
+			// check exec_command
+			if($this->Get('type') == "exec") {
+				if(!json_decode($this->Get('exec_command'), true)) {
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValueExecCommand", 'e.g ["cmd", "args"]');
+				}
+			}
+
+			// check httpHeaders and http port
+			if($this->Get('type') == "httpGet") {
+				$headers = json_decode($this->Get('httpGet_httpHeaders'), true);
+				$valid = false;
+				if($headers) {
+					foreach($headers as $val) {
+						if(count($val) == 2 && array_key_exists("name", $val) && array_key_exists("value", $val)) {
+							$valid = true;
+						}
+					}
+
+				} 
+
+				if(!$valid) {
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValueHttpHeaders", 'e.g [["name":"Host", "value":"k8s.com"]]');
+				}
+
+				if($this->Get('httpGet_port') < 1 || $this->Get('httpGet_port') > 65535) {
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValuePort", 'Range: 1 ~ 65535');
+				}
+			}
+
+			// check tcpSocket_port
+			if($this->Get('type') == "tcpSocket") {
+				if($this->Get('tcpSocket_port') < 1 || $this->Get('tcpSocket_port') > 65535) {
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValuePort", 'Range: 1 ~ 65535');
+				}
+			}
+
+			$aChanges = $this->ListChanges();
+			if($aChanges)
+			{
+				$friendlyname = $this->Get('k8sprobe_id') . " " . $this->Get('controller_id');
+				$forbidmodify = array("value","enable");
+				$allow = true;
+				foreach($aChanges as $key => $val) {
+					if(in_array($key, $forbidmodify)) {
+						$allow = false;
+					}
+				}
+
+				if(!$this->IsNew())
+				{
+					if(!$allow) {
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:ModifyNotAllowed", $friendlyname);
+					}
+				} else {
+					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkK8sProbeToController WHERE friendlyname=:friendlyname");
+					$oSet = new DBObjectSet($oSearch, array(), array("friendlyname" => $friendlyname));
+
+					if ($oSet->Count() > 0)
+					{
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:ThisLnkAlreadyExists", $friendlyname);
+					}
+				}
+			}
+		}]]>
+					</code>
+				</method>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   
+  	public function CheckToDelete(&$oDeletionPlan)
+  	{
+		$myContactId = UserRights::GetContactId();
+		$deploy = MetaModel::GetObject("Controller", $this->Get('controller_id'));
+		$contacts = $deploy->Get('person_list');
+		$flag = false;
+		foreach($contacts as $v) {
+			if($v->Get('person_id') == $myContactId) {
+				$flag = true;
+				break;
+			}
+		}
+  		if (!$flag && !UserRights::IsAdministrator())
+		{
+			// 普通用户不允许删除非自己名下的对象
+			$oDeletionPlan->AddToDelete($this, null);
+			$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下的关联'), true);
+			$oDeletionPlan->ComputeResults();
+			return false;
+		}
+		return parent::CheckToDelete($oDeletionPlan);
+  	} 
+					]]></code>
+				</method>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="enable">
+							<rank>3</rank>
+						</item>
+						<item id="type">
+							<rank>5</rank>
+						</item>
+						<item id="controller_id">
+							<rank>10</rank>
+						</item>
+						<item id="k8sprobe_id">
+							<rank>20</rank>
+						</item>
+						<item id="k8sprobe_name">
+							<rank>25</rank>
+						</item>
+						<item id="k8sprobe_description">
+							<rank>35</rank>
+						</item>
+						<item id="initialDelaySeconds">
+							<rank>40</rank>
+						</item>
+						<item id="periodSeconds">
+							<rank>50</rank>
+						</item>
+						<item id="timeoutSeconds">
+							<rank>60</rank>
+						</item>
+						<item id="successThreshold">
+							<rank>70</rank>
+						</item>
+						<item id="failureThreshold">
+							<rank>80</rank>
+						</item>
+						<item id="col:col2">
+							<rank>90</rank>
+							<items>
+								<item id="fieldset:lnkK8sProbeToController:httpGet">
+									<rank>100</rank>
+									<items>
+										<item id="httpGet_host">
+											<rank>110</rank>
+										</item>
+										<item id="httpGet_scheme">
+											<rank>115</rank>
+										</item>
+										<item id="httpGet_port">
+											<rank>120</rank>
+										</item>
+										<item id="httpGet_path">
+											<rank>130</rank>
+										</item>
+										<item id="httpGet_httpHeaders">
+											<rank>140</rank>
+										</item>
+									</items>
+								</item>
+								<item id="fieldset:lnkK8sProbeToController:tcpSocket">
+									<rank>150</rank>
+									<items>
+										<item id="tcpSocket_port">
+											<rank>160</rank>
+										</item>
+									</items>
+								</item>
+								<item id="fieldset:lnkK8sProbeToController:exec">
+									<rank>170</rank>
+									<items>
+										<item id="exec_command">
+											<rank>180</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="enable">
+							<rank>3</rank>
+						</item>
+						<item id="type">
+							<rank>5</rank>
+						</item>
+						<item id="controller_id">
+							<rank>10</rank>
+						</item>
+						<item id="k8sprobe_id">
+							<rank>20</rank>
+						</item>
+						<item id="k8sprobe_name">
+							<rank>25</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="enable">
+							<rank>3</rank>
+						</item>
+						<item id="type">
+							<rank>5</rank>
+						</item>
+						<item id="controller_id">
+							<rank>10</rank>
+						</item>
+						<item id="k8sprobe_id">
+							<rank>20</rank>
+						</item>
+						<item id="initialDelaySeconds">
+							<rank>35</rank>
+						</item>
+						<item id="periodSeconds">
+							<rank>40</rank>
+						</item>
+						<item id="timeoutSeconds">
+							<rank>50</rank>
+						</item>
+						<item id="successThreshold">
+							<rank>60</rank>
+						</item>
+						<item id="failureThreshold">
+							<rank>70</rank>
 						</item>
 					</items>
 				</list>
