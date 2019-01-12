@@ -302,16 +302,15 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 
 //lnkK8sProbeToController
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
-	'Class:lnkK8sProbeToController/Attribute:initialDelaySeconds' => 'initialDelay',
-	'Class:lnkK8sProbeToController/Attribute:periodSeconds' => 'Period',
-	'Class:lnkK8sProbeToController/Attribute:timeoutSeconds' => 'Timeout',
-	'Class:lnkK8sProbeToController/Attribute:successThreshold' => 'Success',
-	'Class:lnkK8sProbeToController/Attribute:failureThreshold' => 'Failure',
-	'Class:lnkK8sProbeToController/Attribute:httpGet_host' => 'Host',
-	'Class:lnkK8sProbeToController/Attribute:httpGet_scheme' => 'Scheme',
-	'Class:lnkK8sProbeToController/Attribute:httpGet_port' => 'Port',
-	'Class:lnkK8sProbeToController/Attribute:httpGet_path' => 'Path',
-	'Class:lnkK8sProbeToController/Attribute:httpGet_httpHeaders' => 'Headers',
+	'Class:lnkK8sProbeToController/Attribute:type' => '探针类型',
+	'Class:lnkK8sProbeToController/Attribute:enable' => '是否启用',
+	'Class:lnkK8sProbeToController/Attribute:k8sprobe_id' => '探针',
+	'Class:lnkK8sProbeToController/Attribute:controller_id' => '服务',
+	'Class:lnkK8sProbeToController/Attribute:common_conf' => '探针基础配置',
 	'Class:lnkK8sProbeToController/Attribute:tcpSocket_port' => 'tcpPort',
 	'Class:lnkK8sProbeToController/Attribute:exec_command' => 'Command',
+
+	'lnkK8sProbeToController:httpGet' => 'httpGet探针',
+	'lnkK8sProbeToController:tcpSocket' => 'tcp探针',
+	'lnkK8sProbeToController:exec' => '命令探针',
 ));

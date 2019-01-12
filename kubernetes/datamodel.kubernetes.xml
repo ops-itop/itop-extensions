@@ -4481,68 +4481,36 @@
 					<extkey_attcode>controller_id</extkey_attcode>
 					<target_attcode>friendlyname</target_attcode>
 				</field>
-				<field id="initialDelaySeconds" xsi:type="AttributeInteger">
-					<sql>initialdelayseconds</sql>
-					<default_value>5</default_value>
-					<is_null_allowed>false</is_null_allowed>
-				</field>
-				<field id="periodSeconds" xsi:type="AttributeInteger">
-					<sql>periodseconds</sql>
-					<default_value>10</default_value>
-					<is_null_allowed>false</is_null_allowed>
-				</field>
-				<field id="timeoutSeconds" xsi:type="AttributeInteger">
-					<sql>timeoutseconds</sql>
-					<default_value>1</default_value>
-					<is_null_allowed>false</is_null_allowed>
-				</field>
-				<field id="successThreshold" xsi:type="AttributeInteger">
-					<sql>successthreshold</sql>
-					<default_value>1</default_value>
-					<is_null_allowed>false</is_null_allowed>
-				</field>
-				<field id="failureThreshold" xsi:type="AttributeInteger">
-					<sql>failurethreshold</sql>
-					<default_value>3</default_value>
-					<is_null_allowed>false</is_null_allowed>
-				</field>
-				<field id="httpGet_host" xsi:type="AttributeString">
-					<sql>httpGet_host</sql>
-					<default_value/>
+				<field id="common_conf" xsi:type="AttributeText">
+					<sql>common_conf</sql>
+					<default_value>initialDelaySeconds: 5
+periodSeconds: 10
+timeoutSeconds: 1
+successThreshold: 1
+failureThreshold: 3
+					</default_value>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
-				<field id="httpGet_scheme" xsi:type="AttributeEnum">
-					<sql>httpGet_scheme</sql>
-					<values>
-						<value id="http">http</value>
-						<value id="https">https</value>
-					</values>
-					<default_value>http</default_value>
-					<is_null_allowed>false</is_null_allowed>
-					<display_style>list</display_style>
-				</field>
-				<field id="httpGet_path" xsi:type="AttributeString">
-					<sql>httpGet_path</sql>
-					<default_value>/healthz</default_value>
-					<validation_pattern>^/[a-z1-9A-Z-_]+$</validation_pattern>
+				<field id="httpGet" xsi:type="AttributeText">
+					<sql>httpGet</sql>
+					<default_value>scheme: HTTP
+port: 80
+path: /healthz
+httpHeaders:
+- name: User-Agent
+  value: Kubelet
+					</default_value>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
-				<field id="httpGet_httpHeaders" xsi:type="AttributeString">
-					<sql>httpGet_httpHeaders</sql>
-					<default_value/>
-					<is_null_allowed>true</is_null_allowed>
-				</field>
-				<field id="httpGet_port" xsi:type="AttributeInteger">
-					<sql>httpGet_port</sql>
-					<default_value>80</default_value>
-					<is_null_allowed>true</is_null_allowed>
-				</field>
-				<field id="exec_command" xsi:type="AttributeString">
+				<field id="exec_command" xsi:type="AttributeText">
 					<sql>exec_command</sql>
-					<default_value/>
+					<default_value>command:
+- cat
+- /tmp/healthy
+					</default_value>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
-				<field id="tcpSocket_port" xsi:type="AttributeString">
+				<field id="tcpSocket_port" xsi:type="AttributeInteger">
 					<sql>tcpSocket_port</sql>
 					<default_value>80</default_value>
 					<is_null_allowed>true</is_null_allowed>
@@ -4593,45 +4561,60 @@
 					<code><![CDATA[  public function DoCheckToWrite(){
 			//  Minimum value is 1. https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
 			$min = ['periodSeconds', 'timeoutSeconds', 'successThreshold', 'failureThreshold'];
-			foreach($min as $val) {
-				if($this->Get($val) < 1) {
-					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValueMinValueShouldBeOne", $min);
+			$common_conf = @yaml_parse($this->Get('common_conf'));
+			if(is_array($common_conf)) {
+				foreach($min as $val) {
+					if(array_key_exists($val, $common_conf) && $common_conf[$val] < 1) {
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValueMinValueShouldBeOne", $val);
+					}
 				}
 			}
 
-			if($this->Get('k8sprobe_name') == "livenessProbe" && $this->Get('successThreshold') != 1) {
+			// common_conf可以为空，但不为空时必须是yaml格式
+			if($this->Get('common_conf') && !is_array($common_conf)) {
+				$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:CommonConfMustBeYaml", $this->Get('common_conf'));
+			}
+
+			if($this->Get('k8sprobe_name') == "livenessProbe" && is_array($common_conf) && array_key_exists('successThreshold', $common_conf) && $common_conf['successThreshold'] != 1) {
 				$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValueMustEqOne", "successThreshold");
 			}
 
 			// check exec_command
 			if($this->Get('type') == "exec") {
-				if(!json_decode($this->Get('exec_command'), true)) {
-					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValueExecCommand", 'e.g ["cmd", "args"]');
+				$command = @yaml_parse($this->Get('exec_command'));
+				if(!is_array($command)) {
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:CommandMustBeYaml", $this->Get('exec_command'));
 				}
 			}
 
-			// check httpHeaders and http port
+			// check httpGet
 			if($this->Get('type') == "httpGet") {
-				$headers = json_decode($this->Get('httpGet_httpHeaders'), true);
-				$valid = false;
-				if($headers) {
-					foreach($headers as $val) {
-						if(count($val) == 2 && array_key_exists("name", $val) && array_key_exists("value", $val)) {
-							$valid = true;
+				$httpGet = @yaml_parse($this->Get('httpGet'));
+				if(is_array($httpGet)) {
+					// path , port必须设置
+					if(!array_key_exists('path', $httpGet) || !array_key_exists('port', $httpGet)) {
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:httpGetMustSetPathAndPort", $httpGet);
+					}
+
+					if(array_key_exists('httpHeaders', $httpGet)) {
+						$valid = false;
+						if(is_array($httpGet['httpHeaders'])) {
+							foreach($httpGet['httpHeaders'] as $val) {
+								if(count($val) == 2 && array_key_exists("name", $val) && array_key_exists("value", $val)) {
+									$valid = true;
+								}
+							}
+						}
+						if(!$valid) {
+							$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValueHttpHeaders", 'e.g [["name":"Host", "value":"k8s.com"]]');
 						}
 					}
-				}
-				// httpGet_httpHeaders 允许为空
-				if(!$this->Get('httpGet_httpHeaders')) {
-					$valid = true;
-				}
 
-				if(!$valid) {
-					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValueHttpHeaders", 'e.g [["name":"Host", "value":"k8s.com"]]');
-				}
-
-				if($this->Get('httpGet_port') < 1 || $this->Get('httpGet_port') > 65535) {
-					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValuePort", 'Range: 1 ~ 65535');
+					if($httpGet['port'] < 1 || $httpGet['port'] > 65535) {
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValuePort", 'Range: 1 ~ 65535');
+					}
+				} else {
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:httpGetMustBeYaml", $httpGet);
 				}
 			}
 
@@ -4643,7 +4626,7 @@
 			}
 
 			$aChanges = $this->ListChanges();
-			if($aChanges)
+			if($aChanges && $this->isNew())
 			{
 				$friendlyname = $this->Get('k8sprobe_id') . " " . $this->Get('controller_id');
 				$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkK8sProbeToController WHERE friendlyname=:friendlyname");
@@ -4697,31 +4680,16 @@
 							<rank>5</rank>
 						</item>
 						<item id="controller_id">
-							<rank>10</rank>
+							<rank>1</rank>
 						</item>
 						<item id="k8sprobe_id">
-							<rank>20</rank>
-						</item>
-						<item id="k8sprobe_name">
-							<rank>25</rank>
+							<rank>2</rank>
 						</item>
 						<item id="k8sprobe_description">
 							<rank>35</rank>
 						</item>
-						<item id="initialDelaySeconds">
+						<item id="common_conf">
 							<rank>40</rank>
-						</item>
-						<item id="periodSeconds">
-							<rank>50</rank>
-						</item>
-						<item id="timeoutSeconds">
-							<rank>60</rank>
-						</item>
-						<item id="successThreshold">
-							<rank>70</rank>
-						</item>
-						<item id="failureThreshold">
-							<rank>80</rank>
 						</item>
 						<item id="col:col2">
 							<rank>90</rank>
@@ -4729,20 +4697,8 @@
 								<item id="fieldset:lnkK8sProbeToController:httpGet">
 									<rank>100</rank>
 									<items>
-										<item id="httpGet_host">
+										<item id="httpGet">
 											<rank>110</rank>
-										</item>
-										<item id="httpGet_scheme">
-											<rank>115</rank>
-										</item>
-										<item id="httpGet_port">
-											<rank>120</rank>
-										</item>
-										<item id="httpGet_path">
-											<rank>130</rank>
-										</item>
-										<item id="httpGet_httpHeaders">
-											<rank>140</rank>
 										</item>
 									</items>
 								</item>
@@ -4787,8 +4743,11 @@
 				</search>
 				<list>
 					<items>
-						<item id="friendlyname">
+						<item id="k8sprobe_id">
 							<rank>1</rank>
+						</item>
+						<item id="controller_id">
+							<rank>2</rank>
 						</item>
 						<item id="enable">
 							<rank>3</rank>
@@ -4796,32 +4755,11 @@
 						<item id="type">
 							<rank>5</rank>
 						</item>
-						<item id="controller_id">
-							<rank>10</rank>
-						</item>
-						<item id="k8sprobe_id">
-							<rank>20</rank>
-						</item>
-						<item id="initialDelaySeconds">
+						<item id="common_conf">
 							<rank>35</rank>
 						</item>
-						<item id="periodSeconds">
-							<rank>40</rank>
-						</item>
-						<item id="httpGet_host">
+						<item id="httpGet">
 							<rank>80</rank>
-						</item>
-						<item id="httpGet_scheme">
-							<rank>90</rank>
-						</item>
-						<item id="httpGet_port">
-							<rank>100</rank>
-						</item>
-						<item id="httpGet_path">
-							<rank>110</rank>
-						</item>
-						<item id="httpGet_httpHeaders">
-							<rank>120</rank>
 						</item>
 						<item id="tcpSocket_port">
 							<rank>130</rank>
