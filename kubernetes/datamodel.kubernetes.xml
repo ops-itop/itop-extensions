@@ -4858,6 +4858,7 @@ httpHeaders:
 					<class id="Secret"/>
 				</classes>
 			</group>
+			<!--这里好像没有必要，只要有权限编辑To后面的类，就有权限编辑lnk类-->
 			<group id="Kubelnk" _delta="define">
 				<classes>
 					<class id="lnkPersonToKubernetes"/>
