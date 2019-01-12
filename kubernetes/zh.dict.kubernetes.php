@@ -53,6 +53,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Controller/Attribute:affinity_list+' => '链接到此服务的所有约束条件',
 	'Class:Controller/Attribute:volume_list' => 'Volumes',
 	'Class:Controller/Attribute:volume_list+' => '链接到此服务的所有Volumes',
+	'Class:Controller/Attribute:probe_list' => '健康检查',
+	'Class:Controller/Attribute:probe_list+' => '此服务的所有健康检查探针',
 
 	'Menu:Controller' => '服务',
 	'Menu:Controller+' => '所有服务',
@@ -288,4 +290,28 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	
 	'Menu:K8sNamespace' => 'LB集群',
 	'Menu:K8sNamespace+' => '所有LB集群',
+));
+
+//K8sProbe
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:K8sProbe' => '健康检查',
+	'Class:K8sProbe/Attribute:description' => '描述',
+	'Class:K8sProbe/Attribute:controller_list' => '服务列表',
+	'Class:K8sProbe/Attribute:controller_list+' => '所有Kubernetes服务',
+));
+
+//lnkK8sProbeToController
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:lnkK8sProbeToController/Attribute:initialDelaySeconds' => 'initialDelay',
+	'Class:lnkK8sProbeToController/Attribute:periodSeconds' => 'Period',
+	'Class:lnkK8sProbeToController/Attribute:timeoutSeconds' => 'Timeout',
+	'Class:lnkK8sProbeToController/Attribute:successThreshold' => 'Success',
+	'Class:lnkK8sProbeToController/Attribute:failureThreshold' => 'Failure',
+	'Class:lnkK8sProbeToController/Attribute:httpGet_host' => 'Host',
+	'Class:lnkK8sProbeToController/Attribute:httpGet_scheme' => 'Scheme',
+	'Class:lnkK8sProbeToController/Attribute:httpGet_port' => 'Port',
+	'Class:lnkK8sProbeToController/Attribute:httpGet_path' => 'Path',
+	'Class:lnkK8sProbeToController/Attribute:httpGet_httpHeaders' => 'Headers',
+	'Class:lnkK8sProbeToController/Attribute:tcpSocket_port' => 'tcpPort',
+	'Class:lnkK8sProbeToController/Attribute:exec_command' => 'Command',
 ));
