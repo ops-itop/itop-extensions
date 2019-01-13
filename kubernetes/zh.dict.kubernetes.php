@@ -313,4 +313,15 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'lnkK8sProbeToController:httpGet' => 'httpGet探针',
 	'lnkK8sProbeToController:tcpSocket' => 'tcp探针',
 	'lnkK8sProbeToController:exec' => '命令探针',
+
+	'Class:lnkK8sProbeToController/Error:InvalidValueMinValueShouldBeOne' => 'periodSeconds,timeoutSeconds,successThreshold,failureThreshold的最小值为1: %1$s 值非法',
+	'Class:lnkK8sProbeToController/Error:InvalidValueMinValueShouldBeZero' => '最小值应为0: %1$s',
+	'Class:lnkK8sProbeToController/Error:CommonConfMustBeYaml' => '探针基础配置必须是YAML格式: %1$s',
+	'Class:lnkK8sProbeToController/Error:InvalidValueMustEqOne' => 'livenessProbe中successThreshold必须为1: %1$s',
+	'Class:lnkK8sProbeToController/Error:CommandMustBeYaml' => 'Command必须是YAML格式: %1$s',
+	'Class:lnkK8sProbeToController/Error:httpGetMustSetPathAndPort' => 'httpGet必须设置path和port: %1$s',
+	'Class:lnkK8sProbeToController/Error:InvalidValueHttpHeaders' => 'httpHeaders格式错误: %1$s',
+	'Class:lnkK8sProbeToController/Error:InvalidValuePort' => '端口值非法: %1$s',
+	'Class:lnkK8sProbeToController/Error:httpGetMustBeYaml' => 'httpGet必须为YAML格式: %1$s',
+	'Class:lnkK8sProbeToController/Error:ThisLnkAlreadyExists' => '此链接已存在: %1$s',
 ));

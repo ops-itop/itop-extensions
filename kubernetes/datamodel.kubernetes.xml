@@ -4568,11 +4568,16 @@ httpHeaders:
 						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValueMinValueShouldBeOne", $val);
 					}
 				}
+
+				// initialDelaySeconds最小值可以为0
+				if(array_key_exists('initialDelaySeconds', $common_conf) && ($common_conf['initialDelaySeconds'] < 0 || !is_numeric($common_conf['initialDelaySeconds']))) {
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValueMinValueShouldBeZero", 'initialDelaySeconds');
+				}
 			}
 
 			// common_conf可以为空，但不为空时必须是yaml格式
 			if($this->Get('common_conf') && !is_array($common_conf)) {
-				$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:CommonConfMustBeYaml", $this->Get('common_conf'));
+				$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:CommonConfMustBeYaml", $this->Get('k8sprobe_name'));
 			}
 
 			if($this->Get('k8sprobe_name') == "livenessProbe" && is_array($common_conf) && array_key_exists('successThreshold', $common_conf) && $common_conf['successThreshold'] != 1) {
@@ -4583,7 +4588,7 @@ httpHeaders:
 			if($this->Get('type') == "exec") {
 				$command = @yaml_parse($this->Get('exec_command'));
 				if(!is_array($command)) {
-					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:CommandMustBeYaml", $this->Get('exec_command'));
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:CommandMustBeYaml", $this->Get('k8sprobe_name'));
 				}
 			}
 
@@ -4593,7 +4598,7 @@ httpHeaders:
 				if(is_array($httpGet)) {
 					// path , port必须设置
 					if(!array_key_exists('path', $httpGet) || !array_key_exists('port', $httpGet)) {
-						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:httpGetMustSetPathAndPort", $httpGet);
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:httpGetMustSetPathAndPort", $this->Get('k8sprobe_name'));
 					}
 
 					if(array_key_exists('httpHeaders', $httpGet)) {
@@ -4606,15 +4611,15 @@ httpHeaders:
 							}
 						}
 						if(!$valid) {
-							$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValueHttpHeaders", 'e.g [["name":"Host", "value":"k8s.com"]]');
+							$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValueHttpHeaders", $this->Get('k8sprobe_name'));
 						}
 					}
 
-					if($httpGet['port'] < 1 || $httpGet['port'] > 65535) {
+					if(array_key_exists('port', $httpGet) && ($httpGet['port'] < 1 || $httpGet['port'] > 65535)) {
 						$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:InvalidValuePort", 'Range: 1 ~ 65535');
 					}
 				} else {
-					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:httpGetMustBeYaml", $httpGet);
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:httpGetMustBeYaml", $this->Get('k8sprobe_name'));
 				}
 			}
 
@@ -4634,7 +4639,7 @@ httpHeaders:
 
 				if ($oSet->Count() > 0)
 				{
-					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:ThisLnkAlreadyExists", $friendlyname);
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sProbeToController/Error:ThisLnkAlreadyExists", $this->Get('k8sprobe_name'));
 				}
 			}
 		}]]>
