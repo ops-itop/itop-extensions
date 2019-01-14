@@ -657,6 +657,16 @@
 								$this->m_aCheckIssues[] = Dict::Format("Class:Controller/Error:maxSurgeAndmaxUnavailableCannotBeZeroBoth", $this->Get('rolling_strategy'));
 							}
 						}
+
+						// 检查probe
+						foreach($this->Get('probe_list') as $probe) {
+							$probe->DoCheckToWrite();
+							$probeArray = get_object_vars($probe);
+							if(!$probeArray['m_aCheckIssues']) continue;
+							foreach($probeArray['m_aCheckIssues'] as $issue) {
+								$this->m_aCheckIssues[] = $issue;
+							}
+						}
 						parent::DoCheckToWrite();
 					}
 					]]>
