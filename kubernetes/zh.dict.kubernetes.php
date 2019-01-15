@@ -10,6 +10,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Kubernetes/Attribute:applicationsolution_id' => 'APP',
 	'Class:Kubernetes/Attribute:k8snamespace_id' => 'LB集群',
 	'Class:Kubernetes/Attribute:description' => '描述',
+	'Class:Kubernetes/Attribute:person_list' => '联系人',
+	'Class:Kubernetes/Attribute:person_list+' => '链接到此对象的所有联系人',
 	'Class:Kubernetes/Attribute:org_id' => '组织',
 	'Class:Kubernetes/Attribute:move2production' => '上线日期',
 	'Class:Kubernetes/Attribute:status' => '状态',
@@ -324,4 +326,20 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sProbeToController/Error:InvalidValuePort' => '端口值非法: %1$s',
 	'Class:lnkK8sProbeToController/Error:httpGetMustBeYaml' => 'httpGet必须为YAML格式: %1$s',
 	'Class:lnkK8sProbeToController/Error:ThisLnkAlreadyExists' => '此链接已存在: %1$s',
+));
+
+//K8sAppStore
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:K8sAppStore' => '应用商店',
+	'Class:K8sAppStore/Attribute:name' => '名称',
+	
+	'Class:SideCar' => 'SideCar',
+	'Class:AppTemplate' => '服务模板',
+	
+	'Menu:K8sAppStore' => '应用商店',
+	'Menu:SideCar' => 'SideCar',	
+	'Menu:AppTemplate' => '服务模板',
+	'Menu:K8sAppStore+' => '应用商店',
+	'Menu:SideCar+' => 'SideCar',	
+	'Menu:AppTemplate+' => '服务模板',
 ));

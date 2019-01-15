@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2">
 	<constants>
+		<!-- 需要手动建立 k8snamespace: dev 和ApplicationSolution: k8s-appstore-sidecar, k8s-appstore-apptemplate -->
+		<constant id="TEMPLATE_SIDECAR_NS"><![CDATA[dev]]></constant>
+		<constant id="TEMPLATE_APPTEMPLATE_NS"><![CDATA[dev]]></constant>
+		<constant id="TEMPLATE_SIDECAR_APP"><![CDATA[k8s-appstore-sidecar]]></constant>
+		<constant id="TEMPLATE_APPTEMPLATE_APP"><![CDATA[k8s-appstore-apptemplate]]></constant>
 	</constants>
 	<classes>
 		<class id="Kubernetes" _delta="define">
@@ -2585,6 +2590,375 @@
 			</presentation>
 		</class>
 
+		<class id="K8sAppStore" _delta="define">
+			<parent>Kubernetes</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>true</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>k8sappstore</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon>images/k8sappstore.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="name" xsi:type="AttributeString">
+					<sql>name</sql>
+					<default_value/>
+					<is_null_allowed>false</is_null_allowed>
+					<validation_pattern>^[a-z][a-z1-9_]+$</validation_pattern>
+				</field>
+				<field id="doc" xsi:type="AttributeURL">
+					<sql>doc</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+			</fields>
+			<methods>
+				<method id="ComputeValues" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+					public function ComputeValues()
+					{
+						if(!$this->Get('doc')) {
+							$key = $this->Get('finalclass') . "_doc";
+							$doc = MetaModel::GetModuleSetting('kubernetes', $key, "http://localhost/doc/" . $this->Get('name'));
+							$this->Set('doc', $doc);
+						}
+						return parent::ComputeValues();
+					}
+					]]>
+					</code>
+				</method>
+
+				<method id="GetAttributeFlags" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+					// 不允许修改组成friendlyname的属性
+					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+					{
+						$sArg = array('applicationsolution_id','k8snamespace_id', 'name');
+						if (!$this->IsNew() && in_array($sAttCode, $sArg))
+						{
+							return OPT_ATT_READONLY;
+						}
+						else
+						{
+							return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+						}
+					}
+					]]>
+					</code>
+				</method>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	  
+					public function DoCheckToWrite()
+					{
+						$aChanges = $this->ListChanges();
+						if(array_key_exists('name', $aChanges))
+						{
+							$finalclass = $this->Get('finalclass');
+							$oSearch = DBObjectSearch::FromOQL_AllData("SELECT $finalclass WHERE name=:name");
+							$oSet = new DBObjectSet($oSearch, array(), array("name" => $this->Get('name')));
+
+							if ($oSet->Count() > 0)
+							{
+								$this->m_aCheckIssues[] = Dict::Format("Class:K8sAppStore/Error:AlreadyExists", $this->Get('name'));
+							}
+						}
+						parent::DoCheckToWrite();
+					}
+					]]>
+					</code>
+				</method>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   
+					public function CheckToDelete(&$oDeletionPlan)
+					{
+					/*
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Controller WHERE status='production' AND secret_id=:secret_id");
+						$oSet = new DBObjectSet($oSearch, array(), array("secret_id" => $this->GetKey()));
+
+						if ($oSet->Count() > 0)
+						{
+							// 被在线状态Controller使用的Seret不允许直接删除
+							$oDeletionPlan->AddToDelete($this, null);
+							$oDeletionPlan->SetDeletionIssues($this, array('有在线状态K8S控制器使用此Secret对象，不允许直接删除'), true);
+							$oDeletionPlan->ComputeResults();
+							return false;
+						}*/
+						return parent::CheckToDelete($oDeletionPlan);
+					} 
+					]]></code>
+				</method>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="description">
+							<rank>350</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+						<item id="person_list">
+							<rank>60</rank>
+						</item>
+						<item id="col:col3">
+							<rank>300</rank>
+							<items>
+								<item id="fieldset:Secret:other">
+									<rank>310</rank>
+									<items>
+										<item id="change_log">
+											<rank>320</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="description">
+							<rank>35</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="description">
+							<rank>15</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+
+		<class id="AppTemplate" _delta="define">
+			<parent>K8sAppStore</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>apptemplate</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon>images/apptemplate.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+			</fields>
+			<methods>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="description">
+							<rank>350</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+						<item id="person_list">
+							<rank>60</rank>
+						</item>
+						<item id="col:col3">
+							<rank>300</rank>
+							<items>
+								<item id="fieldset:Secret:other">
+									<rank>310</rank>
+									<items>
+										<item id="change_log">
+											<rank>320</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="description">
+							<rank>35</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="description">
+							<rank>15</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+
+		<class id="SideCar" _delta="define">
+			<parent>K8sAppStore</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>sidecar</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon>images/sidecar.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+			</fields>
+			<methods>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="description">
+							<rank>350</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+						<item id="person_list">
+							<rank>60</rank>
+						</item>
+						<item id="col:col3">
+							<rank>300</rank>
+							<items>
+								<item id="fieldset:Secret:other">
+									<rank>310</rank>
+									<items>
+										<item id="change_log">
+											<rank>320</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="description">
+							<rank>35</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="description">
+							<rank>15</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
 
 		<!-- 以下是类型配置及lnk类-->
 		<class id="K8sNamespace" _delta="define">
@@ -4821,6 +5195,24 @@ httpHeaders:
 			<oql>SELECT Secret AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
+		<menu id="K8sAppStore" xsi:type="OQLMenuNode" _delta="define">
+			<rank>35</rank>
+			<parent>Kubernetes</parent>
+			<oql>SELECT K8sAppStore</oql>
+			<do_search>1</do_search>
+		</menu>
+		<menu id="SideCar" xsi:type="OQLMenuNode" _delta="define">
+			<rank>35</rank>
+			<parent>K8sAppStore</parent>
+			<oql>SELECT SideCar</oql>
+			<do_search>1</do_search>
+		</menu>
+		<menu id="AppTemplate" xsi:type="OQLMenuNode" _delta="define">
+			<rank>35</rank>
+			<parent>K8sAppStore</parent>
+			<oql>SELECT AppTemplate</oql>
+			<do_search>1</do_search>
+		</menu>
 		<menu id="Typology" xsi:type="DashboardMenuNode">
 			<definition>
 				<cells>
@@ -4873,6 +5265,12 @@ httpHeaders:
 					<class id="Secret"/>
 				</classes>
 			</group>
+			<group id="AppStore" _delta="define">
+				<classes>
+					<class id="SideCar"/>
+					<class id="AppTemplate"/>
+				</classes>
+			</group>
 			<!--这里好像没有必要，只要有权限编辑To后面的类，就有权限编辑lnk类-->
 			<group id="Kubelnk" _delta="define">
 				<classes>
@@ -4908,6 +5306,11 @@ httpHeaders:
 							<action id="stimulus:ev_online">allow</action>
 							<action id="stimulus:ev_offline">allow</action>
 							<action id="action:delete">allow</action>
+						</actions>
+					</group>
+					<group id="AppStore" _delta="define">
+						<actions>
+							<action id="action:write">allow</action>
 						</actions>
 					</group>
 					<group id="Kubelnk" _delta="define">
