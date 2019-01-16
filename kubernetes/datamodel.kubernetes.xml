@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2">
 	<constants>
-		<!-- 需要手动建立 k8snamespace: dev 和ApplicationSolution: k8s-appstore-sidecar, k8s-appstore-apptemplate -->
-		<constant id="TEMPLATE_SIDECAR_NS"><![CDATA[dev]]></constant>
-		<constant id="TEMPLATE_APPTEMPLATE_NS"><![CDATA[dev]]></constant>
-		<constant id="TEMPLATE_SIDECAR_APP"><![CDATA[k8s-appstore-sidecar]]></constant>
-		<constant id="TEMPLATE_APPTEMPLATE_APP"><![CDATA[k8s-appstore-apptemplate]]></constant>
 	</constants>
 	<classes>
 		<class id="Kubernetes" _delta="define">
@@ -134,11 +129,10 @@
 					{
 						if(MetaModel::IsValidKeyAttCode($this->Get('finalclass'), 'applicationsolution_id') && $this->Get('applicationsolution_id') > 0)
 						{
-							$app = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $this->Get('applicationsolution_name'), false);
+							$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
 							$this->Set("org_id", $app->Get("org_id"));
 
 							// 根据关联的APP自动填充联系人字段
-							$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
 							$list = $app->Get('contact_list_custom');
 
 							// ormLinkSet需要设置oOriginalSet
@@ -2712,20 +2706,22 @@
 					<code><![CDATA[	   
 					public function CheckToDelete(&$oDeletionPlan)
 					{
-					/*
-						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Controller WHERE status='production' AND secret_id=:secret_id");
-						$oSet = new DBObjectSet($oSearch, array(), array("secret_id" => $this->GetKey()));
-
-						if ($oSet->Count() > 0)
-						{
-							// 被在线状态Controller使用的Seret不允许直接删除
+						if(count($this->Get('version_list')) > 0) {
+							// 不允许删除有版本的对象
 							$oDeletionPlan->AddToDelete($this, null);
-							$oDeletionPlan->SetDeletionIssues($this, array('有在线状态K8S控制器使用此Secret对象，不允许直接删除'), true);
+							$oDeletionPlan->SetDeletionIssues($this, array('有版本的对象不允许直接删除'), true);
 							$oDeletionPlan->ComputeResults();
 							return false;
-						}*/
-						return parent::CheckToDelete($oDeletionPlan);
-					} 
+						}
+
+						if(!self::isAllowedModifyCustom()) {
+							// 普通用户不允许删除非自己名下的Kubernetes对象
+							$oDeletionPlan->AddToDelete($this, null);
+							$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下的对象'), true);
+							$oDeletionPlan->ComputeResults();
+							return false;
+						}
+					}
 					]]></code>
 				</method>
 			</methods>
