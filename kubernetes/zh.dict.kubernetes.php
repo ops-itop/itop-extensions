@@ -332,9 +332,14 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:K8sAppStore' => '应用商店',
 	'Class:K8sAppStore/Attribute:name' => '名称',
+	'Class:K8sAppStore/Attribute:doc' => '文档',
+	'Class:K8sAppStore/Attribute:person_list' => '维护者',
+	'Class:K8sAppStore/Attribute:person_list+' => '所有维护者',
 	
 	'Class:SideCar' => 'SideCar',
+	'Class:SideCarVer' => 'SideCar版本',
 	'Class:AppTemplate' => '服务模板',
+	'Class:AppTemplateVer' => '服务模板版本',
 	
 	'Menu:K8sAppStore' => '应用商店',
 	'Menu:SideCar' => 'SideCar',	
@@ -342,4 +347,14 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Menu:K8sAppStore+' => '应用商店',
 	'Menu:SideCar+' => 'SideCar',	
 	'Menu:AppTemplate+' => '服务模板',
+	
+	'Class:SideCar/Attribute:version_list' => '版本列表',
+	'Class:SideCar/Attribute:version_list+' => '所有版本',
+	'Class:AppTemplate/Attribute:version_list' => '版本列表',
+	'Class:AppTemplate/Attribute:version_list+' => '所有版本',
+	
+	'Class:K8sAppStoreVer/Attribute:status/Value:new' => '测试中',
+	'Class:K8sAppStoreVer/Attribute:status/Value:production' => '已发布',
+	'Class:K8sAppStoreVer/Attribute:status/Value:error' => '错误',
+	'Class:K8sAppStoreVer/Attribute:status/Value:stock' => '已废弃',
 ));

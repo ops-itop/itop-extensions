@@ -2621,7 +2621,7 @@
 				</field>
 				<field id="doc" xsi:type="AttributeURL">
 					<sql>doc</sql>
-					<default_value/>
+					<default_value>http://auto-generated.org</default_value>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
 			</fields>
@@ -2638,6 +2638,18 @@
 							$doc = MetaModel::GetModuleSetting('kubernetes', $key, "http://localhost/doc/" . $this->Get('name'));
 							$this->Set('doc', $doc);
 						}
+
+						// 自动设置namespace 和app
+						$finalclass = $this->Get('finalclass');
+						$ns = MetaModel::GetModuleSetting('kubernetes', 'namespace_' . strtolower($finalclass), 'dev');
+						$app = MetaModel::GetModuleSetting('kubernetes', 'app_' . strtolower($finalclass), 'k8s-appstore-' . strtolower($finalclass));
+
+						$nsObj = MetaModel::GetObjectByName('K8sNamespace', $ns);
+						$appObj = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $app);
+
+						$this->Set('k8snamespace_id', $nsObj->GetKey());
+						$this->Set('applicationsolution_id', $appObj->GetKey());
+
 						return parent::ComputeValues();
 					}
 					]]>
@@ -2652,6 +2664,10 @@
 					// 不允许修改组成friendlyname的属性
 					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
 					{
+						// doc 链接自动生成
+						if($sAttCode == "doc") {
+							return OPT_ATT_READONLY;
+						}
 						$sArg = array('applicationsolution_id','k8snamespace_id', 'name');
 						if (!$this->IsNew() && in_array($sAttCode, $sArg))
 						{
@@ -2731,6 +2747,9 @@
 						<item id="person_list">
 							<rank>60</rank>
 						</item>
+						<item id="version_list">
+							<rank>70</rank>
+						</item>
 						<item id="col:col3">
 							<rank>300</rank>
 							<items>
@@ -2773,6 +2792,9 @@
 						<item id="move2production">
 							<rank>50</rank>
 						</item>
+						<item id="finalclass">
+							<rank>60</rank>
+						</item>
 					</items>
 				</list>
 			</presentation>
@@ -2801,6 +2823,10 @@
 				</reconciliation>
 			</properties>
 			<fields>
+				<field id="version_list" xsi:type="AttributeLinkedSet">
+					<linked_class>AppTemplateVer</linked_class>
+					<ext_key_to_me>k8sappstore_id</ext_key_to_me>
+				</field>
 			</fields>
 			<methods>
 			</methods>
@@ -2809,6 +2835,9 @@
 					<items>
 						<item id="name">
 							<rank>10</rank>
+						</item>
+						<item id="doc">
+							<rank>20</rank>
 						</item>
 						<item id="description">
 							<rank>350</rank>
@@ -2821,6 +2850,9 @@
 						</item>
 						<item id="person_list">
 							<rank>60</rank>
+						</item>
+						<item id="version_list">
+							<rank>70</rank>
 						</item>
 						<item id="col:col3">
 							<rank>300</rank>
@@ -2855,6 +2887,9 @@
 				</search>
 				<list>
 					<items>
+						<item id="doc">
+							<rank>10</rank>
+						</item>
 						<item id="description">
 							<rank>15</rank>
 						</item>
@@ -2892,6 +2927,10 @@
 				</reconciliation>
 			</properties>
 			<fields>
+				<field id="version_list" xsi:type="AttributeLinkedSet">
+					<linked_class>SideCarVer</linked_class>
+					<ext_key_to_me>k8sappstore_id</ext_key_to_me>
+				</field>
 			</fields>
 			<methods>
 			</methods>
@@ -2900,6 +2939,9 @@
 					<items>
 						<item id="name">
 							<rank>10</rank>
+						</item>
+						<item id="doc">
+							<rank>20</rank>
 						</item>
 						<item id="description">
 							<rank>350</rank>
@@ -2912,6 +2954,9 @@
 						</item>
 						<item id="person_list">
 							<rank>60</rank>
+						</item>
+						<item id="version_list">
+							<rank>70</rank>
 						</item>
 						<item id="col:col3">
 							<rank>300</rank>
@@ -2946,6 +2991,9 @@
 				</search>
 				<list>
 					<items>
+						<item id="doc">
+							<rank>10</rank>
+						</item>
 						<item id="description">
 							<rank>15</rank>
 						</item>
@@ -2969,33 +3017,16 @@
 				<db_table>k8sappstorever</db_table>
 				<db_key_field>id</db_key_field>
 				<db_final_class_field>finalclass</db_final_class_field>
-				<naming>
-					<attributes>
-						<attribute id="k8sappstore_name"/>
-						<attribute id="version"/>
-					</attributes>
-				</naming>
 				<display_template/>
 				<icon>images/k8sappstore.png</icon>
 				<reconciliation>
 					<attributes>
-						<attribute id="k8sappstore_id"/>
-						<attribute id="version"/>
+						<attribute id="k8snamespace_id"/>
+						<attribute id="applicationsolution_id"/>
 					</attributes>
 				</reconciliation>
 			</properties>
 			<fields>
-				<field id="k8sappstore_id" xsi:type="AttributeExternalKey">
-					<sql>k8sappstore_id</sql>
-					<target_class>K8sAppStore</target_class>
-					<is_null_allowed>false</is_null_allowed>
-					<on_target_delete>DEL_MANUAL</on_target_delete>
-					<allow_target_creation>false</allow_target_creation>
-				</field>
-				<field id="k8sappstore_name" xsi:type="AttributeExternalField">
-					<extkey_attcode>k8sappstore_id</extkey_attcode>
-					<target_attcode>name</target_attcode>
-				</field>
 				<field id="version" xsi:type="AttributeString">
 					<sql>version</sql>
 					<default_value/>
@@ -3181,6 +3212,17 @@
 				</reconciliation>
 			</properties>
 			<fields>
+				<field id="k8sappstore_id" xsi:type="AttributeExternalKey">
+					<sql>k8sappstore_id</sql>
+					<target_class>SideCar</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>
+				</field>
+				<field id="k8sappstore_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8sappstore_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
 			</fields>
 			<methods>
 			</methods>
@@ -3341,6 +3383,17 @@
 				</reconciliation>
 			</properties>
 			<fields>
+				<field id="k8sappstore_id" xsi:type="AttributeExternalKey">
+					<sql>k8sappstore_id</sql>
+					<target_class>AppTemplate</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>
+				</field>
+				<field id="k8sappstore_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8sappstore_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
 			</fields>
 			<methods>
 			</methods>
