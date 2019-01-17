@@ -2632,9 +2632,8 @@
 						$this->Set('doc', $doc);
 
 						// 自动设置namespace 和app
-						$finalclass = $this->Get('finalclass');
-						$ns = MetaModel::GetModuleSetting('kubernetes', 'namespace_' . strtolower($finalclass), 'dev');
-						$app = MetaModel::GetModuleSetting('kubernetes', 'app_' . strtolower($finalclass), 'k8s-appstore-' . strtolower($finalclass));
+						$ns = MetaModel::GetModuleSetting('kubernetes', 'appstore_namespace', 'dev');
+						$app = MetaModel::GetModuleSetting('kubernetes', 'appstore_app', 'k8s-appstore-app');
 
 						$nsObj = MetaModel::GetObjectByName('K8sNamespace', $ns);
 						$appObj = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $app);
@@ -3045,6 +3044,28 @@
 				</field>
 			</fields>
 			<methods>
+				<method id="ComputeValues" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+					public function ComputeValues()
+					{
+						// 自动设置namespace 和app
+						$ns = MetaModel::GetModuleSetting('kubernetes', 'appstore_namespace', 'dev');
+						$app = MetaModel::GetModuleSetting('kubernetes', 'appstore_app', 'k8s-appstore-app');
+
+						$nsObj = MetaModel::GetObjectByName('K8sNamespace', $ns);
+						$appObj = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $app);
+
+						$this->Set('k8snamespace_id', $nsObj->GetKey());
+						$this->Set('applicationsolution_id', $appObj->GetKey());
+
+						return parent::ComputeValues();
+					}
+					]]>
+					</code>
+				</method>
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
 					<access>protected</access>
@@ -3229,6 +3250,12 @@
 			<presentation>
 				<details>
 					<items>
+						<item id="k8sappstore_id">
+							<rank>10</rank>
+						</item>
+						<item id="version">
+							<rank>20</rank>
+						</item>
 						<item id="status">
 							<rank>30</rank>
 						</item>
@@ -3301,6 +3328,12 @@
 				</details>
 				<search>
 					<items>
+						<item id="k8sappstore_id">
+							<rank>10</rank>
+						</item>
+						<item id="version">
+							<rank>20</rank>
+						</item>
 						<item id="status">
 							<rank>30</rank>
 						</item>
@@ -3332,6 +3365,12 @@
 				</search>
 				<list>
 					<items>
+						<item id="k8sappstore_id">
+							<rank>10</rank>
+						</item>
+						<item id="version">
+							<rank>20</rank>
+						</item>
 						<item id="status">
 							<rank>30</rank>
 						</item>
@@ -3389,6 +3428,12 @@
 			<presentation>
 				<details>
 					<items>
+						<item id="k8sappstore_id">
+							<rank>10</rank>
+						</item>
+						<item id="version">
+							<rank>20</rank>
+						</item>
 						<item id="status">
 							<rank>30</rank>
 						</item>
@@ -3461,6 +3506,12 @@
 				</details>
 				<search>
 					<items>
+						<item id="k8sappstore_id">
+							<rank>10</rank>
+						</item>
+						<item id="version">
+							<rank>20</rank>
+						</item>
 						<item id="status">
 							<rank>30</rank>
 						</item>
@@ -3492,6 +3543,12 @@
 				</search>
 				<list>
 					<items>
+						<item id="k8sappstore_id">
+							<rank>10</rank>
+						</item>
+						<item id="version">
+							<rank>20</rank>
+						</item>
 						<item id="status">
 							<rank>30</rank>
 						</item>
