@@ -754,11 +754,14 @@
 						$app = $this->Get('applicationsolution_name');
 						$ns = $this->Get('k8snamespace_name');
 						// Fix me! 除deployment之外还有其他类型
-						$tabUrl = $kubedash . "/#!/deployment/" . $ns . "/" . $app . "?namespace=" . $ns;
+						$tabUrl = "";
+						if($this->Get('finalclass') == "Deployment") {
+							$tabUrl = $kubedash . "/#!/deployment/" . $ns . "/" . $app . "?namespace=" . $ns;
+						}
 						$iframe_start = '<iframe style="border:0;padding:0;margin:0;width:100%;height:' . $iframeHeight . ';overflow:auto" ';
 						$iframe_end = '</iframe></div>';
 						$addStr = $iframe_start . 'src=' . '"' . $tabUrl . '"' . '>' . $iframe_end;
-						if (!$bEditMode)
+						if (!$bEditMode && $tabUrl)
 						{
 							$oPage->SetCurrentTab(Dict::S('Class:Controller/Tab:Debug'));
 							$oPage->add('<div id="kubernetes_dashboard_url" style="width:100%;height:' . $iframeHeight . ';">');
