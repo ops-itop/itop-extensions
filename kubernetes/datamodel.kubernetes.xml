@@ -2644,7 +2644,19 @@
 						$this->Set('k8snamespace_id', $nsObj->GetKey());
 						$this->Set('applicationsolution_id', $appObj->GetKey());
 
-						return parent::ComputeValues();
+						// 新建时将创建人加入 维护者 列表
+						if($this->IsNew()) {
+							// ormLinkSet需要设置oOriginalSet
+							$oOriginalSet = DBObjectSet::FromScratch('lnkPersonToKubernetes');
+							$c = new ormLinkSet('Kubernetes', 'person_list', $oOriginalSet);
+							$p = new lnkPersonToKubernetes();
+							$p->Set('person_id', UserRights::GetContactId());
+							$p->Set('kubernetes_id', $this->GetKey());
+							$c->AddItem($p);
+							$this->Set('person_list', $c);
+						}
+						// 这里不要调用父类的方法，父类中对person_list的处理有问题，是直接取app的联系人，新建了个ormLinkSet对象，会覆盖本类中的person_list
+						//return parent::ComputeValues();
 					}
 					]]>
 					</code>
