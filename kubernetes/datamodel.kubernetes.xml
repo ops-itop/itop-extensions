@@ -2740,6 +2740,13 @@
 				</method>
 			</methods>
 			<presentation>
+				<default_search>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+					</items>
+				</default_search>
 				<details>
 					<items>
 						<item id="name">
@@ -5830,19 +5837,19 @@ httpHeaders:
 		<menu id="K8sAppStore" xsi:type="OQLMenuNode" _delta="define">
 			<rank>35</rank>
 			<parent>Kubernetes</parent>
-			<oql>SELECT K8sAppStore</oql>
+			<oql>SELECT K8sAppStore AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="SideCar" xsi:type="OQLMenuNode" _delta="define">
 			<rank>35</rank>
 			<parent>K8sAppStore</parent>
-			<oql>SELECT SideCar</oql>
+			<oql>SELECT SideCar AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="AppTemplate" xsi:type="OQLMenuNode" _delta="define">
 			<rank>35</rank>
 			<parent>K8sAppStore</parent>
-			<oql>SELECT AppTemplate</oql>
+			<oql>SELECT AppTemplate AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Typology" xsi:type="DashboardMenuNode">
