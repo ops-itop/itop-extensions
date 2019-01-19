@@ -171,7 +171,9 @@
 							$myContactId = UserRights::GetContactId();
 
 							// Deployment和Ingress使用lnkPersonToKubernetes的person_list会有延迟（依赖UpdateKubernetesContacts的执行间隔），因此使用ApplicationSolution的contact_list）
-							if($this->Get('finalclass') != "Secret")
+							// Secret, SideCar, AppTemplate使用 person_list 做权限判断
+							$useList = ['Secret', 'SideCar', 'AppTemplate', 'SideCarVer', 'AppTemplateVer'];
+							if(!in_array($this->Get('finalclass'), $useList))
 							{
 								$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
 								$person_list = $app->Get('contact_list_custom');
