@@ -3702,6 +3702,7 @@
 						<attribute id="monitor_node"/>
 						<attribute id="method"/>
 						<attribute id="applicationsolution_name"/>
+						<attribute id="no"/>
 						<attribute id="url"/>
 					</attributes>
 				</naming>
@@ -3779,6 +3780,11 @@
 					<default_value>China</default_value>
 					<is_null_allowed>true</is_null_allowed>
 					<display_style>list</display_style>
+				</field>
+				<field id="no" xsi:type="AttributeInteger">
+					<sql>no</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
 				</field>
 				<field id="headers" xsi:type="AttributeText" _delta="define">
 					<sql>headers</sql>
@@ -3915,6 +3921,9 @@
 										</item>
 										<item id="url">
 											<rank>10</rank>
+										</item>
+										<item id="no">
+											<rank>13</rank>
 										</item>
 										<item id="status">
 											<rank>15</rank>

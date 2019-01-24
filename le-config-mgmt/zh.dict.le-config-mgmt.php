@@ -297,6 +297,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Url:autocomplete' => '自动填充信息(无需填写)',
 	'Class:Url/Attribute:name' => '名称',
 	'Class:Url/Attribute:url' => 'URL',
+	'Class:Url/Attribute:no' => '编号',
 	'Class:Url/Attribute:applicationsolution_id' => 'APP',
 	'Class:Url/Attribute:method' => '请求方法',
 	'Class:Url/Attribute:headers' => 'Headers',
@@ -324,7 +325,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	
 	'Class:Url/Error:CanOnlyUpdateUrlOfYours' => '只能编辑自己名下APP的URL',
 	'Class:Url/Error:UrlMustBeUnique' => '%1s 已被占用，monitor_node.method.app.url组合必须唯一',
-	'Class:Url/Name' => '%1$s.%2$s.%3$s.%4$s',
+	'Class:Url/Name' => '%1$s.%2$s.%3$s.%4$s.%5$s',
 	'Class:Url/Tab:Monitor' => '监控',
 
 ));
