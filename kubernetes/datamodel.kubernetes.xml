@@ -2632,8 +2632,8 @@
 					<code><![CDATA[
 					public function ComputeValues()
 					{
-						$key = $this->Get('finalclass') . "_doc";
-						$doc = MetaModel::GetModuleSetting('kubernetes', $key, "http://localhost/doc/" . $this->Get('name'));
+						$key = strtolower($this->Get('finalclass')) . "_doc";
+						$doc = MetaModel::GetModuleSetting('kubernetes', $key, "http://localhost/doc/") . $this->Get('name');
 						$this->Set('doc', $doc);
 
 						// 自动设置namespace 和app
