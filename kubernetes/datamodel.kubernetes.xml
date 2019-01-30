@@ -2764,9 +2764,6 @@
 						<item id="person_list">
 							<rank>60</rank>
 						</item>
-						<item id="version_list">
-							<rank>70</rank>
-						</item>
 						<item id="col:col3">
 							<rank>300</rank>
 							<items>
