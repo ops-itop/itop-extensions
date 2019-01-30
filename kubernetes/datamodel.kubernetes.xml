@@ -270,7 +270,7 @@
 						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
 						{
 
-							if(!self::isAllowedModifyCustom())
+							if(!$this->isAllowedModifyCustom())
 							{
 								$sMesg = Dict::Format("Class:Kubernetes/Error:CanOnlyUpdateK8SObjYourself", $this->Get('friendlyname'));
 								self::ReloadAndDisplayCustom($oPage, $this, 'k8s-modify-not-allowd', $sMesg, 'info');
@@ -307,7 +307,7 @@
 					parent::DoCheckToWrite();
 
 					// 不允许修改非自己名下的对象
-					if(!self::isAllowedModifyCustom())
+					if(!$this->isAllowedModifyCustom())
 					{
 						$this->m_aCheckIssues[] = Dict::Format("Class:Kubernetes/Error:CanOnlyUpdateK8SObjYourself", $this->Get('friendlyname'));
 					}
@@ -372,7 +372,7 @@
 							return false;
 						}
 
-						if(!self::isAllowedModifyCustom()) {
+						if(!$this->isAllowedModifyCustom()) {
 							// 普通用户不允许删除非自己名下的Kubernetes对象
 							$oDeletionPlan->AddToDelete($this, null);
 							$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下的对象'), true);
@@ -722,8 +722,10 @@
 					// 不允许修改组成friendlyname的属性
 					public function DisplayBareHistory(WebPage $oPage, $bEditMode = false, $iLimitCount = 0, $iLimitStart = 0)
 					{
+						// SideCarVer 和 AppTemplateVer 没有使用 person_list，不限制查看历史记录
+						$whitelist = ["SideCarVer", "AppTemplateVer"];
 						// 权限控制，不允许查看非自己名下对象的history table
-						if(!$this->IsNew()) 
+						if(!$this->IsNew() && !in_array($this->Get('finalclass'), $whitelist)) 
 						{
 							$myContactId = UserRights::GetContactId();
 							$person_list = $this->Get('person_list');
@@ -2728,7 +2730,7 @@
 							return false;
 						}
 
-						if(!self::isAllowedModifyCustom()) {
+						if(!$this->isAllowedModifyCustom()) {
 							// 普通用户不允许删除非自己名下的Kubernetes对象
 							$oDeletionPlan->AddToDelete($this, null);
 							$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下的对象'), true);
@@ -3049,7 +3051,7 @@
 			<fields>
 				<field id="k8sappstore_id" xsi:type="AttributeExternalKey">
 					<sql>k8sappstore_id</sql>
-					<target_class>SideCar</target_class>
+					<target_class>K8sAppStore</target_class>
 					<is_null_allowed>false</is_null_allowed>
 					<on_target_delete>DEL_MANUAL</on_target_delete>
 					<allow_target_creation>false</allow_target_creation>
@@ -3065,6 +3067,37 @@
 				</field>
 			</fields>
 			<methods>
+				<method id="isAllowedModifyCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+						public function isAllowedModifyCustom()
+						{
+							if($this->IsNew()) {
+								return true;
+							}
+
+							$myContactId = UserRights::GetContactId();
+
+							// SideCarVer, AppTemplateVer使用对应SideCar及APPTemplate的person_list做权限判断
+							$appstore = MetaModel::GetObject('K8sAppStore', $this->Get('k8sappstore_id'));
+							$person_list = $appstore->Get('person_list');
+
+							$contacts = array();
+							foreach($person_list as $v) {
+								$contacts[] = $v->Get('person_id');
+							}
+							if(!in_array($myContactId, $contacts) && !UserRights::IsAdministrator())
+							{
+								return false;
+							} else {
+								return(true);
+							}
+						}
+					]]>
+					</code>
+				</method>
 				<method id="ComputeValues" _delta="define">
 					<static>false</static>
 					<access>public</access>
@@ -3140,9 +3173,6 @@
 						</item>
 						<item id="description">
 							<rank>900</rank>
-						</item>
-						<item id="person_list">
-							<rank>60</rank>
 						</item>
 						<item id="probe_list">
 							<rank>135</rank>
@@ -3306,9 +3336,6 @@
 						</item>
 						<item id="description">
 							<rank>900</rank>
-						</item>
-						<item id="person_list">
-							<rank>60</rank>
 						</item>
 						<item id="probe_list">
 							<rank>135</rank>
@@ -3484,9 +3511,6 @@
 						</item>
 						<item id="description">
 							<rank>900</rank>
-						</item>
-						<item id="person_list">
-							<rank>60</rank>
 						</item>
 						<item id="probe_list">
 							<rank>135</rank>
@@ -5949,6 +5973,7 @@ httpHeaders:
 					<group id="AppStore" _delta="define">
 						<actions>
 							<action id="action:write">allow</action>
+							<action id="action:delete">allow</action>
 						</actions>
 					</group>
 					<group id="Kubelnk" _delta="define">

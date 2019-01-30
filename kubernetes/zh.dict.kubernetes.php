@@ -357,4 +357,6 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:K8sAppStoreVer/Attribute:status/Value:production' => '已发布',
 	'Class:K8sAppStoreVer/Attribute:status/Value:error' => '错误',
 	'Class:K8sAppStoreVer/Attribute:status/Value:stock' => '已废弃',
+	'Class:K8sAppStoreVer/Attribute:k8sappstore_id' => '应用商店对象',
+	'Class:K8sAppStoreVer/Attribute:version' => '版本号',
 ));
