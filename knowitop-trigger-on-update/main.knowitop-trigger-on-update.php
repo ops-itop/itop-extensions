@@ -31,60 +31,84 @@ class TriggerOnObjectUpdate extends TriggerOnObject
 
 class TriggerOnObjectUpdatePlugIn implements iApplicationObjectExtension
 {
+    private $aChangedAttCodes = [];
+
     public function OnIsModified($oObject)
     {
         return false;
     }
-
+    
     public function OnCheckToWrite($oObject)
     {
+        if ($oObject->IsNew()) return array();
+        // See comment to OnDBUpdate bellow to figure it out.
+        // TODO: haven't worked with list attcodes yet, like contact_list, functionalci_list, etc.
+        $aAttCodesWithoutLists = array_filter(array_keys($oObject->ListChanges()), function($sAttCode) {
+            return !preg_match('/_list$/', $sAttCode);
+        });
+        $aNewAttCodes = array_fill_keys($aAttCodesWithoutLists, true);
+        $sKey = get_class($oObject) . '::' . $oObject->GetKey();
+        $this->aChangedAttCodes[$sKey] = isset($this->aChangedAttCodes[$sKey]) ?
+            array_merge($aNewAttCodes, $this->aChangedAttCodes[$sKey]) : $aNewAttCodes;
         return array();
     }
-
+    
     public function OnCheckToDelete($oObject)
     {
         return array();
     }
 
+    /**
+     * OnDBUpdate can be called multiple times for one real update and each time it adds new attcodes.
+     * On each iteration we collect attcodes and mark them as triggered to prevent re-trigger on the same attcodes.
+     * ListChanges doesn't work sometimes inside OnDBUpdate (don't know why). So we get changed attcodes inside OnCheckToWrite,
+     * because it's called at least once for every OnDBUpdate and ListChanges works inside it.
+     *
+     * @param DBObject $oObject
+     * @param null $oChange
+     */
     public function OnDBUpdate($oObject, $oChange = null)
     {
         if (!is_object($oChange)) return;
-        $aChangedAttcodes = array('^ *$'); // regexp пустого значения поля tracked_attcodes （tracked_attcodes regexp空字段值）
-        $aChangeLog = array(); // лог изменения как в истории(如何改变历史日志)
-        $aContextArgs = array(); // аргументы контекста для использования в уведомлении в виде $change->html(log)$（上下文参数用于通知作为$ change - > html(log)$）
-        $oFilter = new DBObjectSearch('CMDBChangeOpSetAttribute');
-        $oFilter->AddCondition('objkey', $oObject->GetKey(), '=');
-        $oFilter->AddCondition('objclass', get_class($oObject), '=');
-        $oFilter->AddCondition('change', $oChange->GetKey(), '=');
-        $oChangeOpSet = new DBObjectSet($oFilter);
-        while ($oChangeOp = $oChangeOpSet->Fetch()) {
-            $aChangedAttcodes[] = $oChangeOp->Get('attcode');
-            $aChangeLog[] = $oChangeOp->GetDescription();
-            $aContextArgs['change->userinfo'] = $oChangeOp->Get('userinfo');
-            $aContextArgs['change->date'] = $oChangeOp->Get('date');
-        }
-        $aContextArgs['change->log'] = strip_tags(implode(" ", $aChangeLog));
-        $aContextArgs['change->html(log)'] = "<ul><li>" . implode('</li><li>', $aChangeLog) . "</li></ul>";
-        foreach ($aContextArgs as $key => $val) {
-            $aContextArgs[str_replace('->', '-&gt;', $key)] = $val;
-        }
-        $sClassList = implode("', '", MetaModel::EnumParentClasses(get_class($oObject), ENUM_PARENT_CLASSES_ALL));
-        $sRegExp = implode('|', $aChangedAttcodes);
-        $oSet = new DBObjectSet(DBObjectSearch::FromOQL("SELECT TriggerOnObjectUpdate WHERE target_class IN ('$sClassList') AND  tracked_attcodes REGEXP '$sRegExp'"));
+        $sClass = get_class($oObject);
+        $sKey = $sClass . '::' . $oObject->GetKey();
+        $aFilteredAttcodes = isset($this->aChangedAttCodes[$sKey]) ?
+            array_keys(array_filter($this->aChangedAttCodes[$sKey])) : []; // select only 'attcode' => true
+        if (empty($aFilteredAttcodes)) return;
+        array_walk($this->aChangedAttCodes[$sKey], function (&$item) { $item = false; });
+        $sClassList = implode("', '", MetaModel::EnumParentClasses($sClass, ENUM_PARENT_CLASSES_ALL));
+        $sRegExp = '^ *$|' . implode('|', $aFilteredAttcodes); // '^ *$' - regexp for an empty tracked_attcodes (exactly with space!)
+        $oSet = new DBObjectSet(DBObjectSearch::FromOQL("SELECT TriggerOnObjectUpdate WHERE target_class IN ('$sClassList') AND tracked_attcodes REGEXP '$sRegExp'"));
         if ($oSet->Count() > 0) {
+            $aChangeLog = array(); // change log like in ticket's history
+            $aContextArgs = array(); // context arguments to use in notifications as placeholders $change->html(log)$
+            $oFilter = DBObjectSearch::FromOQL("SELECT CMDBChangeOpSetAttribute WHERE attcode IN ('" . implode("','", $aFilteredAttcodes) . "')");
+            // $oFilter->AddCondition('attcode', $aFilteredAttcodes, 'IN'); // it throws an exception, but works in OQL above
+            $oFilter->AddCondition('objkey', $oObject->GetKey(), '=');
+            $oFilter->AddCondition('objclass', $sClass, '=');
+            $oFilter->AddCondition('change', $oChange->GetKey(), '=');
+            $oChangeOpSet = new DBObjectSet($oFilter);
+            while ($oChangeOp = $oChangeOpSet->Fetch()) {
+                $aChangeLog[] = $oChangeOp->GetDescription();
+                $aContextArgs['change->userinfo'] = $oChangeOp->Get('userinfo');
+                $aContextArgs['change->date'] = $oChangeOp->Get('date');
+            }
+            $aContextArgs['change->log'] = strip_tags(implode(" ", $aChangeLog));
+            $aContextArgs['change->html(log)'] = "<ul><li>" . implode('</li><li>', $aChangeLog) . "</li></ul>";
+            foreach ($aContextArgs as $key => $val) {
+                $aContextArgs[str_replace('->', '-&gt;', $key)] = $val;
+            }
             while ($oTrigger = $oSet->Fetch()) {
                 $oTrigger->DoActivate(array_merge($oObject->ToArgs('this'), $aContextArgs));
             }
         }
     }
-
+    
     public function OnDBInsert($oObject, $oChange = null)
     {
     }
-
+    
     public function OnDBDelete($oObject, $oChange = null)
     {
     }
 }
-
-?>
