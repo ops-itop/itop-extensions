@@ -19,10 +19,10 @@ class TriggerOnObjectUpdate extends TriggerOnObject
         MetaModel::Init_Params($aParams);
         MetaModel::Init_InheritAttributes();
         MetaModel::Init_AddAttribute(new AttributeString("tracked_attcodes", array("allowed_values" => null, "sql" => "tracked_attcodes", "default_value" => null, "is_null_allowed" => true, "depends_on" => array())));
-
+        MetaModel::Init_AddAttribute(new AttributeString("exclude_attcodes", array("allowed_values" => null, "sql" => "exclude_attcodes", "default_value" => null, "is_null_allowed" => true, "depends_on" => array())));
         // Display lists
-        MetaModel::Init_SetZListItems('details', array('description', 'target_class', 'filter', 'tracked_attcodes', 'action_list')); // Attributes to be displayed for the complete details
-        MetaModel::Init_SetZListItems('list', array('finalclass', 'target_class', 'tracked_attcodes')); // Attributes to be displayed for a list
+        MetaModel::Init_SetZListItems('details', array('description', 'target_class', 'filter', 'exclude_attcodes', 'tracked_attcodes', 'action_list')); // Attributes to be displayed for the complete details
+        MetaModel::Init_SetZListItems('list', array('finalclass', 'target_class', 'exclude_attcodes', 'tracked_attcodes')); // Attributes to be displayed for a list
         // Search criteria
         MetaModel::Init_SetZListItems('standard_search', array('description', 'target_class')); // Criteria of the std search form
         //MetaModel::Init_SetZListItems('advanced_search', array('name')); // Criteria of the advanced search form
