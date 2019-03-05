@@ -44,7 +44,8 @@ class TriggerOnObjectUpdatePlugIn implements iApplicationObjectExtension
         // See comment to OnDBUpdate bellow to figure it out.
         // TODO: haven't worked with list attcodes yet, like contact_list, functionalci_list, etc.
         $aAttCodesWithoutLists = array_filter(array_keys($oObject->ListChanges()), function($sAttCode) {
-            return !preg_match('/_list$/', $sAttCode);
+            //return !preg_match('/_list$/', $sAttCode);   某些场景下需要_list属性更新时触发, 通过支持exclude_attcodes来排除某些属性
+            return true;
         });
         $aNewAttCodes = array_fill_keys($aAttCodesWithoutLists, true);
         $sKey = get_class($oObject) . '::' . $oObject->GetKey();
@@ -99,7 +100,18 @@ class TriggerOnObjectUpdatePlugIn implements iApplicationObjectExtension
                 $aContextArgs[str_replace('->', '-&gt;', $key)] = $val;
             }
             while ($oTrigger = $oSet->Fetch()) {
-                $oTrigger->DoActivate(array_merge($oObject->ToArgs('this'), $aContextArgs));
+                $exclude_attcodes = $oTrigger->Get('exclude_attcodes');
+                $exclude_attcodes = explode(",", $exclude_attcodes);
+                // 如果变化的属性全都在exclude_attcodes里，则不触发
+                $flag = false;
+                foreach($aFilteredAttcodes as $val) {
+                    if(!in_array($val, $exclude_attcodes)) {
+                        $flag = true;break;
+                    }
+                }
+                if($flag) {
+                    $oTrigger->DoActivate(array_merge($oObject->ToArgs('this'), $aContextArgs));
+                }
             }
         }
     }
