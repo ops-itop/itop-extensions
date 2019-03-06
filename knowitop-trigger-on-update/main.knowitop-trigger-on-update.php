@@ -108,11 +108,15 @@ class TriggerOnObjectUpdatePlugIn implements iApplicationObjectExtension
                 // 如果变化的属性在tracket_attcode里，则触发
                 $flag = false;
                 foreach($aFilteredAttcodes as $val) {
-                    if(in_array($val, $tracked_attcodes)) {
-                        $flag = true;break;
-                    }
-                    if(!in_array($val, $exclude_attcodes)) {
-                        $flag = true;break;
+                    // tracked_attcodes 优先级高于 exclude_attcodes
+                    if($tracked_attcodes) {
+                        if(in_array($val, $tracked_attcodes)) {
+                            $flag = true;break;
+                        }
+                    } else {
+                        if(!in_array($val, $exclude_attcodes)) {
+                            $flag = true;break;
+                        }
                     }
                 }
                 if($flag) {
