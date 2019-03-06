@@ -102,9 +102,15 @@ class TriggerOnObjectUpdatePlugIn implements iApplicationObjectExtension
             while ($oTrigger = $oSet->Fetch()) {
                 $exclude_attcodes = $oTrigger->Get('exclude_attcodes');
                 $exclude_attcodes = explode(",", $exclude_attcodes);
+                $tracked_attcodes = $oTrigger->Get('tracked_attcodes');
+                $tracked_attcodes = explode(",", $tracked_attcodes);
                 // 如果变化的属性全都在exclude_attcodes里，则不触发
+                // 如果变化的属性在tracket_attcode里，则触发
                 $flag = false;
                 foreach($aFilteredAttcodes as $val) {
+                    if(in_array($val, $tracked_attcodes)) {
+                        $flag = true;break;
+                    }
                     if(!in_array($val, $exclude_attcodes)) {
                         $flag = true;break;
                     }
