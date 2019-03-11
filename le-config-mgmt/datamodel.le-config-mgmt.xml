@@ -535,7 +535,7 @@
 					if(in_array($finalclass,$UniqNameClass) && array_key_exists('name', $aChanges))
 					{
 						$sServer = $aChanges['name'];
-						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT Server WHERE name=:name");
+						$oSearch = DBObjectSearch::FromOQL_AllData("SELECT $finalclass WHERE name=:name");
 						$oSet = new DBObjectSet($oSearch, array(), array('name' => $sServer));
 						if ($oSet->Count() > 0)
 						{
