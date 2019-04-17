@@ -2622,6 +2622,22 @@
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
+				<field id="cname" xsi:type="AttributeString">
+					<sql>cname</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+				<field id="lbtype" xsi:type="AttributeEnum">
+					<values>
+						<value id="develop">develop</value>
+						<value id="test">test</value>
+						<value id="production">production</value>
+					</values>
+					<sql>lbtype</sql>
+					<default_value>production</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
 				<field id="note" xsi:type="AttributeString">
 					<sql>note</sql>
 					<default_value/>
@@ -2655,6 +2671,12 @@
 						<item id="domain">
 							<rank>12</rank>
 						</item>
+						<item id="cname">
+							<rank>13</rank>
+						</item>
+						<item id="lbtype">
+							<rank>14</rank>
+						</item>
 						<item id="note">
 							<rank>15</rank>
 						</item>
@@ -2674,6 +2696,12 @@
 						<item id="domain">
 							<rank>12</rank>
 						</item>
+						<item id="cname">
+							<rank>13</rank>
+						</item>
+						<item id="lbtype">
+							<rank>14</rank>
+						</item>
 						<item id="note">
 							<rank>15</rank>
 						</item>
@@ -2686,6 +2714,12 @@
 						</item>
 						<item id="domain">
 							<rank>12</rank>
+						</item>
+						<item id="cname">
+							<rank>13</rank>
+						</item>
+						<item id="lbtype">
+							<rank>14</rank>
 						</item>
 						<item id="note">
 							<rank>15</rank>

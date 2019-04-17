@@ -282,6 +282,11 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	
 	'Class:K8sNamespace/Attribute:name' => '名称',
 	'Class:K8sNamespace/Attribute:domain' => '域名',
+	'Class:K8sNamespace/Attribute:cname' => 'CNAME地址',
+	'Class:K8sNamespace/Attribute:lbtype' => 'LB类型',
+	'Class:K8sNamespace/Attribute:lbtype/Value:develop' => '开发环境',
+	'Class:K8sNamespace/Attribute:lbtype/Value:test' => '测试环境',
+	'Class:K8sNamespace/Attribute:lbtype/Value:production' => '生产环境',
 	'Class:K8sNamespace/Attribute:note' => '注释',
 	'Class:K8sNamespace/Attribute:deployment_list' => '无状态服务',
 	'Class:K8sNamespace/Attribute:deployment_list+' => '此集群上的所有无状态服务',
