@@ -5895,7 +5895,7 @@ httpHeaders:
 				</field>
 				<field id="sidecarver_name" xsi:type="AttributeExternalField">
 					<extkey_attcode>sidecarver_id</extkey_attcode>
-					<target_attcode>name</target_attcode>
+					<target_attcode>friendlyname</target_attcode>
 				</field>
 				<field id="sidecarver_version" xsi:type="AttributeExternalField">
 					<extkey_attcode>sidecarver_id</extkey_attcode>

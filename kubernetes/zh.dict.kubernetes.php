@@ -49,6 +49,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Controller/Attribute:secret' => '配置项',
 	'Class:Controller/Attribute:rolling_strategy' => '更新策略',
 	'Class:Controller/Attribute:hostaliases' => '自定义hosts',
+	'Class:Controller/Attribute:sidecar_list' => 'SideCar',
+	'Class:Controller/Attribute:sidecar_list+' => '链接到此服务的所有SideCar',
 	'Class:Controller/Attribute:person_list' => '联系人',
 	'Class:Controller/Attribute:person_list+' => '链接到此服务的所有联系人',
 	'Class:Controller/Attribute:affinity_list' => '约束条件',
@@ -338,6 +340,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	
 	'Class:SideCar' => 'SideCar',
 	'Class:SideCarVer' => 'SideCar版本',
+	'Class:SideCarVer/Attribute:controller_list' => 'Kubernetes服务',
+	'Class:SideCarVer/Attribute:controller_list+' => '使用此SideCar的Kubernetes服务',
 	'Class:AppTemplate' => '服务模板',
 	'Class:AppTemplateVer' => '服务模板版本',
 	
