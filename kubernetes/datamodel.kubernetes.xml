@@ -550,6 +550,14 @@
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
+				<field id="sidecar_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkSideCarVerToController</linked_class>
+					<ext_key_to_me>controller_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>sidecarver_id</ext_key_to_remote>
+					<duplicates/>
+				</field>
 			</fields>
 			<methods>
 				<method id="RecordAttChange" _delta="define">
@@ -1333,6 +1341,9 @@
 						</item>
 						<item id="ingressannotations_list">
 							<rank>140</rank>
+						</item>
+						<item id="sidecar_list">
+							<rank>150</rank>
 						</item>
 						<item id="col:col2">
 							<rank>200</rank>
@@ -3314,6 +3325,14 @@
 				</reconciliation>
 			</properties>
 			<fields>
+				<field id="controller_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkSideCarVerToController</linked_class>
+					<ext_key_to_me>sidecarver_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>controller_id</ext_key_to_remote>
+					<duplicates/>
+				</field>
 			</fields>
 			<methods>
 			</methods>
@@ -3358,6 +3377,9 @@
 						</item>
 						<item id="probe_list">
 							<rank>135</rank>
+						</item>
+						<item id="controller_list">
+							<rank>140</rank>
 						</item>
 						<item id="col:col2">
 							<rank>200</rank>
@@ -5834,6 +5856,240 @@ httpHeaders:
 						</item>
 						<item id="exec_command">
 							<rank>140</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+		<class id="lnkSideCarVerToController" _delta="define">
+			<parent>cmdbAbstractObject</parent>
+			<properties>
+				<is_link>1</is_link>
+				<category>bizmodel</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>lnksidecarvertocontroller</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field/>
+				<naming>
+					<attributes>
+						<attribute id="sidecarver_id"/>
+						<attribute id="controller_id"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon/>
+				<reconciliation>
+					<attributes>
+						<attribute id="sidecarver_id"/>
+						<attribute id="controller_id"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="sidecarver_id" xsi:type="AttributeExternalKey">
+					<sql>sidecarver_id</sql>
+					<target_class>SideCarVer</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+				</field>
+				<field id="sidecarver_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>sidecarver_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="sidecarver_version" xsi:type="AttributeExternalField">
+					<extkey_attcode>sidecarver_id</extkey_attcode>
+					<target_attcode>version</target_attcode>
+				</field>
+				<field id="cpu_request" xsi:type="AttributeDecimal">
+					<sql>cpu_request</sql>
+					<default_value>0.1</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<digits>4</digits>
+					<decimals>2</decimals>
+				</field>
+				<field id="cpu_limit" xsi:type="AttributeDecimal">
+					<sql>cpu_limit</sql>
+					<default_value>0.1</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<digits>4</digits>
+					<decimals>2</decimals>
+				</field>
+				<field id="mem_request" xsi:type="AttributeInteger">
+					<sql>mem_request</sql>
+					<default_value>128</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+				<field id="controller_id" xsi:type="AttributeExternalKey">
+					<sql>controller_id</sql>
+					<target_class>Controller</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="controller_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>controller_id</extkey_attcode>
+					<target_attcode>friendlyname</target_attcode>
+				</field>
+			</fields>
+			<methods>
+				<method id="ReloadAndDisplayCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+					function ReloadAndDisplayCustom($oPage, $oObj, $sMessageId = '', $sMessage = '', $sSeverity = null)
+					{
+						$oAppContext = new ApplicationContext();
+						if ($sMessageId != '')
+						{
+							cmdbAbstractObject::SetSessionMessage(get_class($oObj), $oObj->GetKey(), $sMessageId, $sMessage, $sSeverity, 0, true /* must not exist */);
+						}
+
+						$oId = $oObj->getKey();
+						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
+					}
+					]]>
+					</code>
+				</method>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[  public function DoCheckToWrite(){
+			$aChanges = $this->ListChanges();
+			if($aChanges)
+			{
+				$friendlyname = $this->Get('sidecarver_id') . " " . $this->Get('controller_id');
+				$allowmodify = array("cpu_request", "cpu_limit", "mem_request");
+				$allow = true;
+				foreach($aChanges as $key => $val) {
+					if(!in_array($key, $allowmodify)) {
+						$allow = false;
+					}
+				}
+
+				if(!$this->IsNew())
+				{
+					if(!$allow) {
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkSideCarVerToController/Error:ModifyNotAllowed", $friendlyname);
+					}
+				}else
+				{
+					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkSideCarVerToController WHERE friendlyname=:friendlyname");
+					$oSet = new DBObjectSet($oSearch, array(), array("friendlyname" => $friendlyname));
+
+					if ($oSet->Count() > 0)
+					{
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkSideCarVerToController/Error:ThisLnkAlreadyExists", $friendlyname);
+					}
+				}
+			}
+		}]]>
+					</code>
+				</method>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   
+  	public function CheckToDelete(&$oDeletionPlan)
+  	{
+		$myContactId = UserRights::GetContactId();
+		$deploy = MetaModel::GetObject("Controller", $this->Get('controller_id'));
+		$contacts = $deploy->Get('person_list');
+		$flag = false;
+		foreach($contacts as $v) {
+			if($v->Get('person_id') == $myContactId) {
+				$flag = true;
+				break;
+			}
+		}
+  		if (!$flag && !UserRights::IsAdministrator())
+		{
+			// 普通用户不允许删除非自己名下的lnkSideCarVerToDeployment
+			$oDeletionPlan->AddToDelete($this, null);
+			$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下的关联'), true);
+			$oDeletionPlan->ComputeResults();
+			return false;
+		}
+		return parent::CheckToDelete($oDeletionPlan);
+  	} 
+					]]></code>
+				</method>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="controller_id">
+							<rank>10</rank>
+						</item>
+						<item id="sidecarver_id">
+							<rank>20</rank>
+						</item>
+						<item id="sidecarver_name">
+							<rank>25</rank>
+						</item>
+						<item id="sidecarver_version">
+							<rank>30</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>35</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>40</rank>
+						</item>
+						<item id="mem_request">
+							<rank>45</rank>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="controller_id">
+							<rank>10</rank>
+						</item>
+						<item id="sidecarver_id">
+							<rank>20</rank>
+						</item>
+						<item id="sidecarver_name">
+							<rank>25</rank>
+						</item>
+						<item id="sidecarver_version">
+							<rank>30</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>35</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>40</rank>
+						</item>
+						<item id="mem_request">
+							<rank>45</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="controller_id">
+							<rank>10</rank>
+						</item>
+						<item id="sidecarver_id">
+							<rank>20</rank>
+						</item>
+						<item id="sidecarver_name">
+							<rank>25</rank>
+						</item>
+						<item id="sidecarver_version">
+							<rank>30</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>35</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>40</rank>
+						</item>
+						<item id="mem_request">
+							<rank>45</rank>
 						</item>
 					</items>
 				</list>
