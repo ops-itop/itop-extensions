@@ -127,6 +127,14 @@
 					<code><![CDATA[
 					public function ComputeValues()
 					{
+						$aChanges = $this->ListChanges();
+
+						// 点击更新，如果不变更任何属性，aChanges为空，可以根据这里决定是否更新update字段，达到 1.避免联系人更新时错误的更新部署 2. 使更新功能正常使用
+						// 注意这段代码位置不能更改，因为下面设置person_list的代码总会导致aChanges包含 person_list
+						if(!(count($aChanges) == 1 && array_key_exists("person_list", $aChanges))) {
+							$this->Set("update", date("Y-m-d H:i:s"));
+						}
+
 						if(MetaModel::IsValidKeyAttCode($this->Get('finalclass'), 'applicationsolution_id') && $this->Get('applicationsolution_id') > 0)
 						{
 							$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
@@ -5583,8 +5591,7 @@
 periodSeconds: 10
 timeoutSeconds: 1
 successThreshold: 1
-failureThreshold: 3
-					</default_value>
+failureThreshold: 3</default_value>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
 				<field id="httpGet" xsi:type="AttributeText">
@@ -5594,16 +5601,14 @@ port: 80
 path: /healthz
 httpHeaders:
 - name: User-Agent
-  value: Kubelet
-					</default_value>
+  value: Kubelet</default_value>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
 				<field id="exec_command" xsi:type="AttributeText">
 					<sql>exec_command</sql>
 					<default_value>command:
 - cat
-- /tmp/healthy
-					</default_value>
+- /tmp/healthy</default_value>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
 				<field id="tcpSocket_port" xsi:type="AttributeInteger">
@@ -6263,8 +6268,7 @@ httpHeaders:
 							<action id="stimulus:ev_new">allow</action>
 							<action id="stimulus:ev_online">allow</action>
 							<action id="stimulus:ev_offline">allow</action>
-							<action id="stimulus:ev_redeploy">allow</action>
-							<action id="stimulus:ev_redeploy2">allow</action>
+							<action id="stimulus:ev_update">allow</action>
 							<action id="action:delete">allow</action>
 						</actions>
 					</group>
@@ -6276,6 +6280,7 @@ httpHeaders:
 							<action id="stimulus:ev_new">allow</action>
 							<action id="stimulus:ev_online">allow</action>
 							<action id="stimulus:ev_offline">allow</action>
+							<action id="stimulus:ev_update">allow</action>
 							<action id="action:delete">allow</action>
 						</actions>
 					</group>
