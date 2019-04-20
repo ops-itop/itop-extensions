@@ -6108,7 +6108,7 @@ httpHeaders:
 							<rank>10</rank>
 						</item>
 						<item id="sidecarver_id">
-							<rank>20</rank>
+							<rank>1</rank>
 						</item>
 						<item id="sidecarver_version">
 							<rank>30</rank>

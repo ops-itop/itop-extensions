@@ -367,7 +367,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkSideCarVerToController/Attribute:cpu_request' => 'CPU请求',
 	'Class:lnkSideCarVerToController/Attribute:cpu_limit' => 'CPU限制',
 	'Class:lnkSideCarVerToController/Attribute:mem_request' => '内存请求',
-	'Class:lnkSideCarVerToController/Attribute:sidecar_id' => 'SideCar版本',
+	'Class:lnkSideCarVerToController/Attribute:sidecarver_id' => 'SideCar版本',
 	'Class:lnkSideCarVerToController/Error:StockSideCarCanNotBeLinked' => '不能使用已废弃的SideCar %1$s',
 	'Class:lnkSideCarVerToController/Error:ProductionNsMustUseProductionSideCar' => '线上集群必须使用已发布的SideCar %1$s',
 ));
