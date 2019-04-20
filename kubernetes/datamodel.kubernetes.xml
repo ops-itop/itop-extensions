@@ -137,11 +137,10 @@
 
 						if(MetaModel::IsValidKeyAttCode($this->Get('finalclass'), 'applicationsolution_id') && $this->Get('applicationsolution_id') > 0)
 						{
-							$app = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $this->Get('applicationsolution_name'), false);
+							$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
 							$this->Set("org_id", $app->Get("org_id"));
 
 							// 根据关联的APP自动填充联系人字段
-							$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
 							$list = $app->Get('contact_list_custom');
 
 							// ormLinkSet需要设置oOriginalSet
@@ -180,7 +179,9 @@
 							$myContactId = UserRights::GetContactId();
 
 							// Deployment和Ingress使用lnkPersonToKubernetes的person_list会有延迟（依赖UpdateKubernetesContacts的执行间隔），因此使用ApplicationSolution的contact_list）
-							if($this->Get('finalclass') != "Secret")
+							// Secret, SideCar, AppTemplate使用 person_list 做权限判断
+							$useList = ['Secret', 'SideCar', 'AppTemplate', 'SideCarVer', 'AppTemplateVer'];
+							if(!in_array($this->Get('finalclass'), $useList))
 							{
 								$app = MetaModel::GetObject('ApplicationSolution', $this->Get('applicationsolution_id'));
 								$person_list = $app->Get('contact_list_custom');
@@ -277,7 +278,7 @@
 						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
 						{
 
-							if(!self::isAllowedModifyCustom())
+							if(!$this->isAllowedModifyCustom())
 							{
 								$sMesg = Dict::Format("Class:Kubernetes/Error:CanOnlyUpdateK8SObjYourself", $this->Get('friendlyname'));
 								self::ReloadAndDisplayCustom($oPage, $this, 'k8s-modify-not-allowd', $sMesg, 'info');
@@ -314,7 +315,7 @@
 					parent::DoCheckToWrite();
 
 					// 不允许修改非自己名下的对象
-					if(!self::isAllowedModifyCustom())
+					if(!$this->isAllowedModifyCustom())
 					{
 						$this->m_aCheckIssues[] = Dict::Format("Class:Kubernetes/Error:CanOnlyUpdateK8SObjYourself", $this->Get('friendlyname'));
 					}
@@ -379,7 +380,7 @@
 							return false;
 						}
 
-						if(!self::isAllowedModifyCustom()) {
+						if(!$this->isAllowedModifyCustom()) {
 							// 普通用户不允许删除非自己名下的Kubernetes对象
 							$oDeletionPlan->AddToDelete($this, null);
 							$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下的对象'), true);
@@ -557,6 +558,14 @@
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
+				<field id="sidecar_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkSideCarVerToController</linked_class>
+					<ext_key_to_me>controller_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>sidecarver_id</ext_key_to_remote>
+					<duplicates/>
+				</field>
 			</fields>
 			<methods>
 				<method id="RecordAttChange" _delta="define">
@@ -675,6 +684,17 @@
 								$this->m_aCheckIssues[] = $issue;
 							}
 						}
+
+						// 检查sidecar_list，production的namespace不允许链接非production的sidecar
+						foreach($this->Get('sidecar_list') as $sidecar) {
+							$sidecar->DoCheckToWrite();
+							$sidecarArray = get_object_vars($sidecar);
+							if(!$sidecarArray['m_aCheckIssues']) continue;
+							foreach($sidecarArray['m_aCheckIssues'] as $issue) {
+								$this->m_aCheckIssues[] = $issue;
+							}
+						}
+
 						parent::DoCheckToWrite();
 					}
 					]]>
@@ -729,8 +749,10 @@
 					// 不允许修改组成friendlyname的属性
 					public function DisplayBareHistory(WebPage $oPage, $bEditMode = false, $iLimitCount = 0, $iLimitStart = 0)
 					{
+						// SideCarVer 和 AppTemplateVer 没有使用 person_list，不限制查看历史记录
+						$whitelist = ["SideCarVer", "AppTemplateVer"];
 						// 权限控制，不允许查看非自己名下对象的history table
-						if(!$this->IsNew()) 
+						if(!$this->IsNew() && !in_array($this->Get('finalclass'), $whitelist)) 
 						{
 							$myContactId = UserRights::GetContactId();
 							$person_list = $this->Get('person_list');
@@ -763,11 +785,14 @@
 						$app = $this->Get('applicationsolution_name');
 						$ns = $this->Get('k8snamespace_name');
 						// Fix me! 除deployment之外还有其他类型
-						$tabUrl = $kubedash . "/#!/deployment/" . $ns . "/" . $app . "?namespace=" . $ns;
+						$tabUrl = "";
+						if($this->Get('finalclass') == "Deployment") {
+							$tabUrl = $kubedash . "/#!/deployment/" . $ns . "/" . $app . "?namespace=" . $ns;
+						}
 						$iframe_start = '<iframe style="border:0;padding:0;margin:0;width:100%;height:' . $iframeHeight . ';overflow:auto" ';
 						$iframe_end = '</iframe></div>';
 						$addStr = $iframe_start . 'src=' . '"' . $tabUrl . '"' . '>' . $iframe_end;
-						if (!$bEditMode)
+						if (!$bEditMode && $tabUrl)
 						{
 							$oPage->SetCurrentTab(Dict::S('Class:Controller/Tab:Debug'));
 							$oPage->add('<div id="kubernetes_dashboard_url" style="width:100%;height:' . $iframeHeight . ';">');
@@ -1335,6 +1360,9 @@
 						</item>
 						<item id="ingressannotations_list">
 							<rank>140</rank>
+						</item>
+						<item id="sidecar_list">
+							<rank>150</rank>
 						</item>
 						<item id="col:col2">
 							<rank>200</rank>
@@ -2593,6 +2621,1064 @@
 			</presentation>
 		</class>
 
+		<class id="K8sAppStore" _delta="define">
+			<parent>Kubernetes</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>true</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>k8sappstore</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon>images/k8sappstore.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="name" xsi:type="AttributeString">
+					<sql>name</sql>
+					<default_value/>
+					<is_null_allowed>false</is_null_allowed>
+					<validation_pattern>^[a-z][a-z1-9_]+$</validation_pattern>
+				</field>
+				<field id="doc" xsi:type="AttributeURL">
+					<sql>doc</sql>
+					<default_value>http://auto-generated.org</default_value>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
+			</fields>
+			<methods>
+				<method id="ComputeValues" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+					public function ComputeValues()
+					{
+						$key = strtolower($this->Get('finalclass')) . "_doc";
+						$doc = MetaModel::GetModuleSetting('kubernetes', $key, "http://localhost/doc/") . $this->Get('name');
+						$this->Set('doc', $doc);
+
+						// 自动设置namespace 和app
+						$ns = MetaModel::GetModuleSetting('kubernetes', 'appstore_namespace', 'dev');
+						$app = MetaModel::GetModuleSetting('kubernetes', 'appstore_app', 'k8s-appstore-app');
+
+						$nsObj = MetaModel::GetObjectByName('K8sNamespace', $ns);
+						$appObj = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $app);
+
+						$this->Set('k8snamespace_id', $nsObj->GetKey());
+						$this->Set('applicationsolution_id', $appObj->GetKey());
+
+						// 新建时将创建人加入 维护者 列表
+						if($this->IsNew()) {
+							// ormLinkSet需要设置oOriginalSet
+							$oOriginalSet = DBObjectSet::FromScratch('lnkPersonToKubernetes');
+							$c = new ormLinkSet('Kubernetes', 'person_list', $oOriginalSet);
+							$p = new lnkPersonToKubernetes();
+							$p->Set('person_id', UserRights::GetContactId());
+							$p->Set('kubernetes_id', $this->GetKey());
+							$c->AddItem($p);
+							$this->Set('person_list', $c);
+						}
+						// 这里不要调用父类的方法，父类中对person_list的处理有问题，是直接取app的联系人，新建了个ormLinkSet对象，会覆盖本类中的person_list
+						//return parent::ComputeValues();
+					}
+					]]>
+					</code>
+				</method>
+
+				<method id="GetAttributeFlags" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+					// 不允许修改组成friendlyname的属性
+					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+					{
+						// doc 链接自动生成
+						if($sAttCode == "doc") {
+							return OPT_ATT_READONLY;
+						}
+						$sArg = array('applicationsolution_id','k8snamespace_id', 'name');
+						if (!$this->IsNew() && in_array($sAttCode, $sArg))
+						{
+							return OPT_ATT_READONLY;
+						}
+						else
+						{
+							return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+						}
+					}
+					]]>
+					</code>
+				</method>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	  
+					public function DoCheckToWrite()
+					{
+						$aChanges = $this->ListChanges();
+						if(array_key_exists('name', $aChanges))
+						{
+							$finalclass = $this->Get('finalclass');
+							$oSearch = DBObjectSearch::FromOQL_AllData("SELECT $finalclass WHERE name=:name");
+							$oSet = new DBObjectSet($oSearch, array(), array("name" => $this->Get('name')));
+
+							if ($oSet->Count() > 0)
+							{
+								$this->m_aCheckIssues[] = Dict::Format("Class:K8sAppStore/Error:AlreadyExists", $this->Get('name'));
+							}
+						}
+						parent::DoCheckToWrite();
+					}
+					]]>
+					</code>
+				</method>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   
+					public function CheckToDelete(&$oDeletionPlan)
+					{
+						if(count($this->Get('version_list')) > 0) {
+							// 不允许删除有版本的对象
+							$oDeletionPlan->AddToDelete($this, null);
+							$oDeletionPlan->SetDeletionIssues($this, array('有版本的对象不允许直接删除'), true);
+							$oDeletionPlan->ComputeResults();
+							return false;
+						}
+
+						if(!$this->isAllowedModifyCustom()) {
+							// 普通用户不允许删除非自己名下的Kubernetes对象
+							$oDeletionPlan->AddToDelete($this, null);
+							$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下的对象'), true);
+							$oDeletionPlan->ComputeResults();
+							return false;
+						}
+					}
+					]]></code>
+				</method>
+			</methods>
+			<presentation>
+				<default_search>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+					</items>
+				</default_search>
+				<details>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="description">
+							<rank>350</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+						<item id="person_list">
+							<rank>60</rank>
+						</item>
+						<item id="col:col3">
+							<rank>300</rank>
+							<items>
+								<item id="fieldset:Secret:other">
+									<rank>310</rank>
+									<items>
+										<item id="change_log">
+											<rank>320</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="description">
+							<rank>35</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="description">
+							<rank>15</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+						<item id="finalclass">
+							<rank>60</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+
+		<class id="AppTemplate" _delta="define">
+			<parent>K8sAppStore</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>apptemplate</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon>images/apptemplate.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="version_list" xsi:type="AttributeLinkedSet">
+					<linked_class>AppTemplateVer</linked_class>
+					<ext_key_to_me>k8sappstore_id</ext_key_to_me>
+				</field>
+			</fields>
+			<methods>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="doc">
+							<rank>20</rank>
+						</item>
+						<item id="description">
+							<rank>350</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+						<item id="person_list">
+							<rank>60</rank>
+						</item>
+						<item id="version_list">
+							<rank>70</rank>
+						</item>
+						<item id="col:col3">
+							<rank>300</rank>
+							<items>
+								<item id="fieldset:Secret:other">
+									<rank>310</rank>
+									<items>
+										<item id="change_log">
+											<rank>320</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="description">
+							<rank>35</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="doc">
+							<rank>10</rank>
+						</item>
+						<item id="description">
+							<rank>15</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+
+		<class id="SideCar" _delta="define">
+			<parent>K8sAppStore</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>sidecar</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon>images/sidecar.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="name"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="version_list" xsi:type="AttributeLinkedSet">
+					<linked_class>SideCarVer</linked_class>
+					<ext_key_to_me>k8sappstore_id</ext_key_to_me>
+				</field>
+			</fields>
+			<methods>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="doc">
+							<rank>20</rank>
+						</item>
+						<item id="description">
+							<rank>350</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+						<item id="person_list">
+							<rank>60</rank>
+						</item>
+						<item id="version_list">
+							<rank>70</rank>
+						</item>
+						<item id="col:col3">
+							<rank>300</rank>
+							<items>
+								<item id="fieldset:Secret:other">
+									<rank>310</rank>
+									<items>
+										<item id="change_log">
+											<rank>320</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="name">
+							<rank>10</rank>
+						</item>
+						<item id="description">
+							<rank>35</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="doc">
+							<rank>10</rank>
+						</item>
+						<item id="description">
+							<rank>15</rank>
+						</item>
+						<item id="org_id">
+							<rank>40</rank>
+						</item>
+						<item id="move2production">
+							<rank>50</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+
+		<class id="K8sAppStoreVer" _delta="define">
+			<parent>Controller</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>true</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>k8sappstorever</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="k8sappstore_name"/>
+						<attribute id="version"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon>images/k8sappstore.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="k8sappstore_id"/>
+						<attribute id="version"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="k8sappstore_id" xsi:type="AttributeExternalKey">
+					<sql>k8sappstore_id</sql>
+					<target_class>K8sAppStore</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+					<allow_target_creation>false</allow_target_creation>
+				</field>
+				<field id="k8sappstore_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8sappstore_id</extkey_attcode>
+					<target_attcode>name</target_attcode>
+				</field>
+				<field id="version" xsi:type="AttributeString">
+					<sql>version</sql>
+					<default_value/>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+			</fields>
+			<methods>
+				<method id="GetAttributeFlags" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+					// 不允许修改组成friendlyname的属性
+					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+					{
+						$sArg = ['k8sappstore_id'];
+						if (!$this->IsNew() && in_array($sAttCode, $sArg))
+						{
+							return OPT_ATT_READONLY;
+						} else {
+							return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+						}
+					}
+					]]>
+					</code>
+				</method>
+				<method id="isAllowedModifyCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+						public function isAllowedModifyCustom()
+						{
+							if($this->IsNew()) {
+								return true;
+							}
+
+							$myContactId = UserRights::GetContactId();
+
+							// SideCarVer, AppTemplateVer使用对应SideCar及APPTemplate的person_list做权限判断
+							$appstore = MetaModel::GetObject('K8sAppStore', $this->Get('k8sappstore_id'));
+							$person_list = $appstore->Get('person_list');
+
+							$contacts = array();
+							foreach($person_list as $v) {
+								$contacts[] = $v->Get('person_id');
+							}
+							if(!in_array($myContactId, $contacts) && !UserRights::IsAdministrator())
+							{
+								return false;
+							} else {
+								return(true);
+							}
+						}
+					]]>
+					</code>
+				</method>
+				<method id="ComputeValues" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+					public function ComputeValues()
+					{
+						// 自动设置namespace 和app
+						$ns = MetaModel::GetModuleSetting('kubernetes', 'appstore_namespace', 'dev');
+						$app = MetaModel::GetModuleSetting('kubernetes', 'appstore_app', 'k8s-appstore-app');
+
+						$nsObj = MetaModel::GetObjectByName('K8sNamespace', $ns);
+						$appObj = MetaModel::GetObjectByColumn('ApplicationSolution', 'name', $app);
+
+						$this->Set('k8snamespace_id', $nsObj->GetKey());
+						$this->Set('applicationsolution_id', $appObj->GetKey());
+
+						return parent::ComputeValues();
+					}
+					]]>
+					</code>
+				</method>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	  
+					public function DoCheckToWrite()
+					{
+						$aChanges = $this->ListChanges();
+						if(array_key_exists("version", $aChanges) || array_key_exists("k8sappstore_id", $aChanges)) {
+							$oSearch = DBObjectSearch::FromOQL_AllData("SELECT K8sAppStoreVer WHERE version=:version AND k8sappstore_id=:k8sappstore_id");
+							$oSet = new DBObjectSet($oSearch, array(), array('version' => $this->Get('version'), 'k8sappstore_id' => $this->Get('k8sappstore_id')));
+							if ($oSet->Count() > 0) {
+								$this->m_aCheckIssues[] = Dict::Format("Class:K8sAppStoreVer/Error:MustBeUnique", $this->Get('k8sappstore_name') . "/" . $this->Get('version'));
+							}
+						}
+						parent::DoCheckToWrite();
+					}
+					]]>
+					</code>
+				</method>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="image">
+							<rank>40</rank>
+						</item>
+						<item id="image_tag">
+							<rank>42</rank>
+						</item>
+						<item id="repo">
+							<rank>45</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+						<item id="description">
+							<rank>900</rank>
+						</item>
+						<item id="probe_list">
+							<rank>135</rank>
+						</item>
+						<item id="col:col2">
+							<rank>200</rank>
+							<items>
+								<item id="fieldset:Deployment:secret">
+									<rank>210</rank>
+									<items>
+										<item id="secret">
+											<rank>220</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+						<item id="col:col3">
+							<rank>300</rank>
+							<items>
+								<item id="fieldset:Deployment:other">
+									<rank>310</rank>
+									<items>
+										<item id="change_log">
+											<rank>320</rank>
+										</item>
+										<item id="command">
+											<rank>360</rank>
+										</item>
+										<item id="args">
+											<rank>370</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="image">
+							<rank>40</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="org_id">
+							<rank>70</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+						<item id="description">
+							<rank>90</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="org_id">
+							<rank>70</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+
+		<class id="SideCarVer" _delta="define">
+			<parent>K8sAppStoreVer</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>sidecarver</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="k8sappstore_name"/>
+						<attribute id="version"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon>images/sidecar.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="k8sappstore_id"/>
+						<attribute id="version"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="controller_list" xsi:type="AttributeLinkedSetIndirect">
+					<linked_class>lnkSideCarVerToController</linked_class>
+					<ext_key_to_me>sidecarver_id</ext_key_to_me>
+					<count_min>0</count_min>
+					<count_max>0</count_max>
+					<ext_key_to_remote>controller_id</ext_key_to_remote>
+					<duplicates/>
+				</field>
+			</fields>
+			<methods>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="k8sappstore_id">
+							<rank>10</rank>
+						</item>
+						<item id="version">
+							<rank>20</rank>
+						</item>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="image">
+							<rank>40</rank>
+						</item>
+						<item id="image_tag">
+							<rank>42</rank>
+						</item>
+						<item id="repo">
+							<rank>45</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+						<item id="description">
+							<rank>900</rank>
+						</item>
+						<item id="probe_list">
+							<rank>135</rank>
+						</item>
+						<item id="controller_list">
+							<rank>140</rank>
+						</item>
+						<item id="col:col2">
+							<rank>200</rank>
+							<items>
+								<item id="fieldset:Deployment:secret">
+									<rank>210</rank>
+									<items>
+										<item id="secret">
+											<rank>220</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+						<item id="col:col3">
+							<rank>300</rank>
+							<items>
+								<item id="fieldset:Deployment:other">
+									<rank>310</rank>
+									<items>
+										<item id="change_log">
+											<rank>320</rank>
+										</item>
+										<item id="command">
+											<rank>360</rank>
+										</item>
+										<item id="args">
+											<rank>370</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="k8sappstore_id">
+							<rank>10</rank>
+						</item>
+						<item id="version">
+							<rank>20</rank>
+						</item>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="image">
+							<rank>40</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="org_id">
+							<rank>70</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+						<item id="description">
+							<rank>90</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="k8sappstore_id">
+							<rank>10</rank>
+						</item>
+						<item id="version">
+							<rank>20</rank>
+						</item>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="org_id">
+							<rank>70</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
+
+		<class id="AppTemplateVer" _delta="define">
+			<parent>K8sAppStoreVer</parent>
+			<properties>
+				<category>bizmodel,searchable</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>apptemplatever</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field>finalclass</db_final_class_field>
+				<naming>
+					<attributes>
+						<attribute id="k8sappstore_name"/>
+						<attribute id="version"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon>images/apptemplate.png</icon>
+				<reconciliation>
+					<attributes>
+						<attribute id="k8sappstore_id"/>
+						<attribute id="version"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+			</fields>
+			<methods>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="k8sappstore_id">
+							<rank>10</rank>
+						</item>
+						<item id="version">
+							<rank>20</rank>
+						</item>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="image">
+							<rank>40</rank>
+						</item>
+						<item id="image_tag">
+							<rank>42</rank>
+						</item>
+						<item id="repo">
+							<rank>45</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+						<item id="description">
+							<rank>900</rank>
+						</item>
+						<item id="probe_list">
+							<rank>135</rank>
+						</item>
+						<item id="col:col2">
+							<rank>200</rank>
+							<items>
+								<item id="fieldset:Deployment:secret">
+									<rank>210</rank>
+									<items>
+										<item id="secret">
+											<rank>220</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+						<item id="col:col3">
+							<rank>300</rank>
+							<items>
+								<item id="fieldset:Deployment:other">
+									<rank>310</rank>
+									<items>
+										<item id="change_log">
+											<rank>320</rank>
+										</item>
+										<item id="command">
+											<rank>360</rank>
+										</item>
+										<item id="args">
+											<rank>370</rank>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="k8sappstore_id">
+							<rank>10</rank>
+						</item>
+						<item id="version">
+							<rank>20</rank>
+						</item>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="image">
+							<rank>40</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="org_id">
+							<rank>70</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+						<item id="description">
+							<rank>90</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="k8sappstore_id">
+							<rank>10</rank>
+						</item>
+						<item id="version">
+							<rank>20</rank>
+						</item>
+						<item id="status">
+							<rank>30</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>52</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>54</rank>
+						</item>
+						<item id="mem_request">
+							<rank>56</rank>
+						</item>
+						<item id="containerport">
+							<rank>60</rank>
+						</item>
+						<item id="org_id">
+							<rank>70</rank>
+						</item>
+						<item id="move2production">
+							<rank>80</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
 
 		<!-- 以下是类型配置及lnk类-->
 		<class id="K8sNamespace" _delta="define">
@@ -2621,22 +3707,6 @@
 					<sql>domain</sql>
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
-				</field>
-				<field id="cname" xsi:type="AttributeString">
-					<sql>cname</sql>
-					<default_value/>
-					<is_null_allowed>true</is_null_allowed>
-				</field>
-				<field id="lbtype" xsi:type="AttributeEnum">
-					<values>
-						<value id="develop">develop</value>
-						<value id="test">test</value>
-						<value id="production">production</value>
-					</values>
-					<sql>lbtype</sql>
-					<default_value>production</default_value>
-					<is_null_allowed>false</is_null_allowed>
-					<display_style>list</display_style>
 				</field>
 				<field id="note" xsi:type="AttributeString">
 					<sql>note</sql>
@@ -2671,12 +3741,6 @@
 						<item id="domain">
 							<rank>12</rank>
 						</item>
-						<item id="cname">
-							<rank>13</rank>
-						</item>
-						<item id="lbtype">
-							<rank>14</rank>
-						</item>
 						<item id="note">
 							<rank>15</rank>
 						</item>
@@ -2696,12 +3760,6 @@
 						<item id="domain">
 							<rank>12</rank>
 						</item>
-						<item id="cname">
-							<rank>13</rank>
-						</item>
-						<item id="lbtype">
-							<rank>14</rank>
-						</item>
 						<item id="note">
 							<rank>15</rank>
 						</item>
@@ -2714,12 +3772,6 @@
 						</item>
 						<item id="domain">
 							<rank>12</rank>
-						</item>
-						<item id="cname">
-							<rank>13</rank>
-						</item>
-						<item id="lbtype">
-							<rank>14</rank>
 						</item>
 						<item id="note">
 							<rank>15</rank>
@@ -4825,6 +5877,263 @@ httpHeaders:
 				</list>
 			</presentation>
 		</class>
+		<class id="lnkSideCarVerToController" _delta="define">
+			<parent>cmdbAbstractObject</parent>
+			<properties>
+				<is_link>1</is_link>
+				<category>bizmodel</category>
+				<abstract>false</abstract>
+				<key_type>autoincrement</key_type>
+				<db_table>lnksidecarvertocontroller</db_table>
+				<db_key_field>id</db_key_field>
+				<db_final_class_field/>
+				<naming>
+					<attributes>
+						<attribute id="sidecarver_id"/>
+						<attribute id="controller_id"/>
+					</attributes>
+				</naming>
+				<display_template/>
+				<icon/>
+				<reconciliation>
+					<attributes>
+						<attribute id="sidecarver_id"/>
+						<attribute id="controller_id"/>
+					</attributes>
+				</reconciliation>
+			</properties>
+			<fields>
+				<field id="sidecarver_id" xsi:type="AttributeExternalKey">
+					<sql>sidecarver_id</sql>
+					<target_class>SideCarVer</target_class>
+					<filter>SELECT SideCarVer AS S WHERE S.status!='stock'</filter>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_MANUAL</on_target_delete>
+				</field>
+				<field id="sidecarver_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>sidecarver_id</extkey_attcode>
+					<target_attcode>friendlyname</target_attcode>
+				</field>
+				<field id="sidecarver_version" xsi:type="AttributeExternalField">
+					<extkey_attcode>sidecarver_id</extkey_attcode>
+					<target_attcode>version</target_attcode>
+				</field>
+				<field id="sidecarver_status" xsi:type="AttributeExternalField">
+					<extkey_attcode>sidecarver_id</extkey_attcode>
+					<target_attcode>status</target_attcode>
+				</field>
+				<field id="cpu_request" xsi:type="AttributeDecimal">
+					<sql>cpu_request</sql>
+					<default_value>0.1</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<digits>4</digits>
+					<decimals>2</decimals>
+				</field>
+				<field id="cpu_limit" xsi:type="AttributeDecimal">
+					<sql>cpu_limit</sql>
+					<default_value>0.1</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<digits>4</digits>
+					<decimals>2</decimals>
+				</field>
+				<field id="mem_request" xsi:type="AttributeInteger">
+					<sql>mem_request</sql>
+					<default_value>128</default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
+				<field id="controller_id" xsi:type="AttributeExternalKey">
+					<sql>controller_id</sql>
+					<target_class>Controller</target_class>
+					<is_null_allowed>false</is_null_allowed>
+					<on_target_delete>DEL_AUTO</on_target_delete>
+				</field>
+				<field id="controller_name" xsi:type="AttributeExternalField">
+					<extkey_attcode>controller_id</extkey_attcode>
+					<target_attcode>friendlyname</target_attcode>
+				</field>
+				<field id="controller_ns" xsi:type="AttributeExternalField">
+					<extkey_attcode>controller_id</extkey_attcode>
+					<target_attcode>k8snamespace_id</target_attcode>
+				</field>
+			</fields>
+			<methods>
+				<method id="ReloadAndDisplayCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+					function ReloadAndDisplayCustom($oPage, $oObj, $sMessageId = '', $sMessage = '', $sSeverity = null)
+					{
+						$oAppContext = new ApplicationContext();
+						if ($sMessageId != '')
+						{
+							cmdbAbstractObject::SetSessionMessage(get_class($oObj), $oObj->GetKey(), $sMessageId, $sMessage, $sSeverity, 0, true /* must not exist */);
+						}
+
+						$oId = $oObj->getKey();
+						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
+					}
+					]]>
+					</code>
+				</method>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[  public function DoCheckToWrite(){
+			$aChanges = $this->ListChanges();
+			if($aChanges)
+			{
+				$friendlyname = $this->Get('sidecarver_id') . " " . $this->Get('controller_id');
+				$allowmodify = array("cpu_request", "cpu_limit", "mem_request");
+				$allow = true;
+				foreach($aChanges as $key => $val) {
+					if(!in_array($key, $allowmodify)) {
+						$allow = false;
+					}
+				}
+
+				// 限制production的namespace只能链接production的sidecar，已废弃的不能链接任何controller
+				if($this->Get('sidecarver_status') == "stock") {
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkSideCarVerToController/Error:StockSideCarCanNotBeLinked", $friendlyname);
+				}
+				
+				$ns = MetaModel::GetObject("K8sNamespace", $this->Get("controller_ns"));
+				$lbtype = $ns->Get("lbtype");
+				if($lbtype == "production" && $this->Get('sidecarver_status') != 'production') {
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkSideCarVerToController/Error:ProductionNsMustUseProductionSideCar", $friendlyname);
+				}
+				
+				if(!$this->IsNew())
+				{
+					if(!$allow) {
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkSideCarVerToController/Error:ModifyNotAllowed", $friendlyname);
+					}
+				}else
+				{
+					$oSearch = DBObjectSearch::FromOQL_AllData("SELECT lnkSideCarVerToController WHERE friendlyname=:friendlyname");
+					$oSet = new DBObjectSet($oSearch, array(), array("friendlyname" => $friendlyname));
+
+					if ($oSet->Count() > 0)
+					{
+						$this->m_aCheckIssues[] = Dict::Format("Class:lnkSideCarVerToController/Error:ThisLnkAlreadyExists", $friendlyname);
+					}
+				}
+			}
+		}]]>
+					</code>
+				</method>
+				<method id="CheckToDelete" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[	   
+  	public function CheckToDelete(&$oDeletionPlan)
+  	{
+		$myContactId = UserRights::GetContactId();
+		$deploy = MetaModel::GetObject("Controller", $this->Get('controller_id'));
+		$contacts = $deploy->Get('person_list');
+		$flag = false;
+		foreach($contacts as $v) {
+			if($v->Get('person_id') == $myContactId) {
+				$flag = true;
+				break;
+			}
+		}
+  		if (!$flag && !UserRights::IsAdministrator())
+		{
+			// 普通用户不允许删除非自己名下的lnkSideCarVerToDeployment
+			$oDeletionPlan->AddToDelete($this, null);
+			$oDeletionPlan->SetDeletionIssues($this, array('只能删除自己名下的关联'), true);
+			$oDeletionPlan->ComputeResults();
+			return false;
+		}
+		return parent::CheckToDelete($oDeletionPlan);
+  	} 
+					]]></code>
+				</method>
+			</methods>
+			<presentation>
+				<details>
+					<items>
+						<item id="controller_id">
+							<rank>10</rank>
+						</item>
+						<item id="sidecarver_id">
+							<rank>20</rank>
+						</item>
+						<item id="sidecarver_version">
+							<rank>30</rank>
+						</item>
+						<item id="sidecarver_status">
+							<rank>32</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>35</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>40</rank>
+						</item>
+						<item id="mem_request">
+							<rank>45</rank>
+						</item>
+					</items>
+				</details>
+				<search>
+					<items>
+						<item id="controller_id">
+							<rank>10</rank>
+						</item>
+						<item id="sidecarver_id">
+							<rank>20</rank>
+						</item>
+						<item id="sidecarver_name">
+							<rank>25</rank>
+						</item>
+						<item id="sidecarver_version">
+							<rank>30</rank>
+						</item>
+						<item id="sidecarver_status">
+							<rank>32</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>35</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>40</rank>
+						</item>
+						<item id="mem_request">
+							<rank>45</rank>
+						</item>
+					</items>
+				</search>
+				<list>
+					<items>
+						<item id="controller_id">
+							<rank>10</rank>
+						</item>
+						<item id="sidecarver_id">
+							<rank>1</rank>
+						</item>
+						<item id="sidecarver_version">
+							<rank>30</rank>
+						</item>
+						<item id="sidecarver_status">
+							<rank>32</rank>
+						</item>
+						<item id="cpu_request">
+							<rank>35</rank>
+						</item>
+						<item id="cpu_limit">
+							<rank>40</rank>
+						</item>
+						<item id="mem_request">
+							<rank>45</rank>
+						</item>
+					</items>
+				</list>
+			</presentation>
+		</class>
 	</classes>
 	<menus>
 		<menu id="Kubernetes" xsi:type="MenuGroup" _delta="define">
@@ -4858,6 +6167,24 @@ httpHeaders:
 			<rank>30</rank>
 			<parent>Configuration</parent>
 			<oql>SELECT Secret AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
+			<do_search>1</do_search>
+		</menu>
+		<menu id="K8sAppStore" xsi:type="OQLMenuNode" _delta="define">
+			<rank>35</rank>
+			<parent>Kubernetes</parent>
+			<oql>SELECT K8sAppStore AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
+			<do_search>1</do_search>
+		</menu>
+		<menu id="SideCar" xsi:type="OQLMenuNode" _delta="define">
+			<rank>35</rank>
+			<parent>K8sAppStore</parent>
+			<oql>SELECT SideCar AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
+			<do_search>1</do_search>
+		</menu>
+		<menu id="AppTemplate" xsi:type="OQLMenuNode" _delta="define">
+			<rank>35</rank>
+			<parent>K8sAppStore</parent>
+			<oql>SELECT AppTemplate AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Typology" xsi:type="DashboardMenuNode">
@@ -4912,6 +6239,14 @@ httpHeaders:
 					<class id="Secret"/>
 				</classes>
 			</group>
+			<group id="AppStore" _delta="define">
+				<classes>
+					<class id="SideCar"/>
+					<class id="AppTemplate"/>
+					<class id="SideCarVer"/>
+					<class id="AppTemplateVer"/>
+				</classes>
+			</group>
 			<!--这里好像没有必要，只要有权限编辑To后面的类，就有权限编辑lnk类-->
 			<group id="Kubelnk" _delta="define">
 				<classes>
@@ -4946,6 +6281,12 @@ httpHeaders:
 							<action id="stimulus:ev_online">allow</action>
 							<action id="stimulus:ev_offline">allow</action>
 							<action id="stimulus:ev_update">allow</action>
+							<action id="action:delete">allow</action>
+						</actions>
+					</group>
+					<group id="AppStore" _delta="define">
+						<actions>
+							<action id="action:write">allow</action>
 							<action id="action:delete">allow</action>
 						</actions>
 					</group>

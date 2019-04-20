@@ -57,6 +57,8 @@ SetupWebPage::AddModule(
 			'ace_editor_theme' => 'xcode',
 			'ace_editor_minHeight' => '300px',
 			'highlight_theme' => 'vs2015',
+			'sidecar_doc' => 'http://opwiki.cn/sidecar/',
+			'apptemplate_doc' => 'http://opwiki.cn/apptemplate/',
 		),
 	)
 );

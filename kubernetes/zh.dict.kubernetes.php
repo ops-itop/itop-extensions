@@ -10,6 +10,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Kubernetes/Attribute:applicationsolution_id' => 'APP',
 	'Class:Kubernetes/Attribute:k8snamespace_id' => 'LB集群',
 	'Class:Kubernetes/Attribute:description' => '描述',
+	'Class:Kubernetes/Attribute:person_list' => '联系人',
+	'Class:Kubernetes/Attribute:person_list+' => '链接到此对象的所有联系人',
 	'Class:Kubernetes/Attribute:org_id' => '组织',
 	'Class:Kubernetes/Attribute:move2production' => '上线日期',
 	'Class:Kubernetes/Attribute:status' => '状态',
@@ -47,6 +49,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Controller/Attribute:secret' => '配置项',
 	'Class:Controller/Attribute:rolling_strategy' => '更新策略',
 	'Class:Controller/Attribute:hostaliases' => '自定义hosts',
+	'Class:Controller/Attribute:sidecar_list' => 'SideCar',
+	'Class:Controller/Attribute:sidecar_list+' => '链接到此服务的所有SideCar',
 	'Class:Controller/Attribute:person_list' => '联系人',
 	'Class:Controller/Attribute:person_list+' => '链接到此服务的所有联系人',
 	'Class:Controller/Attribute:affinity_list' => '约束条件',
@@ -329,4 +333,46 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sProbeToController/Error:InvalidValuePort' => '端口值非法: %1$s',
 	'Class:lnkK8sProbeToController/Error:httpGetMustBeYaml' => 'httpGet必须为YAML格式: %1$s',
 	'Class:lnkK8sProbeToController/Error:ThisLnkAlreadyExists' => '此链接已存在: %1$s',
+));
+
+//K8sAppStore
+Dict::Add('ZH CN', 'Chinese', '简体中文', array(
+	'Class:K8sAppStore' => '应用商店',
+	'Class:K8sAppStore/Attribute:name' => '名称',
+	'Class:K8sAppStore/Attribute:doc' => '文档',
+	'Class:K8sAppStore/Attribute:person_list' => '维护者',
+	'Class:K8sAppStore/Attribute:person_list+' => '所有维护者',
+	
+	'Class:SideCar' => 'SideCar',
+	'Class:SideCarVer' => 'SideCar版本',
+	'Class:SideCarVer/Attribute:controller_list' => 'Kubernetes服务',
+	'Class:SideCarVer/Attribute:controller_list+' => '使用此SideCar的Kubernetes服务',
+	'Class:AppTemplate' => '服务模板',
+	'Class:AppTemplateVer' => '服务模板版本',
+	
+	'Menu:K8sAppStore' => '应用商店',
+	'Menu:SideCar' => 'SideCar',	
+	'Menu:AppTemplate' => '服务模板',
+	'Menu:K8sAppStore+' => '应用商店',
+	'Menu:SideCar+' => 'SideCar',	
+	'Menu:AppTemplate+' => '服务模板',
+	
+	'Class:SideCar/Attribute:version_list' => '版本列表',
+	'Class:SideCar/Attribute:version_list+' => '所有版本',
+	'Class:AppTemplate/Attribute:version_list' => '版本列表',
+	'Class:AppTemplate/Attribute:version_list+' => '所有版本',
+	
+	'Class:K8sAppStoreVer/Attribute:status/Value:new' => '测试中',
+	'Class:K8sAppStoreVer/Attribute:status/Value:production' => '已发布',
+	'Class:K8sAppStoreVer/Attribute:status/Value:error' => '错误',
+	'Class:K8sAppStoreVer/Attribute:status/Value:stock' => '已废弃',
+	'Class:K8sAppStoreVer/Attribute:k8sappstore_id' => '应用商店对象',
+	'Class:K8sAppStoreVer/Attribute:version' => '版本号',
+	
+	'Class:lnkSideCarVerToController/Attribute:cpu_request' => 'CPU请求',
+	'Class:lnkSideCarVerToController/Attribute:cpu_limit' => 'CPU限制',
+	'Class:lnkSideCarVerToController/Attribute:mem_request' => '内存请求',
+	'Class:lnkSideCarVerToController/Attribute:sidecarver_id' => 'SideCar版本',
+	'Class:lnkSideCarVerToController/Error:StockSideCarCanNotBeLinked' => '不能使用已废弃的SideCar %1$s',
+	'Class:lnkSideCarVerToController/Error:ProductionNsMustUseProductionSideCar' => '线上集群必须使用已发布的SideCar %1$s',
 ));
