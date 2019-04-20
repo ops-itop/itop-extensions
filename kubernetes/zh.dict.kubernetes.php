@@ -363,4 +363,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:K8sAppStoreVer/Attribute:status/Value:stock' => '已废弃',
 	'Class:K8sAppStoreVer/Attribute:k8sappstore_id' => '应用商店对象',
 	'Class:K8sAppStoreVer/Attribute:version' => '版本号',
+	
+	'Class:lnkSideCarVerToController/Error:StockSideCarCanNotBeLinked' => '不能使用已废弃的SideCar %1$s',
+	'Class:lnkSideCarVerToController/Error:ProductionNsMustUseProductionSideCar' => '线上集群必须使用已发布的SideCar %1$s',
 ));

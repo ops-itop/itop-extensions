@@ -676,6 +676,17 @@
 								$this->m_aCheckIssues[] = $issue;
 							}
 						}
+
+						// 检查sidecar_list，production的namespace不允许链接非production的sidecar
+						foreach($this->Get('sidecar_list') as $sidecar) {
+							$sidecar->DoCheckToWrite();
+							$sidecarArray = get_object_vars($sidecar);
+							if(!$sidecarArray['m_aCheckIssues']) continue;
+							foreach($sidecarArray['m_aCheckIssues'] as $issue) {
+								$this->m_aCheckIssues[] = $issue;
+							}
+						}
+
 						parent::DoCheckToWrite();
 					}
 					]]>
@@ -5890,6 +5901,7 @@ httpHeaders:
 				<field id="sidecarver_id" xsi:type="AttributeExternalKey">
 					<sql>sidecarver_id</sql>
 					<target_class>SideCarVer</target_class>
+					<filter>SELECT SideCarVer AS S WHERE S.status!='stock'</filter>
 					<is_null_allowed>false</is_null_allowed>
 					<on_target_delete>DEL_MANUAL</on_target_delete>
 				</field>
@@ -5900,6 +5912,10 @@ httpHeaders:
 				<field id="sidecarver_version" xsi:type="AttributeExternalField">
 					<extkey_attcode>sidecarver_id</extkey_attcode>
 					<target_attcode>version</target_attcode>
+				</field>
+				<field id="sidecarver_status" xsi:type="AttributeExternalField">
+					<extkey_attcode>sidecarver_id</extkey_attcode>
+					<target_attcode>status</target_attcode>
 				</field>
 				<field id="cpu_request" xsi:type="AttributeDecimal">
 					<sql>cpu_request</sql>
@@ -5929,6 +5945,10 @@ httpHeaders:
 				<field id="controller_name" xsi:type="AttributeExternalField">
 					<extkey_attcode>controller_id</extkey_attcode>
 					<target_attcode>friendlyname</target_attcode>
+				</field>
+				<field id="controller_ns" xsi:type="AttributeExternalField">
+					<extkey_attcode>controller_id</extkey_attcode>
+					<target_attcode>k8snamespace_id</target_attcode>
 				</field>
 			</fields>
 			<methods>
@@ -5968,6 +5988,17 @@ httpHeaders:
 					}
 				}
 
+				// 限制production的namespace只能链接production的sidecar，已废弃的不能链接任何controller
+				if($this->Get('sidecarver_status') == "stock") {
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkSideCarVerToController/Error:StockSideCarCanNotBeLinked", $friendlyname);
+				}
+				
+				$ns = MetaModel::GetObject("K8sNamespace", $this->Get("controller_ns"));
+				$lbtype = $ns->Get("lbtype");
+				if($lbtype == "production" && $this->Get('sidecarver_status') != 'production') {
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkSideCarVerToController/Error:ProductionNsMustUseProductionSideCar", $friendlyname);
+				}
+				
 				if(!$this->IsNew())
 				{
 					if(!$allow) {
@@ -6032,6 +6063,9 @@ httpHeaders:
 						<item id="sidecarver_version">
 							<rank>30</rank>
 						</item>
+						<item id="sidecarver_status">
+							<rank>32</rank>
+						</item>
 						<item id="cpu_request">
 							<rank>35</rank>
 						</item>
@@ -6057,6 +6091,9 @@ httpHeaders:
 						<item id="sidecarver_version">
 							<rank>30</rank>
 						</item>
+						<item id="sidecarver_status">
+							<rank>32</rank>
+						</item>
 						<item id="cpu_request">
 							<rank>35</rank>
 						</item>
@@ -6081,6 +6118,9 @@ httpHeaders:
 						</item>
 						<item id="sidecarver_version">
 							<rank>30</rank>
+						</item>
+						<item id="sidecarver_status">
+							<rank>32</rank>
 						</item>
 						<item id="cpu_request">
 							<rank>35</rank>
