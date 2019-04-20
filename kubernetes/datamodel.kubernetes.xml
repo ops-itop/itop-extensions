@@ -3354,6 +3354,28 @@
 				</field>
 			</fields>
 			<methods>
+				<method id="DoCheckToWrite" _delta="define">
+					<static>false</static>
+					<access>protected</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[  public function DoCheckToWrite(){
+					$status = $this->Get('status');
+					$controller_list = $this->Get('controller_list');
+					if($status == 'stock' && $controller_list->Fetch()) {
+						$this->m_aCheckIssues[] = Dict::Format("Class:SideCarVer/Error:ThisVerStillUsed", $this->Get('friendlyname'));
+					}
+					if($status !== 'production') {
+						while($controller = $controller_list->Fetch()) {
+							$ns = MetaModel::GetObject("K8sNamespace", $controller->Get('controller_ns'));
+							if($ns->Get('lbtype') == 'production') {
+								$this->m_aCheckIssues[] = Dict::Format("Class:SideCarVer/Error:ThisVerStillUsedByProduction", $this->Get('friendlyname'));
+							}
+						}
+					}
+				parent::DoCheckToWrite();
+		}]]>
+					</code>
+				</method>
 			</methods>
 			<presentation>
 				<details>
