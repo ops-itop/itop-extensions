@@ -6057,9 +6057,6 @@ httpHeaders:
 						<item id="sidecarver_id">
 							<rank>20</rank>
 						</item>
-						<item id="sidecarver_name">
-							<rank>25</rank>
-						</item>
 						<item id="sidecarver_version">
 							<rank>30</rank>
 						</item>
@@ -6112,9 +6109,6 @@ httpHeaders:
 						</item>
 						<item id="sidecarver_id">
 							<rank>20</rank>
-						</item>
-						<item id="sidecarver_name">
-							<rank>25</rank>
 						</item>
 						<item id="sidecarver_version">
 							<rank>30</rank>
