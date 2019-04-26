@@ -687,11 +687,9 @@
 
 						// 检查sidecar_list，production的namespace不允许链接非production的sidecar
 						foreach($this->Get('sidecar_list') as $sidecar) {
-							$sidecar->DoCheckToWrite();
-							$sidecarArray = get_object_vars($sidecar);
-							if(!$sidecarArray['m_aCheckIssues']) continue;
-							foreach($sidecarArray['m_aCheckIssues'] as $issue) {
-								$this->m_aCheckIssues[] = $issue;
+							$check = $sidecar->checkStatus($this->Get('k8snamespace_id'));
+							if($check) {
+								$this->m_aCheckIssues[] = $check;
 							}
 						}
 
@@ -6032,6 +6030,28 @@ httpHeaders:
 					]]>
 					</code>
 				</method>
+				<method id="checkStatus" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+						public function checkStatus($ns) {
+				// 限制production的namespace只能链接production的sidecar，已废弃的不能链接任何controller
+				$friendlyname = $this->Get('sidecarver_name');
+				if($this->Get('sidecarver_status') == "stock") {
+					return Dict::Format("Class:lnkSideCarVerToController/Error:StockSideCarCanNotBeLinked", $friendlyname);
+				}
+
+				$ns = MetaModel::GetObject("K8sNamespace", $ns);
+				$lbtype = $ns->Get("lbtype");
+				if($lbtype == "production" && $this->Get('sidecarver_status') != 'production') {
+					return  Dict::Format("Class:lnkSideCarVerToController/Error:ProductionNsMustUseProductionSideCar", $friendlyname);
+				}
+				return false;
+						}
+					]]>
+					</code>
+				</method>
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
 					<access>protected</access>
@@ -6049,15 +6069,9 @@ httpHeaders:
 					}
 				}
 
-				// 限制production的namespace只能链接production的sidecar，已废弃的不能链接任何controller
-				if($this->Get('sidecarver_status') == "stock") {
-					$this->m_aCheckIssues[] = Dict::Format("Class:lnkSideCarVerToController/Error:StockSideCarCanNotBeLinked", $friendlyname);
-				}
-				
-				$ns = MetaModel::GetObject("K8sNamespace", $this->Get("controller_ns"));
-				$lbtype = $ns->Get("lbtype");
-				if($lbtype == "production" && $this->Get('sidecarver_status') != 'production') {
-					$this->m_aCheckIssues[] = Dict::Format("Class:lnkSideCarVerToController/Error:ProductionNsMustUseProductionSideCar", $friendlyname);
+				$check = $this->checkStatus($this->Get('controller_ns'));
+				if($check) {
+					$this->m_aCheckIssues[] = $check;
 				}
 				
 				if(!$this->IsNew())
