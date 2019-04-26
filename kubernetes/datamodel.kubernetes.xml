@@ -2120,6 +2120,7 @@
 					<target_class>Controller</target_class>
 					<is_null_allowed>false</is_null_allowed>
 					<on_target_delete>DEL_AUTO</on_target_delete>
+					<filter>SELECT Controller AS c WHERE c.finalclass NOT IN ('SideCarVer', 'AppTemplateVer')</filter>
 					<allow_target_creation>false</allow_target_creation>
 				</field>
 				<field id="controller_name" xsi:type="AttributeExternalField">
@@ -4630,6 +4631,7 @@
 					<sql>controller_id</sql>
 					<target_class>Controller</target_class>
 					<is_null_allowed>false</is_null_allowed>
+					<filter>SELECT Controller AS c WHERE c.finalclass NOT IN ('SideCarVer', 'AppTemplateVer')</filter>
 					<on_target_delete>DEL_AUTO</on_target_delete>
 				</field>
 				<field id="controller_name" xsi:type="AttributeExternalField">
@@ -4884,6 +4886,7 @@
 					<sql>controller_id</sql>
 					<target_class>Controller</target_class>
 					<is_null_allowed>false</is_null_allowed>
+					<filter>SELECT Controller AS c WHERE c.finalclass NOT IN ('SideCarVer', 'AppTemplateVer')</filter>
 					<on_target_delete>DEL_AUTO</on_target_delete>
 				</field>
 				<field id="controller_name" xsi:type="AttributeExternalField">
@@ -5633,6 +5636,7 @@
 					<sql>controller_id</sql>
 					<target_class>Controller</target_class>
 					<is_null_allowed>false</is_null_allowed>
+					<filter>SELECT Controller AS c WHERE c.finalclass NOT IN ('SideCarVer', 'AppTemplateVer')</filter>
 					<on_target_delete>DEL_AUTO</on_target_delete>
 				</field>
 				<field id="controller_name" xsi:type="AttributeExternalField">
@@ -5999,6 +6003,7 @@ httpHeaders:
 					<sql>controller_id</sql>
 					<target_class>Controller</target_class>
 					<is_null_allowed>false</is_null_allowed>
+					<filter>SELECT Controller AS c WHERE c.finalclass NOT IN ('SideCarVer', 'AppTemplateVer')</filter>
 					<on_target_delete>DEL_AUTO</on_target_delete>
 				</field>
 				<field id="controller_name" xsi:type="AttributeExternalField">
