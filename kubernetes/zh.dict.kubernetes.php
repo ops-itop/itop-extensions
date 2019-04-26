@@ -342,6 +342,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:K8sAppStore/Attribute:doc' => '文档',
 	'Class:K8sAppStore/Attribute:person_list' => '维护者',
 	'Class:K8sAppStore/Attribute:person_list+' => '所有维护者',
+	'Class:K8sAppStore/Attribute:k8sappstore_id_finalclass_recall' => '对象类型',
 	
 	'Class:SideCar' => 'SideCar',
 	'Class:SideCarVer' => 'SideCar版本',
@@ -351,7 +352,11 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:AppTemplateVer' => '服务模板版本',
 	
 	'Menu:K8sAppStore' => '应用商店',
-	'Menu:SideCar' => 'SideCar',	
+	'Menu:SideCar' => 'SideCar',
+	'Menu:SideCarVer' => 'SideCar版本',
+	'Menu:SideCarVer+' => 'SideCar版本',
+	'Menu:AppTemplateVer' => '服务模板版本',
+	'Menu:AppTemplateVer+' => '服务模板版本',
 	'Menu:AppTemplate' => '服务模板',
 	'Menu:K8sAppStore+' => '应用商店',
 	'Menu:SideCar+' => 'SideCar',	

@@ -6237,10 +6237,22 @@ httpHeaders:
 			<oql>SELECT SideCar AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
+		<menu id="SideCarVer" xsi:type="OQLMenuNode" _delta="define">
+			<rank>35</rank>
+			<parent>K8sAppStore</parent>
+			<oql>SELECT SideCarVer AS sv JOIN K8sAppStore AS s ON sv.k8sappstore_id=s.id JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
+			<do_search>1</do_search>
+		</menu>
 		<menu id="AppTemplate" xsi:type="OQLMenuNode" _delta="define">
 			<rank>35</rank>
 			<parent>K8sAppStore</parent>
 			<oql>SELECT AppTemplate AS s JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
+			<do_search>1</do_search>
+		</menu>
+		<menu id="AppTemplateVer" xsi:type="OQLMenuNode" _delta="define">
+			<rank>35</rank>
+			<parent>K8sAppStore</parent>
+			<oql>SELECT AppTemplateVer AS sv JOIN K8sAppStore AS s ON sv.k8sappstore_id=s.id JOIN lnkPersonToKubernetes AS l ON l.kubernetes_id=s.id WHERE l.person_id = :current_contact_id</oql>
 			<do_search>1</do_search>
 		</menu>
 		<menu id="Typology" xsi:type="DashboardMenuNode">
