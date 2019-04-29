@@ -374,6 +374,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:K8sAppStoreVer/Attribute:k8sappstore_id' => '应用商店对象',
 	'Class:K8sAppStoreVer/Attribute:version' => '版本号',
 	
+	'Class:SideCarVer/Attribute:k8sappstore_id_finalclass_recall' => '类型',
+	
 	'Class:lnkSideCarVerToController/Attribute:cpu_request' => 'CPU请求',
 	'Class:lnkSideCarVerToController/Attribute:cpu_limit' => 'CPU限制',
 	'Class:lnkSideCarVerToController/Attribute:mem_request' => '内存请求',
