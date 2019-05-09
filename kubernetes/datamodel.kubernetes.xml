@@ -2695,6 +2695,23 @@
 					</code>
 				</method>
 
+				<method id="GetInitialStateAttributeFlags" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-iDisplay</type>
+					<code><![CDATA[
+					public function GetInitialStateAttributeFlags($sAttCode, &$aReasons = array())
+					{
+						// doc 链接自动生成
+						if($sAttCode == "doc") {
+							return OPT_ATT_READONLY;
+						} else {
+							return parent::GetInitialStateAttributeFlags($sAttCode, $aReasons);
+						}
+					}
+					]]>
+					</code>
+				</method>
 				<method id="GetAttributeFlags" _delta="define">
 					<static>false</static>
 					<access>public</access>
