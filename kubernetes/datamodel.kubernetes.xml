@@ -3352,6 +3352,126 @@
 					<duplicates/>
 				</field>
 			</fields>
+			<lifecycle>
+				<highlight_scale>
+					<item id="warning">
+						<rank>1</rank>
+						<color>HIGHLIGHT_CLASS_CRITICAL</color>
+						<icon>images/error.png</icon>
+					</item>
+					<item id="new">
+						<rank>2</rank>
+						<color>HIGHLIGHT_CLASS_WARNING</color>
+						<icon>images/new.png</icon>
+					</item>
+				</highlight_scale>
+				<attribute>status</attribute>
+				<stimuli>
+					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
+					<stimulus id="ev_new" xsi:type="StimulusUserAction"/>
+				</stimuli>
+				<states>
+					<state id="new">
+						<highlight>
+							<code>new</code>
+						</highlight>
+						<flags>
+							<attribute id="org_id">
+								<read_only/>
+							</attribute>
+							<attribute id="controller_list">
+								<read_only/>
+							</attribute>
+							<attribute id="change_log">
+								<must_prompt/>
+							</attribute>
+							<attribute id="image_tag">
+								<must_prompt/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_online">
+								<target>production</target>
+								<actions/>
+							</transition>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="production">
+						<inherit_flags_from>new</inherit_flags_from>
+						<flags>
+							<attribute id="version">
+								<read_only/>
+							</attribute>
+							<attribute id="image">
+								<read_only/>
+							</attribute>
+							<attribute id="image_tag">
+								<read_only/>
+							</attribute>
+							<attribute id="cpu_request">
+								<read_only/>
+							</attribute>
+							<attribute id="cpu_limit">
+								<read_only/>
+							</attribute>
+							<attribute id="mem_request">
+								<read_only/>
+							</attribute>
+							<attribute id="containerport">
+								<read_only/>
+							</attribute>
+							<attribute id="move2production">
+								<read_only/>
+							</attribute>
+							<attribute id="secret">
+								<read_only/>
+							</attribute>
+							<attribute id="command">
+								<read_only/>
+							</attribute>
+							<attribute id="args">
+								<read_only/>
+							</attribute>
+							<attribute id="change_log">
+								<read_only/>
+							</attribute>
+							<attribute id="probe_list">
+								<read_only/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+							<transition id="ev_new">
+								<target>new</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="stock">
+						<inherit_flags_from>new</inherit_flags_from>
+						<flags>
+							<attribute id="change_log">
+								<must_prompt/>
+								<must_change/>
+							</attribute>
+						</flags>
+						<transitions>
+							<transition id="ev_new">
+								<target>new</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+				</states>
+			</lifecycle>
 			<methods>
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>

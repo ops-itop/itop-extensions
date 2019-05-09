@@ -348,6 +348,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:SideCarVer' => 'SideCar版本',
 	'Class:SideCarVer/Attribute:controller_list' => 'Kubernetes服务',
 	'Class:SideCarVer/Attribute:controller_list+' => '使用此SideCar的Kubernetes服务',
+	'Class:SideCarVer/Stimulus:ev_online' => '发布',
+	'Class:SideCarVer/Stimulus:ev_new' => '测试',
+	'Class:SideCarVer/Stimulus:ev_offline' => '废弃',
 	'Class:AppTemplate' => '服务模板',
 	'Class:AppTemplateVer' => '服务模板版本',
 	
