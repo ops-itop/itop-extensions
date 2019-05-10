@@ -6039,6 +6039,11 @@ httpHeaders:
 					<default_value>128</default_value>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
+				<field id="containerport" xsi:type="AttributeInteger">
+					<sql>containerport</sql>
+					<default_value></default_value>
+					<is_null_allowed>false</is_null_allowed>
+				</field>
 				<field id="controller_id" xsi:type="AttributeExternalKey">
 					<sql>controller_id</sql>
 					<target_class>Controller</target_class>
@@ -6192,6 +6197,9 @@ httpHeaders:
 						<item id="mem_request">
 							<rank>45</rank>
 						</item>
+						<item id="containerport">
+							<rank>50</rank>
+						</item>
 					</items>
 				</details>
 				<search>
@@ -6220,6 +6228,9 @@ httpHeaders:
 						<item id="mem_request">
 							<rank>45</rank>
 						</item>
+						<item id="containerport">
+							<rank>50</rank>
+						</item>
 					</items>
 				</search>
 				<list>
@@ -6244,6 +6255,9 @@ httpHeaders:
 						</item>
 						<item id="mem_request">
 							<rank>45</rank>
+						</item>
+						<item id="containerport">
+							<rank>50</rank>
 						</item>
 					</items>
 				</list>
