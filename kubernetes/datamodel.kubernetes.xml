@@ -6111,7 +6111,7 @@ httpHeaders:
 			if($aChanges)
 			{
 				$friendlyname = $this->Get('sidecarver_id') . " " . $this->Get('controller_id');
-				$allowmodify = array("cpu_request", "cpu_limit", "mem_request");
+				$allowmodify = array("cpu_request", "cpu_limit", "mem_request", "containerport");
 				$allow = true;
 				foreach($aChanges as $key => $val) {
 					if(!in_array($key, $allowmodify)) {
