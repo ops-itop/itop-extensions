@@ -385,6 +385,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:AppTemplateVer/Attribute:version' => '版本号',
 	
 	'Class:SideCarVer/Attribute:sidecar_id_finalclass_recall' => '类型',
+	'Class:SideCarVer/Error:ThisVerStillUsed' => '此SideCar版本仍在使用中 - %1$s',
+	'Class:SideCarVer/Error:ThisVerStillUsedByProduction' => '此SideCar版本正在被线上服务使用中 - %1$s',
 	
 	'Class:lnkSideCarVerToController/Attribute:cpu_request' => 'CPU请求',
 	'Class:lnkSideCarVerToController/Attribute:cpu_limit' => 'CPU限制',

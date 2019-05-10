@@ -3267,6 +3267,33 @@
 				</states>
 			</lifecycle>
 			<methods>
+				<method id="DisplayStimulusForm" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[
+						public function DisplayStimulusForm(WebPage $oPage, $sStimulus, $aPrefillFormParam = null)
+						{
+							parent::DisplayStimulusForm($oPage, $sStimulus, $aPrefillFormParam);
+							$sMesgUsed = Dict::Format("Class:SideCarVer/Error:ThisVerStillUsed", $this->Get('friendlyname'));
+							$sMesgUsedByProduct = Dict::Format("Class:SideCarVer/Error:ThisVerStillUsedByProduction", $this->Get('friendlyname'));
+							$controller_list = $this->Get('controller_list');
+							if($sStimulus == "ev_offline") {
+								if(count($controller_list)>0) {
+									$this->ReloadAndDisplayCustom($oPage, $this, 'sidecar-is-still-used', $sMesgUsed, 'error');
+								}
+							} elseif ($sStimulus == "ev_new") {
+								foreach($controller_list as $k=>$controller) {
+									$ns = MetaModel::GetObject("K8sNamespace", $controller->Get('controller_ns'));
+									if($ns->Get('lbtype') == 'production') {
+										$this->ReloadAndDisplayCustom($oPage, $this, 'sidecar-is-still-used-by-product', $sMesgUsedByProduct, 'error');
+									}
+								}
+							}
+						}
+					]]>
+					</code>
+				</method>
 				<method id="GetAttributeFlags" _delta="define">
 					<static>false</static>
 					<access>public</access>
@@ -3341,11 +3368,12 @@
 				</method>
 				<method id="DoCheckToWrite" _delta="define">
 					<static>false</static>
-					<access>protected</access>
+					<access>public</access>
 					<type>Overload-DBObject</type>
 					<code><![CDATA[	  
 					public function DoCheckToWrite()
 					{
+						parent::DoCheckToWrite();
 						$aChanges = $this->ListChanges();
 						if(array_key_exists("version", $aChanges) || array_key_exists("sidecar_id", $aChanges)) {
 							$oSearch = DBObjectSearch::FromOQL_AllData("SELECT SideCarVer WHERE version=:version AND sidecar_id=:sidecar_id");
@@ -3353,23 +3381,20 @@
 							if ($oSet->Count() > 0) {
 								$this->m_aCheckIssues[] = Dict::Format("Class:SideCarVer/Error:MustBeUnique", $this->Get('sidecar_name') . "/" . $this->Get('version'));
 							}
-						}
-						
-						$status = $this->Get('status');
-						$controller_list = $this->Get('controller_list');
-						if($status == 'stock' && $controller_list->Fetch()) {
-							$this->m_aCheckIssues[] = Dict::Format("Class:SideCarVer/Error:ThisVerStillUsed", $this->Get('friendlyname'));
-						}
-						if($status != 'production') {
-							while($controller = $controller_list->Fetch()) {
-								$ns = MetaModel::GetObject("K8sNamespace", $controller->Get('controller_ns'));
-								if($ns->Get('lbtype') == 'production') {
-									$this->m_aCheckIssues[] = Dict::Format("Class:SideCarVer/Error:ThisVerStillUsedByProduction", $this->Get('friendlyname'));
+						} elseif(array_key_exists("status", $aChanges)) {
+							$status = $this->Get('status');
+							$controller_list = $this->Get('controller_list');
+							if($status == 'stock' && count($controller_list)>0) {
+								$this->m_aCheckIssues[] = Dict::Format("Class:SideCarVer/Error:ThisVerStillUsed", $this->Get('friendlyname'));
+							} elseif($status == 'new') {
+								foreach($controller_list as $k=>$controller) {
+									$ns = MetaModel::GetObject("K8sNamespace", $controller->Get('controller_ns'));
+									if($ns->Get('lbtype') == 'production') {
+										$this->m_aCheckIssues[] = Dict::Format("Class:SideCarVer/Error:ThisVerStillUsedByProduction", $this->Get('friendlyname'));
+									}
 								}
 							}
 						}
-						
-						parent::DoCheckToWrite();
 					}
 					]]>
 					</code>
