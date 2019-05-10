@@ -3135,6 +3135,7 @@
 				</highlight_scale>
 				<attribute>status</attribute>
 				<stimuli>
+					<stimulus id="ev_error" xsi:type="StimulusInternal"/>
 					<stimulus id="ev_online" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_offline" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_new" xsi:type="StimulusUserAction"/>
@@ -3219,6 +3220,28 @@
 							</transition>
 							<transition id="ev_new">
 								<target>new</target>
+								<actions/>
+							</transition>
+						</transitions>
+					</state>
+					<state id="error">
+						<highlight>
+							<code>warning</code>
+						</highlight>
+						<inherit_flags_from>new</inherit_flags_from>
+						<flags>
+						</flags>
+						<transitions>
+							<transition id="ev_offline">
+								<target>stock</target>
+								<actions/>
+							</transition>
+							<transition id="ev_new">
+								<target>new</target>
+								<actions/>
+							</transition>
+							<transition id="ev_online">
+								<target>production</target>
 								<actions/>
 							</transition>
 						</transitions>
