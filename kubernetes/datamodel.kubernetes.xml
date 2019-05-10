@@ -3247,6 +3247,9 @@
 						</transitions>
 					</state>
 					<state id="stock">
+						<highlight>
+							<code>warning</code>
+						</highlight>
 						<inherit_flags_from>new</inherit_flags_from>
 						<flags>
 							<attribute id="change_log">
