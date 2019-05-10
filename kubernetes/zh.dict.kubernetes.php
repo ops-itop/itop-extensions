@@ -370,14 +370,21 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:AppTemplate/Attribute:version_list' => '版本列表',
 	'Class:AppTemplate/Attribute:version_list+' => '所有版本',
 	
-	'Class:K8sAppStoreVer/Attribute:status/Value:new' => '测试中',
-	'Class:K8sAppStoreVer/Attribute:status/Value:production' => '已发布',
-	'Class:K8sAppStoreVer/Attribute:status/Value:error' => '错误',
-	'Class:K8sAppStoreVer/Attribute:status/Value:stock' => '已废弃',
-	'Class:K8sAppStoreVer/Attribute:k8sappstore_id' => '应用商店对象',
-	'Class:K8sAppStoreVer/Attribute:version' => '版本号',
+	'Class:SideCarVer/Attribute:status/Value:new' => '测试中',
+	'Class:SideCarVer/Attribute:status/Value:production' => '已发布',
+	'Class:SideCarVer/Attribute:status/Value:error' => '错误',
+	'Class:SideCarVer/Attribute:status/Value:stock' => '已废弃',
+	'Class:SideCarVer/Attribute:sidecar_id' => '应用商店对象',
+	'Class:SideCarVer/Attribute:version' => '版本号',
 	
-	'Class:SideCarVer/Attribute:k8sappstore_id_finalclass_recall' => '类型',
+	'Class:AppTemplateVer/Attribute:status/Value:new' => '测试中',
+	'Class:AppTemplateVer/Attribute:status/Value:production' => '已发布',
+	'Class:AppTemplateVer/Attribute:status/Value:error' => '错误',
+	'Class:AppTemplateVer/Attribute:status/Value:stock' => '已废弃',
+	'Class:AppTemplateVer/Attribute:apptemplate_id' => '应用商店对象',
+	'Class:AppTemplateVer/Attribute:version' => '版本号',
+	
+	'Class:SideCarVer/Attribute:sidecar_id_finalclass_recall' => '类型',
 	
 	'Class:lnkSideCarVerToController/Attribute:cpu_request' => 'CPU请求',
 	'Class:lnkSideCarVerToController/Attribute:cpu_limit' => 'CPU限制',
