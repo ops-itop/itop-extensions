@@ -3109,6 +3109,7 @@
 				<field id="version" xsi:type="AttributeString">
 					<sql>version</sql>
 					<default_value/>
+					<validation_pattern>^[a-z0-9][a-z0-9.-]+[a-z0-9]$</validation_pattern>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
 				<field id="controller_list" xsi:type="AttributeLinkedSetIndirect">
