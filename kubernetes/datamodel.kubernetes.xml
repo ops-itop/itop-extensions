@@ -1281,6 +1281,10 @@
 							if($pattern && !preg_match($pattern, $value)) {
 								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToDeployment/Error:ValueNotValid", $pattern);
 							}
+							
+							if($val->Get('adminonly') == "yes" && !UserRights::IsAdministrator()) {
+								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToDeployment/Error:AdminOnly", $val->Get('k8singressannotations_name'));
+							}
 						}
 						parent::DoCheckToWrite();
 					}
@@ -1852,6 +1856,9 @@
 								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToIngress/Error:ServerSnippetCanOnlyConfigByRootLcation", $annotation);
 							}
 
+							if($val->Get('adminonly') == "yes" && !UserRights::IsAdministrator()) {
+								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToIngress/Error:AdminOnly", $annotation);
+							}
 						}
 
 						// 检查endpoints格式
