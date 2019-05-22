@@ -5144,6 +5144,7 @@
 			<fields>
 				<field id="k8singressannotations_id" xsi:type="AttributeExternalKey">
 					<sql>k8singressannotations_id</sql>
+					<filter>SELECT K8sIngressAnnotations WHERE adminonly="no"</filter>
 					<target_class>K8sIngressAnnotations</target_class>
 					<is_null_allowed>false</is_null_allowed>
 					<on_target_delete>DEL_MANUAL</on_target_delete>
@@ -5454,6 +5455,7 @@
 			<fields>
 				<field id="k8singressannotations_id" xsi:type="AttributeExternalKey">
 					<sql>k8singressannotations_id</sql>
+					<filter>SELECT K8sIngressAnnotations WHERE adminonly="no"</filter>
 					<target_class>K8sIngressAnnotations</target_class>
 					<is_null_allowed>false</is_null_allowed>
 					<on_target_delete>DEL_MANUAL</on_target_delete>
