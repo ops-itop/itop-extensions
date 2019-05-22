@@ -163,6 +163,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:K8sIngressAnnotations/Attribute:name' => '自定义Nginx配置',
 	'Class:K8sIngressAnnotations/Attribute:note' => '用途',
 	'Class:K8sIngressAnnotations/Attribute:enable' => '是否启用',
+	'Class:K8sIngressAnnotations/Attribute:adminonly' => '管理专用',
 	'Class:K8sIngressAnnotations/Attribute:default_value' => '默认值',
 	'Class:K8sIngressAnnotations/Attribute:description' => '详情',
 	'Class:K8sIngressAnnotations/Attribute:validate' => '正则校验',

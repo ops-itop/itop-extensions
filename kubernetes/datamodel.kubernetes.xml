@@ -4221,6 +4221,16 @@
 					<is_null_allowed>false</is_null_allowed>
 					<display_style>list</display_style>
 				</field>
+				<field id="adminonly" xsi:type="AttributeEnum">
+					<sql>adminonly</sql>
+					<values>
+						<value id="yes">yes</value>
+						<value id="no">no</value>
+					</values>
+					<default_value>no</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
 				<field id="note" xsi:type="AttributeString">
 					<sql>note</sql>
 					<default_value/>
@@ -4288,6 +4298,9 @@
 						<item id="enable">
 							<rank>13</rank>
 						</item>
+						<item id="adminonly">
+							<rank>14</rank>
+						</item>
 						<item id="note">
 							<rank>15</rank>
 						</item>
@@ -4316,6 +4329,9 @@
 						<item id="enable">
 							<rank>13</rank>
 						</item>
+						<item id="adminonly">
+							<rank>14</rank>
+						</item>
 						<item id="note">
 							<rank>20</rank>
 						</item>
@@ -4334,6 +4350,9 @@
 						</item>
 						<item id="enable">
 							<rank>25</rank>
+						</item>
+						<item id="adminonly">
+							<rank>27</rank>
 						</item>
 						<item id="validate">
 							<rank>30</rank>
@@ -5133,6 +5152,10 @@
 					<extkey_attcode>k8singressannotations_id</extkey_attcode>
 					<target_attcode>name</target_attcode>
 				</field>
+				<field id="adminonly" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8singressannotations_id</extkey_attcode>
+					<target_attcode>adminonly</target_attcode>
+				</field>
 				<field id="enable" xsi:type="AttributeEnum">
 					<sql>enable</sql>
 					<values>
@@ -5178,6 +5201,32 @@
 				</field>
 			</fields>
 			<methods>
+				<method id="isAllowedModifyCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+						public function isAllowedModifyCustom()
+						{
+							if($this->IsNew()) {
+								return true;
+							}
+
+							$myContactId = UserRights::GetContactId();
+							$deploy = MetaModel::GetObject("Deployment", $this->Get('deployment_id'));
+							$contacts = $deploy->Get('person_list');
+							$flag = false;
+							foreach($contacts as $v) {
+								if($v->Get('person_id') == $myContactId) {
+									return true;
+								}
+							}
+							
+							return false;
+						}
+					]]>
+					</code>
+				</method>
 				<method id="ReloadAndDisplayCustom" _delta="define">
 					<static>false</static>
 					<access>public</access>
@@ -5194,6 +5243,27 @@
 						$oId = $oObj->getKey();
 						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
 					}
+					]]>
+					</code>
+				</method>
+				<method id="DisplayModifyForm" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[
+						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
+						{
+							if(!UserRights::IsAdministrator() && $this->Get('adminonly') == "yes")
+							{
+								$sMesg = Dict::Format("Class:lnkK8sIngressAnnotationsToDeployment/Error:AdminOnly", $this->Get('k8singressannotations_name'));
+								self::ReloadAndDisplayCustom($oPage, $this, 'annotation-modify-adminonly', $sMesg, 'info');
+							} elseif(!$this->isAllowedModifyCustom() && !UserRights::IsAdministrator()) {
+								$sMesg = Dict::Format("Class:lnkK8sIngressAnnotationsToDeployment/Error:CanOnlyModifyLinkYourself", $this->Get('k8singressannotations_name'));
+								self::ReloadAndDisplayCustom($oPage, $this, 'annotation-not-yours', $sMesg, 'info');
+							} else {
+								parent::DisplayModifyForm($oPage, $aExtraParams);
+							}
+						}
 					]]>
 					</code>
 				</method>
@@ -5402,6 +5472,10 @@
 					<is_null_allowed>false</is_null_allowed>
 					<display_style>list</display_style>
 				</field>
+				<field id="adminonly" xsi:type="AttributeExternalField">
+					<extkey_attcode>k8singressannotations_id</extkey_attcode>
+					<target_attcode>adminonly</target_attcode>
+				</field>
 				<field id="k8singressannotations_note" xsi:type="AttributeExternalField">
 					<extkey_attcode>k8singressannotations_id</extkey_attcode>
 					<target_attcode>note</target_attcode>
@@ -5437,6 +5511,32 @@
 				</field>
 			</fields>
 			<methods>
+				<method id="isAllowedModifyCustom" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Custom</type>
+					<code><![CDATA[
+						public function isAllowedModifyCustom()
+						{
+							if($this->IsNew()) {
+								return true;
+							}
+
+							$myContactId = UserRights::GetContactId();
+							$deploy = MetaModel::GetObject("Ingress", $this->Get('ingress_id'));
+							$contacts = $deploy->Get('person_list');
+							$flag = false;
+							foreach($contacts as $v) {
+								if($v->Get('person_id') == $myContactId) {
+									return true;
+								}
+							}
+							
+							return false;
+						}
+					]]>
+					</code>
+				</method>
 				<method id="ReloadAndDisplayCustom" _delta="define">
 					<static>false</static>
 					<access>public</access>
@@ -5453,6 +5553,27 @@
 						$oId = $oObj->getKey();
 						$oPage->add_header('Location: '.utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=details&class='.get_class($oObj).'&id='.$oId.'&'.$oAppContext->GetForLink());
 					}
+					]]>
+					</code>
+				</method>
+				<method id="DisplayModifyForm" _delta="define">
+					<static>false</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[
+						public function DisplayModifyForm(WebPage $oPage, $aExtraParams = array())
+						{
+							if(!UserRights::IsAdministrator() && $this->Get('adminonly') == "yes")
+							{
+								$sMesg = Dict::Format("Class:lnkK8sIngressAnnotationsToIngress/Error:AdminOnly", $this->Get('k8singressannotations_name'));
+								self::ReloadAndDisplayCustom($oPage, $this, 'annotation-modify-adminonly-2', $sMesg, 'info');
+							} elseif(!$this->isAllowedModifyCustom() && !UserRights::IsAdministrator()) {
+								$sMesg = Dict::Format("Class:lnkK8sIngressAnnotationsToIngress/Error:CanOnlyModifyLinkYourself", $this->Get('k8singressannotations_name'));
+								self::ReloadAndDisplayCustom($oPage, $this, 'annotation-modify-not-allowd', $sMesg, 'info');
+							} else {
+								parent::DisplayModifyForm($oPage, $aExtraParams);
+							}
+						}
 					]]>
 					</code>
 				</method>
