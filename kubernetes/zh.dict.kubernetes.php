@@ -75,6 +75,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Controller/Error:IpIsInvalid' => '自定义hosts包含非法IP: %1$s',
 	'Class:Controller/Error:DomainIsInvalid' => '自定义hosts包含非法域名: %1$s',
 	'Class:Controller/Error:CommandAndArgsShouldBeArray' => 'command和args应是PHP数组. %1$s',
+	'Class:Controller/Error:ContainerPortMustBeInteger' => '非法的端口值：%1$s ，容器端口必须为整数',
+	'Class:Controller/Error:ContainerPortRange' => '非法的端口值：%1$s ，容器端口必须在 1~65535 之间',
 
 	'Class:Controller/Tab:Debug' => '调试',
 ));
