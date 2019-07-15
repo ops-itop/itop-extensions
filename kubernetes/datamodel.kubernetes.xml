@@ -562,6 +562,11 @@
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
+				<field id="prestop" xsi:type="AttributeInteger">
+					<sql>prestop</sql>
+					<default_value>45</default_value>
+					<is_null_allowed>true</is_null_allowed>
+				</field>
 				<field id="sidecar_list" xsi:type="AttributeLinkedSetIndirect">
 					<linked_class>lnkSideCarVerToController</linked_class>
 					<ext_key_to_me>controller_id</ext_key_to_me>
@@ -1418,6 +1423,9 @@
 										</item>
 										<item id="args">
 											<rank>370</rank>
+										</item>
+										<item id="prestop">
+											<rank>380</rank>
 										</item>
 									</items>
 								</item>
