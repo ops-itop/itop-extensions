@@ -147,6 +147,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:K8sVolume/Attribute:volumetype' => 'Volume类型',
 	'Class:K8sVolume/Attribute:storageclass' => 'StorageClass',
+	'Class:K8sVolume/Attribute:accessmodes' => '访问模式',
 	'Class:K8sVolume/Attribute:note' => '注释',
 	'Class:K8sVolume/Attribute:controller_list' => '服务',
 	'Class:K8sVolume/Attribute:controller_list+' => '链接到此Volume的所有服务',

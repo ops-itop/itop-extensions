@@ -4173,6 +4173,17 @@
 					<default_value/>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
+				<field id="accessmodes" xsi:type="AttributeEnum">
+					<sql>accessmodes</sql>
+					<values>
+						<value id="ReadWriteOnce">ReadWriteOnce</value>
+						<value id="ReadWriteMany">ReadWriteMany</value>
+						<value id="ReadOnlyMany">ReadOnlyMany</value>
+					</values>
+					<default_value>ReadWriteOnce</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
 				<field id="note" xsi:type="AttributeString">
 					<sql>note</sql>
 					<default_value/>
@@ -4196,7 +4207,7 @@
 					// metadata.annotations.volume.beta.kubernetes.io/storage-class: field is immutable
 					public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
 					{
-						$immutable = ["storageclass", "name", "volumetype"];
+						$immutable = ["storageclass", "name", "volumetype", "accessmodes"];
 						if (!$this->IsNew() && in_array($sAttCode, $immutable))
 						{
 							return OPT_ATT_READONLY;
@@ -4220,6 +4231,9 @@
 						<item id="storageclass">
 							<rank>17</rank>
 						</item>
+						<item id="accessmodes">
+							<rank>18</rank>
+						</item>
 						<item id="note">
 							<rank>20</rank>
 						</item>
@@ -4239,6 +4253,9 @@
 						<item id="storageclass">
 							<rank>17</rank>
 						</item>
+						<item id="accessmodes">
+							<rank>18</rank>
+						</item>
 						<item id="note">
 							<rank>40</rank>
 						</item>
@@ -4254,6 +4271,9 @@
 						</item>
 						<item id="storageclass">
 							<rank>17</rank>
+						</item>
+						<item id="accessmodes">
+							<rank>18</rank>
 						</item>
 						<item id="note">
 							<rank>40</rank>
