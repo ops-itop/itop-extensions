@@ -159,7 +159,9 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sVolumeToController/Attribute:controller_id' => 'K8S服务',
 	'Class:lnkK8sVolumeToController/Attribute:k8svolume_note' => '注释',
 	'Class:lnkK8sVolumeToController/Attribute:mountpath' => '挂载路径',
+	'Class:lnkK8sVolumeToController/Attribute:storage' => '容量(Gi)',
 	'Class:lnkK8sVolumeToController/Attribute:k8svolume_id' => 'Volume',
+	'Class:lnkK8sVolumeToController/Error:StorageMustGreaterThanPrevious' => 'Volume 不支持缩容：%1$s'
 ));
 
 // K8sIngressAnnotations

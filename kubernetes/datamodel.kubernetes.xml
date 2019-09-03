@@ -693,6 +693,16 @@
 								$this->m_aCheckIssues[] = $issue;
 							}
 						}
+						
+						// 检查volume
+						foreach($this->Get('volume_list') as $volume) {
+							$volume->DoCheckToWrite();
+							$volumeArray = get_object_vars($volume);
+							if(!$volumeArray['m_aCheckIssues']) continue;
+							foreach($volumeArray['m_aCheckIssues'] as $issue) {
+								$this->m_aCheckIssues[] = $issue;
+							}
+						}
 
 						// 检查sidecar_list，production的namespace不允许链接非production的sidecar
 						foreach($this->Get('sidecar_list') as $sidecar) {
@@ -5056,6 +5066,12 @@
 					<default_value>/mnt</default_value>
 					<is_null_allowed>false</is_null_allowed>
 				</field>
+				<field id="storage" xsi:type="AttributeString">
+					<sql>storage</sql>
+					<default_value>10</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<validation_pattern>^1[0-9]{0,3}$</validation_pattern>
+				</field>
 			</fields>
 			<methods>
 				<method id="ReloadAndDisplayCustom" _delta="define">
@@ -5086,12 +5102,19 @@
 			if($aChanges)
 			{
 				$friendlyname = $this->Get('k8svolume_id') . " " . $this->Get('controller_id');
-				$allowmodify = array("mountpath");
+				$allowmodify = ["mountpath", "storage"];
 				$allow = true;
+				
 				foreach($aChanges as $key => $val) {
 					if(!in_array($key, $allowmodify)) {
 						$allow = false;
 					}
+				}
+				
+				// 不支持缩容
+				$storage = $this->GetOriginal("storage");
+				if((int)$this->Get("storage") < (int)$storage) {
+					$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sVolumeToController/Error:StorageMustGreaterThanPrevious", $friendlyname);
 				}
 
 				if(!$this->IsNew())
@@ -5149,6 +5172,9 @@
 						<item id="mountpath">
 							<rank>5</rank>
 						</item>
+						<item id="storage">
+							<rank>7</rank>
+						</item>
 						<item id="controller_id">
 							<rank>10</rank>
 						</item>
@@ -5171,6 +5197,9 @@
 						<item id="mountpath">
 							<rank>5</rank>
 						</item>
+						<item id="storage">
+							<rank>7</rank>
+						</item>
 						<item id="controller_id">
 							<rank>10</rank>
 						</item>
@@ -5192,6 +5221,9 @@
 					<items>
 						<item id="mountpath">
 							<rank>5</rank>
+						</item>
+						<item id="storage">
+							<rank>7</rank>
 						</item>
 						<item id="controller_id">
 							<rank>10</rank>
