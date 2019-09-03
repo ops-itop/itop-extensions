@@ -146,9 +146,10 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 // K8sVolume
 Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:K8sVolume/Attribute:volumetype' => 'Volume类型',
+	'Class:K8sVolume/Attribute:storageclass' => 'StorageClass',
 	'Class:K8sVolume/Attribute:note' => '注释',
-	'Class:K8sVolume/Attribute:deployment_list' => '无状态服务',
-	'Class:K8sVolume/Attribute:deployment_list+' => '链接到此Volume的所有无状态服务',
+	'Class:K8sVolume/Attribute:controller_list' => '服务',
+	'Class:K8sVolume/Attribute:controller_list+' => '链接到此Volume的所有服务',
 ));
 
 // lnkK8sVolumeToController
