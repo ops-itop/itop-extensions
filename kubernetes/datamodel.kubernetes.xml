@@ -5078,7 +5078,7 @@
 					<sql>storage</sql>
 					<default_value>10</default_value>
 					<is_null_allowed>false</is_null_allowed>
-					<validation_pattern>^(?!0)(?:[0-9]{1,3}|2000)$</validation_pattern>
+					<validation_pattern>^(?:[1-9]\d{0,2}|1\d{0,3}|2000)$</validation_pattern>
 				</field>
 			</fields>
 			<methods>
