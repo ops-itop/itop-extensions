@@ -4174,7 +4174,7 @@
 						<value id="cephfs">cephfs</value>
 						<value id="glusterfs">glusterfs</value>
 					</values>
-					<default_value>hostpath</default_value>
+					<default_value>rbd</default_value>
 					<is_null_allowed>false</is_null_allowed>
 					<display_style>list</display_style>
 				</field>
