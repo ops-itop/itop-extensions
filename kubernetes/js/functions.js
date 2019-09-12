@@ -95,3 +95,16 @@ function KubernetesStatusHighlight(state) {
 		block.css("letter-spacing", "6px");
 	}
 }
+
+function CustomCert() {
+	var certname = $('[data-attcode=cert_name]');
+	function DisplayCertName() {
+		var customcert = $('[name=attr_custom_cert]').val();
+		certname.hide();
+		if(customcert == 'yes') {
+			certname.show();
+		}
+	}
+	DisplayCertName();
+	$('[name=attr_custom_cert]').bind('change', DisplayCertName);
+}

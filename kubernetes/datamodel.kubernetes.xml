@@ -1669,6 +1669,7 @@
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
 				</field>
+				<!-- 这个 field 是干嘛的? -->
 				<field id="domaincheck" xsi:type="AttributeEnum">
 					<values>
 						<value id="yes">yes</value>
@@ -1678,6 +1679,23 @@
 					<default_value>yes</default_value>
 					<is_null_allowed>false</is_null_allowed>
 					<display_style>list</display_style>
+				</field>
+				<!-- 默认创建的tls secret名称是 default-tls，这里为了支持不同的证书，允许用户输入自定义的tls secret名称是
+ 				     当然，此secret仍然需要管理员事先创建 -->
+				<field id="custom_cert" xsi:type="AttributeEnum">
+					<values>
+						<value id="yes">yes</value>
+						<value id="no">no</value>
+					</values>
+					<sql>custom_cert</sql>
+					<default_value>no</default_value>
+					<is_null_allowed>false</is_null_allowed>
+					<display_style>list</display_style>
+				</field>
+				<field id="cert_name" xsi:type="AttributeString">
+					<sql>cert_name</sql>
+					<default_value>default-tls</default_value>
+					<is_null_allowed>false</is_null_allowed>
 				</field>
 			</fields>
 			<lifecycle>
@@ -1805,6 +1823,31 @@
 				</states>
 			</lifecycle>
 			<methods>
+				<method id="DisplayFormCustom">
+					<static>false</static>
+					<access>public</access>
+					<type>Custome</type>
+					<code><![CDATA[
+						public function DisplayFormCustom($oPage)
+						{
+							$oPage->add_ready_script("CustomCert();");
+						}
+					]]>
+					</code>
+				</method>
+				<method id="DisplayCreationForm">
+					<static>true</static>
+					<access>public</access>
+					<type>Overload-cmdbAbstractObject</type>
+					<code><![CDATA[
+						public static function DisplayCreationForm(WebPage $oPage, $sClass, $oObjectToClone = null, $aArgs = array(), $aExtraParams = array())
+						{
+							self::DisplayFormCustom($oPage);
+							parent::DisplayModifyForm($oPage, $aExtraParams);
+						}
+					]]>
+					</code>
+				</method>
 				<method id="DisplayModifyForm">
 					<static>false</static>
 					<access>public</access>
@@ -1831,6 +1874,7 @@
 							// 所以检测到type变更之后，将submit类型的button都改为button类型，完事之后在给改回去
 							// Kubernetes_IngressWarning(title, content, ok='OK', cancel='Cancel', theme='modern', icon='', width='30%')
 							$oPage->add_ready_script("Kubernetes_IngressWarning('$sWarningTitle', '$sOnTypeChage', '$sButtonOk', '$sButtonCancel', '$sConformTheme', '$sConformIcon', '$sConformWidth');");
+							self::DisplayFormCustom($oPage);
 							parent::DisplayModifyForm($oPage, $aExtraParams);
 						}
 					]]>
@@ -2060,6 +2104,12 @@
 										</item>
 										<item id="change_log">
 											<rank>320</rank>
+										</item>
+										<item id="custom_cert">
+											<rank>330</rank>
+										</item>
+										<item id="cert_name">
+											<rank>340</rank>
 										</item>
 										<item id="domaincheck">
 											<rank>430</rank>

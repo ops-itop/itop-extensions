@@ -243,6 +243,8 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:Ingress/Attribute:https/Value:off' => '关闭',
 	'Class:Ingress/Attribute:type' => '类型',
 	'Class:Ingress/Attribute:domaincheck' => '域名检查',
+	'Class:Ingress/Attribute:custom_cert' => '使用自定义证书',
+	'Class:Ingress/Attribute:cert_name' => '自定义证书名称',
 	'Class:Ingress/Attribute:type/Value:internal' => '内部服务',
 	'Class:Ingress/Attribute:type/Value:external' => '外部服务',
 	'Class:Ingress/Attribute:endpoints' => '端点[仅外部服务有效]',
