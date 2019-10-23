@@ -193,7 +193,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_note' => '用途',
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_description' => '详情',
 	'Class:lnkK8sIngressAnnotationsToDeployment/Attribute:k8singressannotations_validate' => '配置值校验',
-	'Class:lnkK8sIngressAnnotationsToDeployment/Error:AdminOnly' => '请联系管理员添加此配置： %1$s',
+	'Class:lnkK8sIngressAnnotationsToDeployment/Error:AdminOnly' => '请联系管理员添加或更新此配置： %1$s',
 ));
 
 // lnkK8sIngressAnnotationsToIngress
@@ -209,7 +209,7 @@ Dict::Add('ZH CN', 'Chinese', '简体中文', array(
 	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:k8singressannotations_note' => '用途',
 	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:k8singressannotations_description' => '详情',
 	'Class:lnkK8sIngressAnnotationsToIngress/Attribute:k8singressannotations_validate' => '配置值校验',
-	'Class:lnkK8sIngressAnnotationsToIngress/Error:AdminOnly' => '请联系管理员添加此配置： %1$s',
+	'Class:lnkK8sIngressAnnotationsToIngress/Error:AdminOnly' => '请联系管理员添加或更新此配置： %1$s',
 	'Class:lnkK8sIngressAnnotationsToIngress/Error:ValueNotValid' => '配置值不合法 %1$s',
 ));
 

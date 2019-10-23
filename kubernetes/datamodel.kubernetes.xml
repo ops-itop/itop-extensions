@@ -1309,7 +1309,8 @@
 								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToDeployment/Error:ValueNotValid", $pattern);
 							}
 							
-							if($val->Get('adminonly') == "yes" && !UserRights::IsAdministrator()) {
+							// adminonly 的配置要判断是否被修改，否则普通用户无法更新带有管理员专用配置的Ingress
+							if($val->Get('adminonly') == "yes" && !UserRights::IsAdministrator() && $val->IsModified()) {
 								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToDeployment/Error:AdminOnly", $val->Get('k8singressannotations_name'));
 							}
 						}
@@ -1940,7 +1941,8 @@
 								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToIngress/Error:ServerSnippetCanOnlyConfigByRootLcation", $annotation);
 							}
 
-							if($val->Get('adminonly') == "yes" && !UserRights::IsAdministrator()) {
+							// adminonly 的配置要判断是否被修改，否则普通用户无法更新带有管理员专用配置的Ingress
+							if($val->Get('adminonly') == "yes" && !UserRights::IsAdministrator() && $val->IsModified()) {
 								$this->m_aCheckIssues[] = Dict::Format("Class:lnkK8sIngressAnnotationsToIngress/Error:AdminOnly", $annotation);
 							}
 						}
