@@ -35,7 +35,7 @@ if(isset($_SESSION['auth_user'])) {
 	}
 
 	if(isset($_SESSION['verify_user']) && $_SESSION['verify_user'] != 1) {
-		$re = '/^\/pages\/UI\.php\?operation=modify&class=Person&id=[0-9]+|.*\/verify_user\.php.*|^\/pages\/logoff\.php.*/i';
+		$re = '/pages\/UI\.php\?operation=modify&class=Person&id=[0-9]+|.*\/verify_user\.php.*|pages\/logoff\.php.*/i';
 		if(!preg_match($re, $_SERVER['REQUEST_URI']))
 		{
 			header("Location: $location");
