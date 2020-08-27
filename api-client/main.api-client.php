@@ -46,7 +46,7 @@ class iTopClient {
 		curl_setopt($curl, CURLOPT_URL,$url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
 		curl_setopt($curl, CURLOPT_HEADER, false);
-		curl_setopt($curl, CURLOPT_POST, count($params));
+		curl_setopt($curl, CURLOPT_POST, true);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
 		if( ! $this->certificateCheck ) {
 			curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
